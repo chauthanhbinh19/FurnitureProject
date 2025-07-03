@@ -1,5 +1,7 @@
-﻿using FurnitureProject.Models;
+﻿using FurnitureProject.Helper;
+using FurnitureProject.Models;
 using FurnitureProject.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace FurnitureProject.Services
 {
@@ -39,6 +41,40 @@ namespace FurnitureProject.Services
             {
                 await _userRepo.DeleteAsync(user);
             }
+        }
+
+        public async Task<(bool Success, string? Message)> SignInAsync(User user)
+        {
+            var hasher = new PasswordHasher<User>();
+            var userFromDB = await _userRepo.GetByUsernameAsync(user.Username);
+            if (userFromDB != null)
+            {
+                var result = hasher.VerifyHashedPassword(user, userFromDB.Password, user.Password);
+                if(result == PasswordVerificationResult.Success)
+                {
+                    //HttpContext.Session.SetString("UserID");
+                    //HttpContext.Session.SetString("UserRole");
+                }
+            }
+
+            return (true, null);
+        }
+
+        public async Task<(bool Success, string? Message)> SignUpAsync(User user)
+        {
+            var hasher = new PasswordHasher<User>();
+            user.Password = hasher.HashPassword(user, user.Password);
+
+            // Set Create time
+            user.CreatedAt = DateTime.UtcNow;
+
+            // Set user role
+            if (string.IsNullOrEmpty(user.Role))
+                user.Role = "admin";
+
+            // Add user
+            await _userRepo.AddAsync(user);
+            return (true, null);
         }
     }
 

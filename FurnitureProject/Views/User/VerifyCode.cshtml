@@ -1,0 +1,76 @@
+﻿@model FurnitureProject.Models.ViewModels.EmailVerificationViewModel
+
+@{
+    ViewData["Title"] = "Verify Code";
+}
+
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+    <div class="card shadow p-4 rounded-4" style="width: 100%; max-width: 400px;">
+        <h4 class="text-center fw-bold mb-3">Verification Code</h4>
+        <p class="text-center text-muted small">Enter the code sent to your email ending in <b>@Model.Email.Substring(Math.Max(0, Model.Email.Length - 4))</b></p>
+
+        <form asp-action="VerifyCode" asp-controller="User" method="post" id="otpForm">
+            <div class="d-flex justify-content-between mb-3 gap-2" id="otpInputs">
+                @for (int i = 0; i < 6; i++)
+                {
+                    <input type="text" 
+                        class="form-control text-center fw-bold otp-input" 
+                        maxlength="1" 
+                        inputmode="numeric" 
+                        style="width: 40px; height: 50px;" />
+                }
+            </div>
+
+            <input type="hidden" asp-for="Code" id="hiddenCode" />
+            <span asp-validation-for="Code" class="text-danger"></span>
+            <input type="hidden" asp-for="Email" />
+
+            <div id="codeError" class="text-danger small text-center mb-2 d-none">The code you entered is incorrect. Please try again.</div>
+
+            <div class="text-center mb-3 text-muted" id="timer">01:59</div>
+
+            <button type="submit" class="btn btn-primary w-100 rounded-3">Verify</button>
+
+            <div class="text-center mt-3">
+                <small class="text-muted">Didn't receive a code? <a href="#" class="text-primary">Resend Code</a></small>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const inputs = document.querySelectorAll('.otp-input');
+        const hiddenCode = document.getElementById('hiddenCode');
+
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                if (input.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+
+                // Cập nhật giá trị vào hidden input
+                let code = '';
+                inputs.forEach(i => code += i.value);
+                hiddenCode.value = code;
+            });
+
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Backspace' && !input.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Timer countdown
+        let timer = 119; // 1:59
+        const timerDisplay = document.getElementById("timer");
+        const countdown = setInterval(() => {
+            const minutes = String(Math.floor(timer / 60)).padStart(2, '0');
+            const seconds = String(timer % 60).padStart(2, '0');
+            timerDisplay.innerText = `${minutes}:${seconds}`;
+            timer--;
+            if (timer < 0) clearInterval(countdown);
+        }, 1000);
+    </script>
+}

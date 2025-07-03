@@ -17,7 +17,7 @@ namespace FurnitureProject.Repositories
             return await _context.Products
                 .Where(p => !p.IsDeleted)
                 .ToListAsync();
-        }4
+        }
 
         public async Task<Product?> GetByIdAsync(int id)
         {

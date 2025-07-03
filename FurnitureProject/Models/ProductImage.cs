@@ -4,7 +4,7 @@ namespace FurnitureProject.Models
 {
     public class ProductImage : BaseEntity
     {
-        public int Id { get; set; }
+        public int ImageId { get; set; }
 
         [Required]
         public string ImageUrl { get; set; }

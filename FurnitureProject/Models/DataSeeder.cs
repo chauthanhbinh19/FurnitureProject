@@ -14,7 +14,8 @@ namespace FurnitureProject.Models
                         FullName = "Nguyễn Văn A",
                         Email = "a@example.com",
                         Username = "thanhbinh19",
-                        Password = "123456", // demo only
+                        Password = "123456",
+                        PhoneNumber = "0909123456",
                         Role = "admin",
                         CreatedAt = DateTime.UtcNow
                     },
@@ -24,7 +25,18 @@ namespace FurnitureProject.Models
                         Email = "b@example.com",
                         Username = "thanhhiep19",
                         Password = "123456",
+                        PhoneNumber = "0909123457",
                         Role = "user",
+                        CreatedAt = DateTime.UtcNow
+                    },
+                    new User
+                    {
+                        FullName = "Nguyễn Thiên C",
+                        Email = "a@example.com",
+                        Username = "thanhthien20",
+                        Password = "123456",
+                        PhoneNumber = "0909123452",
+                        Role = "admin",
                         CreatedAt = DateTime.UtcNow
                     }
                 );

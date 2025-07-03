@@ -4,13 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FurnitureProject.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductImagesController : ControllerBase
+    [Route("admin/[controller]")]
+    public class ProductImageController : Controller
     {
         private readonly IProductImageService _imageService;
 
-        public ProductImagesController(IProductImageService imageService)
+        public ProductImageController(IProductImageService imageService)
         {
             _imageService = imageService;
         }

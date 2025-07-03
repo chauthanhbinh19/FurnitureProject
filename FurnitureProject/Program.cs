@@ -1,7 +1,9 @@
 ﻿using FurnitureProject.Data;
+using FurnitureProject.Middleware;
 using FurnitureProject.Models;
 using FurnitureProject.Repositories;
 using FurnitureProject.Services;
+using FurnitureProject.Services.Email;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +26,15 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
 
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(option =>
+ {
+     option.IdleTimeout = TimeSpan.FromMinutes(30);
+     option.Cookie.HttpOnly = true;
+     option.Cookie.IsEssential = true;
+ });
 
 var app = builder.Build();
 
@@ -40,23 +50,26 @@ app.MapGet("/test-db", async (AppDbContext db) =>
     try
     {
         var canConnect = await db.Database.CanConnectAsync();
-        return canConnect ? "✅ Kết nối thành công!" : "❌ Không thể kết nối!";
+        return canConnect ? "✅ Connect successfully" : "❌ Connect failed";
     }
     catch (Exception ex)
     {
-        return $"❌ Lỗi: {ex.Message}";
+        return $"❌ Error: {ex.Message}";
     }
 });
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate(); // Tự động tạo DB nếu chưa có
+    db.Database.Migrate(); // Auto create database data if not exist
     await DataSeeder.SeedAsync(db);
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseSession();
+app.UseMiddleware<RoleAuthorizationMiddleware>();
 
 app.UseRouting();
 

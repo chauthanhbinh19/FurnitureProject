@@ -24,7 +24,7 @@ namespace FurnitureProject.Repositories
         {
             return await _context.ProductImages
                 .Include(x => x.Product)
-                .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+                .FirstOrDefaultAsync(x => x.ImageId == id && !x.IsDeleted);
         }
 
         public async Task<IEnumerable<ProductImage>> GetByProductIdAsync(int productId)

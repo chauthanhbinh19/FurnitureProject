@@ -1,0 +1,76 @@
+﻿@model FurnitureProject.Models.User
+@* @using WebApplication1.Enums *@
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="container mt-5" style="max-width: 400px;">
+    <div class="card shadow">
+        <div class="card-header bg-conflowerblue text-white text-center">
+            <h3 class="mb-0">Đăng nhập</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="SignIn" asp-controller="User" method="post">
+                <input type="hidden" asp-for="Id" value="USR@(DateTime.Now.Ticks)" />
+
+                @* <div class="mb-3">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div> *@
+
+                <div class="mb-3">
+                    <label asp-for="Username"></label>
+                    <input asp-for="Username" class="form-control" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 position-relative">
+                    <label asp-for="Password" class="form-label pe-5"></label>
+
+                    <input type="password" asp-for="Password" class="form-control" id="passwordInput" />
+                    <i class="bi bi-eye-slash position-absolute end-0 translate-middle-y me-3"
+                       id="togglePassword"
+                       style="cursor: pointer; top: 72%; transform: translateY(-55%);"></i>
+
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn-custom bg-conflowerblue btn-block" style="border-radius: 0.5rem;">Đăng nhập</button>
+                </div>
+
+                <div class="d-grid mt-2 rounded-5">
+                    <a asp-action="SignUp" asp-controller="User" class="btn btn-outline-secondary btn-block" style="border-radius: 0.5rem;">Đăng ký</a>
+                </div>
+
+                <div class="text-center mt-2 rounded-5">
+                    <a asp-action="ForgotPassword" asp-controller="User">Quên mật khẩu?</a>
+                </div>
+                <hr />
+                <div class="d-grid gap-2 mt-3">
+                    <a href="~/signin-google" class="btn btn-outline-danger btn-block rounded-5" style="border-radius: 0.5rem;">
+                        <i class="bi bi-google"></i> Đăng nhập với Google
+                    </a>
+                    <a href="~/signin-facebook" class="btn btn-outline-primary btn-block rounded-5" style="border-radius: 0.5rem;">
+                        <i class="bi bi-facebook"></i> Đăng nhập với Facebook
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#passwordInput');
+
+        togglePassword.addEventListener('click', function () {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+    </script>
+};

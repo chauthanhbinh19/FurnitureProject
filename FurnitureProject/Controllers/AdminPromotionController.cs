@@ -4,13 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FurnitureProject.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class PromotionsController : ControllerBase
+    [Route("admin/[controller]")]
+    public class AdminPromotionController : Controller
     {
         private readonly IPromotionService _promotionService;
 
-        public PromotionsController(IPromotionService promotionService)
+        public AdminPromotionController(IPromotionService promotionService)
         {
             _promotionService = promotionService;
         }
@@ -19,7 +18,7 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> GetAll()
         {
             var list = await _promotionService.GetAllAsync();
-            return Ok(list);
+            return View(list);
         }
 
         [HttpGet("{id}")]
@@ -27,7 +26,7 @@ namespace FurnitureProject.Controllers
         {
             var promotion = await _promotionService.GetByIdAsync(id);
             if (promotion == null) return NotFound();
-            return Ok(promotion);
+            return View(promotion);
         }
 
         [HttpPost]

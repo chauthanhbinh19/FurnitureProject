@@ -37,8 +37,21 @@ namespace FurnitureProject.Repositories
 
         public async Task AddAsync(User user)
         {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.Users.AddAsync(user);
+                var affected = await _context.SaveChangesAsync();
+
+                if (affected == 0)
+                    Console.WriteLine("No row was inserted.");
+                else
+                    Console.WriteLine("OK");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Insert failed: " + ex.Message);
+                throw;
+            }
         }
 
         public async Task UpdateAsync(User user)

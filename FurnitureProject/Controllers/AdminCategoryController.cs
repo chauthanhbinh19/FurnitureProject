@@ -4,13 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FurnitureProject.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class CategoriesController : ControllerBase
+    [Route("admin/[controller]")]
+    public class AdminCategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
 
-        public CategoriesController(ICategoryService categoryService)
+        public AdminCategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }

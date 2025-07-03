@@ -11,5 +11,7 @@ namespace FurnitureProject.Services
         Task CreateAsync(User user);
         Task UpdateAsync(User user);
         Task DeleteAsync(int id);
+        Task<(bool Success, string? Message)> SignInAsync(User user);
+        Task<(bool Success, string? Message)> SignUpAsync(User user);
     }
 }

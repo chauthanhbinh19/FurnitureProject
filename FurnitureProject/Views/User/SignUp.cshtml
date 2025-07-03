@@ -1,0 +1,143 @@
+﻿@model FurnitureProject.Models.User
+@* @using WebApplication1.Enums *@
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="container mt-5" style="max-width: 400px;">
+    <div class="card shadow">
+        <div class="card-header bg-conflowerblue text-white text-center">
+            <h3 class="mb-0">Đăng ký</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="SignUp" asp-controller="User" method="post">
+
+                <div class="mb-3">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Username"></label>
+                    <input asp-for="Username" class="form-control" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 position-relative">
+                    <label asp-for="Password" class="form-label"></label>
+
+                    <input type="password" asp-for="Password" class="form-control" id="passwordInput" />
+                    <i class="bi bi-eye-slash position-absolute end-0 translate-middle-y me-3"
+                       id="togglePassword"
+                       style="cursor: pointer; top: 72%; transform: translateY(-55%);"></i>
+
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+
+                <div class="mb-3 position-relative">
+                    <label asp-for="ConfirmPassword" class="form-label"></label>
+
+                    <input type="password" asp-for="ConfirmPassword" class="form-control" id="confirmPasswordInput" />
+                    <i class="bi bi-eye-slash position-absolute end-0 translate-middle-y me-3"
+                       id="toggleConfirmPassword"
+                       style="cursor: pointer; top: 72%; transform: translateY(-55%);"></i>
+
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <ul id="password-rules" class="mt-2 small list-unstyled fw-semibold" ">
+                    <li id="rule-length"><i class="bi bi-check me-1 fw-semibold"></i> Tối thiểu 8 ký tự</li>
+                    <li id="rule-uppercase"><i class="bi bi-check me-1 fw-semibold"></i> Có ít nhất 1 chữ hoa</li>
+                    <li id="rule-lowercase"><i class="bi bi-check me-1 fw-semibold"></i> Có ít nhất 1 chữ thường</li>
+                    <li id="rule-number"><i class="bi bi-check me-1 fw-semibold"></i> Có ít nhất 1 số</li>
+                    <li id="rule-special"><i class="bi bi-check me-1 fw-semibold"></i> Có ít nhất 1 ký tự đặc biệt (@@$!%*?&)</li>
+                </ul>
+
+
+                <div class="d-grid">
+                    <button type="submit" class="btn bg-conflowerblue btn-block rounded-5" style="border-radius: 0.5rem;">Đăng ký</button>
+                </div>
+                <div class="d-grid gap-2 mt-3">
+                    <a href="~/signin-google" class="btn btn-outline-danger btn-block rounded-5" style="border-radius: 0.5rem;">
+                        <i class="bi bi-google"></i> Đăng nhập với Google
+                    </a>
+                    <a href="~/signin-facebook" class="btn btn-outline-primary btn-block rounded-5" style="border-radius: 0.5rem;">
+                        <i class="bi bi-facebook"></i> Đăng nhập với Facebook
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const passwordInput = document.getElementById("passwordInput");
+            const form = document.querySelector("form");
+
+        passwordInput.addEventListener("input", function () {
+            const value = passwordInput.value;
+
+            updateRule("length", value.length >= 8);
+            updateRule("uppercase", /[A-Z]/.test(value));
+            updateRule("lowercase", /[a-z]/.test(value));
+            updateRule("number", /[0-9]/.test(value));
+            updateRule("special", /[@@$!%*?&]/.test(value));
+        });
+
+        function updateRule(key, isValid) {
+            const rule = document.getElementById("rule-" + key);
+            rule.classList.remove("text-success", "text-secondary");
+            rule.classList.add(isValid ? "text-success" : "text-secondary");
+            rule.setAttribute("data-valid", isValid); // Gắn trạng thái hợp lệ
+        }
+
+            // Khi submit form
+            form.addEventListener("submit", function (event) {
+                const rules = ["length", "uppercase", "lowercase", "number", "special"];
+                let allValid = true;
+
+                for (const key of rules) {
+                    const rule = document.getElementById("rule-" + key);
+                    if (rule.getAttribute("data-valid") !== "true") {
+                        allValid = false;
+                        break;
+                    }
+                }
+
+                if (!allValid) {
+                    event.preventDefault(); // Ngăn submit
+                    alert("Mật khẩu chưa thỏa mãn đủ điều kiện bảo mật.");
+                }
+            });
+    });
+</script>
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#passwordInput');
+
+        togglePassword.addEventListener('click', function () {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+    </script>
+    <script>
+        const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+        const confirmPasswordInput = document.querySelector('#confirmPasswordInput');
+
+        toggleConfirmPassword.addEventListener('click', function () {
+            const isPassword = confirmPasswordInput.type === 'password';
+            confirmPasswordInput.type = isPassword ? 'text' : 'password';
+
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+    </script>
+
+
+}

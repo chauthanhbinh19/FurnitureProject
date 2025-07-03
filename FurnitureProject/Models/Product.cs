@@ -9,7 +9,7 @@ namespace FurnitureProject.Models
         [Required]
         public string Name { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public decimal Price { get; set; }
 
@@ -17,6 +17,7 @@ namespace FurnitureProject.Models
 
         public int CategoryId { get; set; }
         public Category Category { get; set; }
+        public string Status { get; set; } = "active";
 
         public ICollection<ProductImage> ProductImages { get; set; }
 

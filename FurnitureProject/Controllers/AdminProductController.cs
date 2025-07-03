@@ -4,13 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FurnitureProject.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    [Route("admin/[controller]")]
+    public class AdminProductController : Controller
     {
         private readonly IProductService _productService;
 
-        public ProductController(IProductService productService)
+        public AdminProductController(IProductService productService)
         {
             _productService = productService;
         }
@@ -19,7 +18,7 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> GetAll()
         {
             var products = await _productService.GetAllAsync();
-            return Ok(products);
+            return View(products);
         }
 
         [HttpGet("{id}")]
@@ -27,7 +26,7 @@ namespace FurnitureProject.Controllers
         {
             var product = await _productService.GetByIdAsync(id);
             if (product == null) return NotFound();
-            return Ok(product);
+            return View(product);
         }
 
         [HttpPost]

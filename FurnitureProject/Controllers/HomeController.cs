@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FurnitureProject.Controllers
 {
-    public class HomeController : ControllerBase
+    [Route("")]
+    public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
 
@@ -12,12 +13,12 @@ namespace FurnitureProject.Controllers
         {
             _logger = logger;
         }
-
+        [HttpGet("")]
         public IActionResult Index()
         {
             return View();
         }
-
+        [HttpGet("/privacy")]
         public IActionResult Privacy()
         {
             return View();

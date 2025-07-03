@@ -20,6 +20,15 @@ namespace FurnitureProject.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
+            modelBuilder.ApplyConfiguration(new PromotionConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductPromotionConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+
             // Cấu hình khóa chính kết hợp cho bảng nối nhiều-nhiều
             modelBuilder.Entity<ProductPromotion>()
                 .HasKey(pp => new { pp.ProductId, pp.PromotionId });
