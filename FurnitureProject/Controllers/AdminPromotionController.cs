@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FurnitureProject.Controllers
 {
-    [Route("admin/[controller]")]
+    [Route("admin/promotion")]
     public class AdminPromotionController : Controller
     {
         private readonly IPromotionService _promotionService;
@@ -17,6 +17,8 @@ namespace FurnitureProject.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            ViewBag.UserId = HttpContext.Session.GetString("UserID");
+            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
             var list = await _promotionService.GetAllAsync();
             return View(list);
         }

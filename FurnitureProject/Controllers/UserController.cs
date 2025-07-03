@@ -106,7 +106,7 @@ namespace FurnitureProject.Controllers
             await _emailSender.SendEmailAsync(user.Email, "Mã xác thực",
                 $"<p>Mã xác nhận của bạn là: <b>{code}</b></p>");
 
-            // Lưu thông tin tạm
+            // Save temp data
             TempData["VerificationCode"] = code;
             TempData["PendingEmail"] = user.Email;
             TempData["PendingUsername"] = user.Username;
@@ -119,8 +119,8 @@ namespace FurnitureProject.Controllers
         {
             return View(new EmailVerificationViewModel
             {
-                //Email = TempData["PendingEmail"]?.ToString()
-                Email = "thanhbinhfa999@gmail.com"
+                Email = TempData["PendingEmail"]?.ToString()
+                //Email = "thanhbinhfa999@gmail.com"
             });
         }
         [HttpPost("verifycode")]
@@ -137,33 +137,31 @@ namespace FurnitureProject.Controllers
                 return View(model);
             }
 
-            // Nếu xác nhận thành công → tạo tài khoản
-            //var newUser = new User
-            //{
-            //    Email = email,
-            //    Username = username,
-            //    Password = password,
-            //};
+            //Verfify code success -> save user
+           var newUser = new User
+           {
+               Email = email,
+               Username = username,
+               Password = password,
+           };
 
-            //try
-            //{
-            //    var (success, message) = await _userService.SignUpAsync(newUser);
-            //    if (!success)
-            //    {
-            //        TempData[AppConstants.Status.Error] = message ?? AppConstants.LogMessages.SignInUserError;
-            //        return View(newUser);
-            //    }
-            //    //await _emailSender.SendEmailAsync("thanhbinhfa999@gmail.com", "Xác thực", "<p>Mã xác thực: <b>123456</b></p>");
+            try
+            {
+                var (success, message) = await _userService.SignUpAsync(newUser);
+                if (!success)
+                {
+                    TempData[AppConstants.Status.Error] = message ?? AppConstants.LogMessages.SignInUserError;
+                    return View(newUser);
+                }
 
-            //    TempData[AppConstants.Status.Success] = AppConstants.LogMessages.SignUpSuccess;
-            //    return RedirectToAction("SignIn", "User");
-            //}
-            //catch (Exception ex)
-            //{
-            //    ModelState.AddModelError(string.Empty, ex.Message);
-            //    return View(newUser);
-            //}
-            return View();
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.SignUpSuccess;
+                return RedirectToAction("SignIn", "User");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(newUser);
+            }
         }
 
     }

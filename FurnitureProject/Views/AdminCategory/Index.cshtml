@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FurnitureProject.Models.Category>
+﻿@model IEnumerable<FurnitureProject.Models.DTO.CategoryDTO>
 @{
     ViewData["Title"] = "Danh mục";
 }
@@ -20,7 +20,7 @@
 
 <div class="title-box">
     <div class="text-box">
-        <span class="title">Danh sách danh mục</span>
+        <span class="title ms-2">Danh sách danh mục</span>
     </div>
     <div>
         <form method="get" asp-controller="AdminCategory" asp-action="Index" class="link-custom">
@@ -54,7 +54,7 @@
                     <td>@category.Name</td>
                     <td>@category.Description</td>
                     <td>
-                        <form asp-controller="Category" asp-action="Edit" method="get" style="display:inline;">
+                        <form asp-controller="AdminCategory" asp-action="Update" method="get" style="display:inline;">
                             <input type="hidden" name="id" value="@category.Id" />
                             <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
                                 <i class="bi bi-pencil-square"></i>

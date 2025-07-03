@@ -21,7 +21,7 @@
 
 <div class="title-box">
     <div class="text-box">
-        <span class="title">Danh sách người dùng</span>
+        <span class="title ms-2">Danh sách người dùng</span>
     </div>
     <div>
         <form method="get" asp-controller="AdminUser" asp-action="Index" class="link-custom">
@@ -56,14 +56,14 @@
             {
                 <tr>
                     <td>@user.Id</td>
-                    @* <td>@user.Name</td> *@
+                    <td>@user.FullName</td>
                     <td>@user.Email</td>
                     <td>@user.Username</td>
                     @* <td>@user.password</td> *@
                     <td>@user.Role</td>
-                    @* <td>@user.Status</td> *@
+                    <td>@user.Status</td>
                     <td>
-                        <form asp-controller="User" asp-action="Edit" method="get" style="display:inline;">
+                        <form asp-controller="AdminUser" asp-action="Update" method="get" style="display:inline;">
                             <input type="hidden" name="id" value="@user.Id" />
                             <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
                                 <i class="bi bi-pencil-square"></i>

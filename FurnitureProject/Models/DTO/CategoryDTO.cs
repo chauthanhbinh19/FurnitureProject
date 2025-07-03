@@ -1,16 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace FurnitureProject.Models
+namespace FurnitureProject.Models.DTO
 {
-    public class Category : BaseEntity
+    public class CategoryDTO
     {
         public int Id { get; set; }
-
-        [Required]
         public string Name { get; set; }
         public string? Description { get; set; }
-        public string Status { get; set; } = "active";
+        public string Status { get; set; }
         public ICollection<Product> Products { get; set; }
     }
 }

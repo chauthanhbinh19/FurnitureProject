@@ -16,6 +16,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("")]
         public IActionResult Index()
         {
+            ViewBag.UserId = HttpContext.Session.GetString("UserID");
+            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
             return View();
         }
         [HttpGet("/privacy")]

@@ -20,7 +20,7 @@
 
 <div class="title-box">
     <div class="text-box">
-        <span class="title">Danh sách sản phẩm</span>
+        <span class="title ms-2">Danh sách sản phẩm</span>
     </div>
     <div>
         <form method="get" asp-controller="AdminProduct" asp-action="Index" class="link-custom">
@@ -41,7 +41,7 @@
         <thead class="table-background">
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Hình ảnh</th>
+                @* <th scope="col">Hình ảnh</th> *@
                 <th scope="col">Tên</th>
                 <th scope="col">Mô tả</th>
                 <th scope="col">Giá</th>
@@ -64,9 +64,12 @@
                     <td>@product.Category.Name</td>
                     <td>@product.CreatedAt?.ToString("dd/MM/yyyy")</td>
                     <td>
-                        <a href="/Product/Edit/@product.Id" class="btn btn-sm btn-primary me-1" title="Chỉnh sửa">
-                            <i class="bi bi-pencil-square"></i>
-                        </a>
+                        <form asp-controller="AdminProduct" asp-action="Update" method="get" style="display:inline;">
+                            <input type="hidden" name="id" value="@product.Id" />
+                            <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                        </form>
                         @* <form asp-controller="Product" asp-action="Delete" method="post" style="display:inline;"
                               onsubmit="return confirm('Bạn có chắc muốn xoá sản phẩm này?');">
                             <input type="hidden" name="id" value="@product.Id" />

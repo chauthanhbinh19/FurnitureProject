@@ -28,8 +28,8 @@
                             </div>
                             <ul class="nav flex-column">
                                 <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
-                                       asp-area="" asp-controller="Home" asp-action="Index">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminHome" ? "active" : "")"
+                                       asp-area="" asp-controller="AdminHome" asp-action="Index">
                                         <i class="bi bi-house-door me-2"></i>Trang chủ
                                     </a>
                                 </li>
@@ -72,7 +72,7 @@
                                 <nav class="navbar navbar-expand-lg navbar-light">
                                     <div class="container-fluid">
                                         <!-- Logo -->
-                                        <a class="navbar-brand fw-bold text-dark" asp-area="" asp-controller="Home" asp-action="Index">SweetUIFurniture</a>
+                                        <a class="navbar-brand fw-bold text-dark ms-5" asp-area="" asp-controller="Home" asp-action="Index">SweetUIFurniture</a>
 
                                         <!-- Toggle for mobile -->
                                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
