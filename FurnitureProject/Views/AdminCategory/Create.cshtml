@@ -11,7 +11,7 @@
 <div class="title-box">
         <div class="card-body">
         <form asp-controller="AdminCategory" asp-action="Create" method="post">
-                <input type="hidden" asp-for="Id" value="CAT@(DateTime.Now.Ticks)" />
+                @* <input type="hidden" asp-for="Id" value="CAT@(DateTime.Now.Ticks)" /> *@
             <div class="d-flex flex-wrap gap-4">
                 <div style="flex: 0 0 30%;">
                     <label asp-for="Name" class="form-label"></label>

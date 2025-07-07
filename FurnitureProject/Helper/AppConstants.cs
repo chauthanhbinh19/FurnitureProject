@@ -15,8 +15,11 @@
             public const string UsernameAlreadyExists = "Username already exists";
             public const string UsernameIsNotExists = "Username is not exists";
             public const string EmailAlreadyExists = "Email already exists";
+            public const string EmailDoesNotExists = "Email does not exists";
             public const string SignUpSuccess = "Sign up successfully";
             public const string WrongPassword = "Your password is not correct";
+            public const string PasswordSameAsOld = "Your new password can not match with old password";
+            public const string ChangePasswordSuccessful = "Change password successfully!";
 
             public const string CreateCategorySuccess = "Category created successfully!";
             public const string CreateCategoryError = "Create failed!";

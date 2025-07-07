@@ -69,14 +69,14 @@ namespace FurnitureProject.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create(Category category)
         {
             await _categoryService.CreateAsync(category);
-            return CreatedAtAction(nameof(GetById), new { id = category.Id }, category);
+            return RedirectToAction("Index", "AdminCategory");
         }
 
-        [HttpGet("Update")]
+        [HttpGet("update")]
         public async Task<IActionResult> Update(int id)
         {
             ViewBag.UserId = HttpContext.Session.GetString("UserID");
@@ -85,12 +85,11 @@ namespace FurnitureProject.Controllers
             return View(category);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Category category)
+        [HttpPost("update")]
+        public async Task<IActionResult> Update(Category category)
         {
-            if (id != category.Id) return BadRequest();
             await _categoryService.UpdateAsync(category);
-            return NoContent();
+            return RedirectToAction("Index", "AdminCategory");
         }
 
         [HttpDelete("{id}")]

@@ -1,0 +1,21 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@@{
+ViewData["Title"] = "Danh mục sản phẩm";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4">Danh mục: @ViewBag.CategoryName</h2>
+    <div class="row">
+        @* foreach (var product in Model.Products) { ... } *@
+        <div class="col-md-3">
+            <div class="card">
+                <img src="~/images/sample.jpg" class="card-img-top" />
+                <div class="card-body">
+                    <h5 class="card-title">Tên sản phẩm</h5>
+                    <a href="/product/sample-product" class="btn btn-outline-primary btn-sm">Xem</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

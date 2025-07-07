@@ -1,6 +1,7 @@
-﻿@model FurnitureProject.Models.Product
+﻿@model FurnitureProject.Models.DTO.ProductDTO
 @{
     ViewData["Title"] = "Thêm sản phẩm";
+    var Categories = ViewBag.Categories;
 }
 <div class="title-box">
     <div class="text-box">
@@ -10,7 +11,7 @@
 <div class="title-box">
         <div class="card-body">
         <form id="productForm" asp-controller="AdminProduct" asp-action="Create" method="post" enctype="multipart/form-data">
-                <input type="hidden" asp-for="Id" value="PRO@(DateTime.Now.Ticks)" />
+                @* <input type="hidden" asp-for="Id" value="(DateTime.Now.Ticks)" /> *@
                 <div class="d-flex flex-wrap gap-4">
                     <div style="flex: 0 0 30%;">
                         <label asp-for="Name" class="form-label"></label>
@@ -38,7 +39,7 @@
 
                     <div style="flex: 0 0 30%;">
                         <label asp-for="CategoryId" class="form-label"></label>
-                        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories"></select>
+                        <select asp-for="CategoryId" class="form-select" asp-items="@Categories"></select>
                         <span asp-validation-for="CategoryId" class="text-danger"></span>
                     </div>
                 </div>

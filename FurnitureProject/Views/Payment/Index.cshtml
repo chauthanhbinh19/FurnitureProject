@@ -1,5 +1,24 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Thanh toán";
 }
+
+<div class="container py-4">
+    <h2>Thông tin thanh toán</h2>
+
+    <form method="post" action="/checkout">
+        <div class="mb-3">
+            <label class="form-label">Họ tên</label>
+            <input type="text" class="form-control" name="fullname" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Địa chỉ</label>
+            <textarea class="form-control" name="address" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Số điện thoại</label>
+            <input type="text" class="form-control" name="phone" required />
+        </div>
+
+        <button type="submit" class="btn btn-success">Đặt hàng</button>
+    </form>
+</div>

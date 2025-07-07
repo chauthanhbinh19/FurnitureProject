@@ -54,10 +54,11 @@ namespace FurnitureProject.Services
                 {
                     //HttpContext.Session.SetString("UserID");
                     //HttpContext.Session.SetString("UserRole");
+                    return (true, null);
                 }
             }
 
-            return (true, null);
+            return (false, null);
         }
 
         public async Task<(bool Success, string? Message)> SignUpAsync(User user)

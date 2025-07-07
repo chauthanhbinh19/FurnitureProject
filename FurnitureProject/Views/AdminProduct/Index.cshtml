@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FurnitureProject.Models.Product>
+﻿@model IEnumerable<FurnitureProject.Models.DTO.ProductDTO>
 @{
     ViewData["Title"] = "Sản phẩm";
 }
@@ -41,7 +41,7 @@
         <thead class="table-background">
             <tr>
                 <th scope="col">ID</th>
-                @* <th scope="col">Hình ảnh</th> *@
+                <th scope="col">Hình ảnh</th>
                 <th scope="col">Tên</th>
                 <th scope="col">Mô tả</th>
                 <th scope="col">Giá</th>
@@ -56,7 +56,7 @@
             {
                 <tr>
                     <td>@product.Id</td>
-                    @* <td><img class="" src="/images/@product.ImageUrls[0]" alt="@product.ImageUrls[0]" style="width: 120px; height: 90px; border-radius:5px"/></td> *@
+                    <td><img class="" src="@product.ImageUrls[0]" alt="@product.ImageUrls[0]" style="width: 120px; height: 90px; border-radius:5px"/></td>
                     <td>@product.Name</td>
                     <td>@product.Description</td>
                     <td>@product.Price.ToString("#,##0.##") $</td>

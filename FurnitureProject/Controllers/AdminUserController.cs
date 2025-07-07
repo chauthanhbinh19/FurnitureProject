@@ -2,6 +2,7 @@
 using FurnitureProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FurnitureProject.Controllers
 {
@@ -13,6 +14,20 @@ namespace FurnitureProject.Controllers
         public AdminUserController(IUserService userService)
         {
             _userService = userService;
+        }
+        private void SetViewBags(string? selectedRole = null, string? selectedStatus = null)
+        {
+            ViewBag.Roles = new List<SelectListItem>
+            {
+                new SelectListItem {Text = "Admin", Value = "admin", Selected = selectedStatus == "admin"},
+                new SelectListItem {Text = "User", Value = "user", Selected = selectedStatus == "user"},
+            };
+
+            ViewBag.Status = new List<SelectListItem>
+            {
+                new SelectListItem {Text = "Active", Value = "active", Selected = selectedStatus == "active"},
+                new SelectListItem {Text = "Unactive", Value = "unactive", Selected = selectedStatus == "unactive"},
+            };
         }
 
         [HttpGet("")]
@@ -59,14 +74,15 @@ namespace FurnitureProject.Controllers
         {
             ViewBag.UserId = HttpContext.Session.GetString("UserID");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            SetViewBags();
             return View();
         }
 
-        [HttpPost("")]
+        [HttpPost("create")]
         public async Task<IActionResult> Create(User user)
         {
             await _userService.CreateAsync(user);
-            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+            return RedirectToAction("Index","AdminUser");
         }
 
         [HttpGet("update")]
@@ -75,15 +91,23 @@ namespace FurnitureProject.Controllers
             ViewBag.UserId = HttpContext.Session.GetString("UserID");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
             var user = await _userService.GetByIdAsync(id);
+            if (user == null) return NotFound();
+
+            TempData["UserPassword"] = user.Password;
+            SetViewBags(user.Role, user.Status);
             return View(user);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, User user)
+        [HttpPost("update")]
+        public async Task<IActionResult> Update(User user)
         {
-            if (id != user.Id) return BadRequest();
+            if(user.Password == null)
+            {
+                user.Password = TempData["UserPassword"]?.ToString();
+            }
+            
             await _userService.UpdateAsync(user);
-            return NoContent();
+            return RedirectToAction("Index", "AdminUser");
         }
 
         [HttpDelete("{id}")]

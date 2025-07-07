@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="">
         <div class="row">
             @if (!string.IsNullOrEmpty(userId))
         {
@@ -128,9 +128,16 @@
                 }
                 else
                 {
+                    
+                }
+            }
+            else
+            {
+                @if (true)
+                {
                     <nav class="navbar navbar-expand-lg">
                         <div class="container-fluid">
-                            <div class="d-flex justify-content-between align-items-center w-100 mx-3">
+                            <div class="d-flex justify-content-between align-items-center w-100 mx-3 py-3">
                                 <div class="collapse navbar-collapse" id="navbarNav">
                                     <ul class="navbar-nav">
                                         <li>
@@ -142,16 +149,16 @@
                                             <a class="nav-link active" aria-current="page" href="/">Trang chủ</a>
                                         </li>
                                         <li class="nav-item mx-2">
-                                            <a class="nav-link" asp-controller="Product" asp-action="">Danh mục</a>
+                                            <a class="nav-link" asp-controller="Support" asp-action="About">Giới thiệu</a>
                                         </li>
                                         <li class="nav-item mx-2">
-                                            <a class="nav-link" href="/Categories">Danh mục</a>
+                                            <a class="nav-link" asp-controller="Product" asp-action="">Sản phẩm</a>
                                         </li>
                                         <li class="nav-item mx-2">
-                                            <a class="nav-link" href="/">Tin tức</a>
+                                            <a class="nav-link" asp-controller="Category" asp-action="">Danh mục</a>
                                         </li>
                                         <li class="nav-item mx-2">
-                                            <a class="nav-link" href="/">Liên hệ</a>
+                                            <a class="nav-link" asp-controller="Support" asp-action="Contact">Liên hệ</a>
                                         </li>
                                     </ul>
                                     <ul class="navbar-nav">
@@ -168,7 +175,7 @@
                     <main class="main-content" style="background-color:#f5f6fa">
                         @RenderBody()
                     </main>
-                    <footer class="footer mt-5 py-2 bg-dark border-top text-light">
+                    <footer class="footer py-2 bg-dark border-top text-light">
                         <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
                             <div class="mb-2 mb-md-0">
                                 <img src="~/images/logo.png" alt="Logo" style="height:40px;" class="me-2" />
@@ -186,13 +193,12 @@
                         </div>
                     </footer>
                 }
-        }
-        else
-        {
-            
-            <div class="main-content">
-                    @RenderBody()
-            </div>
+                else
+                {
+                    <div class="main-content">
+                        @RenderBody()
+                    </div>
+                }
         }
         </div>
     </div>

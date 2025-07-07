@@ -12,19 +12,19 @@
         <div class="card-body">
             <form asp-action="SignUp" asp-controller="User" method="post">
 
-                <div class="mb-3">
-                    <label asp-for="Email"></label>
+                <div class="mt-3">
+                    <label asp-for="Email" class="form-label"></label>
                     <input asp-for="Email" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="Username"></label>
+                <div class="mt-3">
+                    <label asp-for="Username" class="form-label"></label>
                     <input asp-for="Username" class="form-control" />
                     <span asp-validation-for="Username" class="text-danger"></span>
                 </div>
 
-                <div class="mb-3 position-relative">
+                <div class="mt-3 position-relative">
                     <label asp-for="Password" class="form-label"></label>
 
                     <input type="password" asp-for="Password" class="form-control" id="passwordInput" />
@@ -32,20 +32,19 @@
                        id="togglePassword"
                        style="cursor: pointer; top: 72%; transform: translateY(-55%);"></i>
 
-                    <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
 
 
-                <div class="mb-3 position-relative">
+                <div class="mt-3 position-relative">
                     <label asp-for="ConfirmPassword" class="form-label"></label>
 
                     <input type="password" asp-for="ConfirmPassword" class="form-control" id="confirmPasswordInput" />
                     <i class="bi bi-eye-slash position-absolute end-0 translate-middle-y me-3"
                        id="toggleConfirmPassword"
                        style="cursor: pointer; top: 72%; transform: translateY(-55%);"></i>
-
-                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
 
                 <ul id="password-rules" class="mt-2 small list-unstyled fw-semibold" ">
                     <li id="rule-length"><i class="bi bi-check me-1 fw-semibold"></i> Tối thiểu 8 ký tự</li>

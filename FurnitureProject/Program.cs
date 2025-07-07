@@ -1,10 +1,12 @@
-﻿using FurnitureProject.Data;
+﻿using CloudinaryDotNet;
+using FurnitureProject.Data;
 using FurnitureProject.Middleware;
 using FurnitureProject.Models;
 using FurnitureProject.Repositories;
 using FurnitureProject.Services;
 using FurnitureProject.Services.Email;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,16 @@ builder.Services.AddControllersWithViews();
 //Kết nối database posgresql
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//Kết nối Cloudinary
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.AddSingleton<Cloudinary>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<CloudinarySettings>>().Value;
+    var account = new Account(settings.CloudName, settings.ApiKey, settings.ApiSecret);
+    return new Cloudinary(account);
+});
+
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();

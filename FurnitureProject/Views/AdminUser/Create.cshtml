@@ -11,8 +11,6 @@
 <div class="title-box" >
     <div class="card-body">
         <form asp-controller="AdminUser" asp-action="Create" method="post">
-            <input type="hidden" asp-for="Id" value="USR@(DateTime.Now.Ticks)" />
-
             <div class="d-flex flex-wrap gap-4">
                 <div style="flex: 0 0 30%;">
                     <label asp-for="FullName" class="form-label"></label>

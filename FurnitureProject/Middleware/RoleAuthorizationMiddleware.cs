@@ -24,7 +24,26 @@ namespace FurnitureProject.Middleware
             }
 
             // Ignore page
-            if (path.StartsWith("/user/sign-in") || path.StartsWith("/user/sign-up") || path.StartsWith("/user/verifycode"))
+            string[] bypassPaths = new[]
+            {
+                "/",
+                "/user/sign-in",
+                "/user/sign-up",
+                "/user/verify-code",
+                "/user/forgot-password",
+                "/user/verify-code-forgot-password",
+                "/user/reset-password",
+                "/support/about",
+                "/support/contact",
+                "/support/faq",
+                "/support/privacy-policy",
+                "/support/terms",
+                "/error/not-found",
+                "/error/server-error",
+                "/error/maintenance"
+            };
+
+            if (bypassPaths.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
             {
                 await _next(context);
                 return;

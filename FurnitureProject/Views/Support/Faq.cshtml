@@ -1,0 +1,90 @@
+﻿@{
+    ViewData["Title"] = "Câu hỏi thường gặp";
+    Layout = "_Layout";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5">
+                    <h2 class="mb-4 text-center text-primary">Câu hỏi thường gặp</h2>
+                    <p class="text-center mb-4">
+                        Dưới đây là những câu hỏi phổ biến mà khách hàng thường thắc mắc khi mua hàng tại cửa hàng của chúng tôi.
+                    </p>
+
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading1">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="true" aria-controls="faqCollapse1">
+                                    1. Làm sao để đặt hàng?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse1" class="accordion-collapse collapse show" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Bạn có thể chọn sản phẩm và nhấn nút "Thêm vào giỏ hàng", sau đó truy cập giỏ hàng và tiến hành thanh toán theo hướng dẫn.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+                                    2. Tôi có thể thanh toán bằng hình thức nào?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Hiện tại chúng tôi hỗ trợ chuyển khoản ngân hàng, ví điện tử (Momo, ZaloPay), và thanh toán khi nhận hàng (COD).
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+                                    3. Bao lâu tôi sẽ nhận được hàng?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Thông thường đơn hàng sẽ được giao trong vòng 2–5 ngày làm việc, tùy khu vực và hình thức vận chuyển.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
+                                    4. Chính sách đổi/trả hàng như thế nào?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Bạn có thể đổi/trả hàng trong vòng 7 ngày kể từ khi nhận hàng nếu sản phẩm bị lỗi kỹ thuật hoặc không đúng mô tả.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading5">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
+                                    5. Làm sao để liên hệ với bộ phận hỗ trợ?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Bạn có thể gửi tin nhắn qua trang <a asp-action="Contact" asp-controller="Support">Liên hệ</a>, gọi đến hotline 1900 9999 hoặc email: support@yourshop.com.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <p>Bạn vẫn còn câu hỏi? <a asp-action="Contact" asp-controller="Support">Liên hệ với chúng tôi</a> để được hỗ trợ nhanh nhất.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

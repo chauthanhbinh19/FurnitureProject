@@ -16,12 +16,14 @@ namespace FurnitureProject.Repositories
         {
             return await _context.Products
                 .Where(p => !p.IsDeleted)
+                .Include(p => p.ProductImages)
                 .ToListAsync();
         }
 
         public async Task<Product?> GetByIdAsync(int id)
         {
-            return await _context.Products.FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
+            return await _context.Products.
+                FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
         }
 
         public async Task AddAsync(Product product)
