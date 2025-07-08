@@ -129,11 +129,11 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> VerifyCode(EmailVerificationViewModel model)
         {
             var expectedCode = TempData["VerificationCode"]?.ToString();
-            var email = TempData["PendingEmail"]?.ToString();
+            //var email = TempData["PendingEmail"]?.ToString();
             var username = TempData["PendingUsername"]?.ToString();
             var password = TempData["PendingPassword"]?.ToString();
 
-            if (model.Code != expectedCode || model.Email != email)
+            if (model.Code != expectedCode)
             {
                 ModelState.AddModelError(nameof(model.Code), AppConstants.LogMessages.InvalidCode);
                 return View(model);
@@ -142,7 +142,7 @@ namespace FurnitureProject.Controllers
             //Verfify code success -> save user
            var newUser = new User
            {
-               Email = email,
+               Email = model.Email,
                Username = username,
                Password = password,
            };

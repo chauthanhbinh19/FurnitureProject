@@ -46,6 +46,12 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminTag" ? "active" : "")"
+                                       asp-area="" asp-controller="AdminTag" asp-action="Index">
+                                        <i class="bi bi-tags me-2"></i>Nhãn
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminUser" ? "active" : "")"
                                        asp-area="" asp-controller="AdminUser" asp-action="Index">
                                         <i class="bi bi-people me-2"></i>Người dùng
@@ -128,7 +134,63 @@
                 }
                 else
                 {
-                    
+                    <nav class="navbar navbar-expand-lg">
+                        <div class="container-fluid">
+                            <div class="d-flex justify-content-between align-items-center w-100 mx-3 py-2">
+                                <div class="collapse navbar-collapse" id="navbarNav">
+                                    <ul class="navbar-nav">
+                                        <li>
+                                            <img src="~/images/logo.png" alt="Logo" class="img-fluid rounded-circle" style="max-width: 40px;" />
+                                        </li>
+                                    </ul>
+                                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex justify-content-center w-100">
+                                        <li class="nav-item mx-2">
+                                            <a class="nav-link active" aria-current="page" href="/">Trang chủ</a>
+                                        </li>
+                                        <li class="nav-item mx-2">
+                                            <a class="nav-link" asp-controller="Support" asp-action="About">Giới thiệu</a>
+                                        </li>
+                                        <li class="nav-item mx-2">
+                                            <a class="nav-link" asp-controller="Product" asp-action="">Sản phẩm</a>
+                                        </li>
+                                        <li class="nav-item mx-2">
+                                            <a class="nav-link" asp-controller="Category" asp-action="">Danh mục</a>
+                                        </li>
+                                        <li class="nav-item mx-2">
+                                            <a class="nav-link" asp-controller="Support" asp-action="Contact">Liên hệ</a>
+                                        </li>
+                                    </ul>
+                                    <ul class="navbar-nav">
+                                        <li class="nav-item mx-2">
+                                            <a class="nav-link text-nowrap" asp-controller="User" asp-action="SignIn">Đăng nhập</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <!-- Nếu chưa đăng nhập, chỉ hiển thị nội dung trang (RenderBody) -->
+                    <main class="main-content" style="background-color:#f5f6fa">
+                        @RenderBody()
+                    </main>
+                    <footer class="footer py-2 bg-dark border-top text-light">
+                        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+                            <div class="mb-2 mb-md-0">
+                                <img src="~/images/logo.png" alt="Logo" style="height:40px;" class="me-2" />
+                                <span class="fw-bold text-light">SweetUIFurniture</span>
+                            </div>
+                            <div class="mb-2 mb-md-0">
+                                <a href="/" class="text-decoration-none text-light me-3">Trang chủ</a>
+                                <a href="/Categories" class="text-decoration-none text-light me-3">Danh mục</a>
+                                <a href="/Order" class="text-decoration-none text-light me-3">Đơn hàng</a>
+                                <a href="/Promotion" class="text-decoration-none text-light">Khuyến mãi</a>
+                            </div>
+                            <div class="text-light small">
+                                &copy; @DateTime.Now.Year SweetUIFurniture. All rights reserved.
+                            </div>
+                        </div>
+                    </footer>
                 }
             }
             else
@@ -137,7 +199,7 @@
                 {
                     <nav class="navbar navbar-expand-lg">
                         <div class="container-fluid">
-                            <div class="d-flex justify-content-between align-items-center w-100 mx-3 py-3">
+                            <div class="d-flex justify-content-between align-items-center w-100 mx-3 py-2">
                                 <div class="collapse navbar-collapse" id="navbarNav">
                                     <ul class="navbar-nav">
                                         <li>

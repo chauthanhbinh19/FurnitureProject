@@ -5,8 +5,8 @@ namespace FurnitureProject.Repositories
     public interface IProductImageRepository
     {
         Task<IEnumerable<ProductImage>> GetAllAsync();
-        Task<ProductImage?> GetByIdAsync(int id);
-        Task<IEnumerable<ProductImage>> GetByProductIdAsync(int productId);
+        Task<ProductImage?> GetByIdAsync(Guid id);
+        Task<IEnumerable<ProductImage>> GetByProductIdAsync(Guid productId);
         Task AddAsync(ProductImage image);
         Task DeleteAsync(ProductImage image);
     }

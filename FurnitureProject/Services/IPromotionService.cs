@@ -5,10 +5,10 @@ namespace FurnitureProject.Services
     public interface IPromotionService
     {
         Task<IEnumerable<Promotion>> GetAllAsync();
-        Task<Promotion?> GetByIdAsync(int id);
+        Task<Promotion?> GetByIdAsync(Guid id);
         Task CreateAsync(Promotion promotion);
         Task UpdateAsync(Promotion promotion);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(Guid id);
     }
 
 }

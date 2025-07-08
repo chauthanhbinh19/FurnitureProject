@@ -1,0 +1,157 @@
+﻿@model IEnumerable<FurnitureProject.Models.DTO.TagDTO>
+@{
+    ViewData["Title"] = "Nhãn";
+}
+@{
+    ViewBag.Title = "Search tags";
+    string keyword = ViewBag.Keyword as string;
+    int totalPages = (int)Math.Ceiling((double)ViewBag.TotalTags / ViewBag.PageSize);
+    int currentPage = ViewBag.CurrentPage;
+}
+@{
+    int maxPagesToShow = 8;
+    int startPage = Math.Max(1, currentPage - maxPagesToShow / 2);
+    int endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+    if (endPage - startPage + 1 < maxPagesToShow)
+    {
+        startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+    }
+}
+
+<div class="title-box">
+    <div class="text-box">
+        <span class="title ms-2">Danh sách nhãn</span>
+    </div>
+    <div>
+        <form method="get" asp-controller="AdminTag" asp-action="Index" class="link-custom">
+            <div class="input-group">
+                <input type="text" name="search" value="@keyword" class="form-control" placeholder="Nhập từ khóa...">
+                <button type="submit" class="btn-custom bg-conflowerblue">
+                    <i class="bi bi-search"></i> Tìm kiếm
+                </button>
+            </div>
+        </form>
+    </div>
+    <div>
+        <a asp-area="" asp-controller="AdminTag" asp-action="Create" class="link-custom btn-custom bg-conflowerblue">Thêm danh mục</a>
+    </div>
+</div>
+<div class="table-responsive title-box">
+    <table class="table table-hover align-middle">
+        <thead class="table-background">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Tên</th>
+                <th scope="col">Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td>@category.Id</td>
+                    <td>@category.Name</td>
+                    <td>
+                        <form asp-controller="AdminTag" asp-action="Update" method="get" style="display:inline;">
+                            <input type="hidden" name="id" value="@category.Id" />
+                            <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                        </form>
+                        @* <form asp-controller="Category" asp-action="Delete" method="post" style="display:inline;"
+                              onsubmit="return confirm('Bạn có chắc muốn xoá user này?');">
+                            <input type="hidden" name="id" value="@category.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger" title="Xoá">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form> *@
+                        <button type="submit" class="btn btn-sm btn-danger delete-category" data-id="@category.Id" title="Xoá">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="pagination-box">
+    <nav>
+        <ul class="pagination justify-content-center">
+
+            <!-- Previous button -->
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1 })" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                </li>
+            }
+
+            <!-- Next button -->
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1 })" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.delete-category').click(function () {
+            const btn = $(this);
+            const id = btn.data('id');
+
+            if (confirm("Bạn có chắc muốn xóa?")) {
+                $.ajax({
+                    url: '/Category/Delete',
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (res) {
+                        if (res.success) {
+                            btn.closest('tr').remove();
+                            showToast('success', res.message); // tuỳ hàm hiển thị toast hoặc alert
+                        } else {
+                            showToast('error', res.message);
+                        }
+                    },
+                    error: function () {
+                        showToast('error', 'Có lỗi xảy ra.');
+                    }
+                });
+            }
+        });
+        // Hàm toast đơn giản
+                    function showToast(type, message) {
+            let toastId = 'toast-' + type;
+            let existing = $('#' + toastId);
+
+            if (existing.length) existing.remove();
+
+            let toast = `
+                <div id="${toastId}" class="toast show text-white ${toastId}"
+                     style="position: fixed; top: 20px; right: 20px; z-index: 9999">
+                    ${message}
+                </div>`;
+            $('body').append(toast);
+
+            setTimeout(function () {
+                $('#' + toastId).remove();
+            }, 2000); // ✅ thời gian hiển thị: 2.5 giây
+        }
+
+        });
+    </script>
+}

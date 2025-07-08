@@ -1,11 +1,11 @@
 ﻿namespace FurnitureProject.Models
 {
-    public class ProductPromotion : BaseEntity
+    public class ProductTag : BaseEntity
     {
         public Guid ProductId { get; set; }
         public Product Product { get; set; }
 
-        public Guid PromotionId { get; set; }
-        public Promotion Promotion { get; set; }
+        public Guid TagId { get; set; }
+        public Tag Tag { get; set; }
     }
 }

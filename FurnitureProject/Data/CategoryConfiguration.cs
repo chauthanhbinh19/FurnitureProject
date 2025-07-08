@@ -12,9 +12,6 @@ namespace FurnitureProject.Data
 
             builder.HasKey(u => u.Id); // Khóa chính
 
-            builder.Property(u => u.Id)
-                .ValueGeneratedOnAdd(); // Tự tăng (cho PostgreSQL dùng Identity)
-
             builder.Property(u => u.Name)
                 .IsRequired()
                 .HasMaxLength(100);

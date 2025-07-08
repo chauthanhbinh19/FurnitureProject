@@ -20,7 +20,7 @@ namespace FurnitureProject.Repositories
                 .ToListAsync();
         }
 
-        public async Task<User?> GetByIdAsync(int id)
+        public async Task<User?> GetByIdAsync(Guid id)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
         }

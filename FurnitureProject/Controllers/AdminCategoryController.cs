@@ -54,7 +54,7 @@ namespace FurnitureProject.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _categoryService.GetByIdAsync(id);
             if (result == null) return NotFound();
@@ -77,7 +77,7 @@ namespace FurnitureProject.Controllers
         }
 
         [HttpGet("update")]
-        public async Task<IActionResult> Update(int id)
+        public async Task<IActionResult> Update(Guid id)
         {
             ViewBag.UserId = HttpContext.Session.GetString("UserID");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
@@ -93,7 +93,7 @@ namespace FurnitureProject.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             await _categoryService.DeleteAsync(id);
             return NoContent();

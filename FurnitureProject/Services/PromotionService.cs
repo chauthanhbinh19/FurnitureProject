@@ -14,7 +14,7 @@ namespace FurnitureProject.Services
 
         public async Task<IEnumerable<Promotion>> GetAllAsync() => await _promotionRepo.GetAllAsync();
 
-        public async Task<Promotion?> GetByIdAsync(int id) => await _promotionRepo.GetByIdAsync(id);
+        public async Task<Promotion?> GetByIdAsync(Guid id) => await _promotionRepo.GetByIdAsync(id);
 
         public async Task CreateAsync(Promotion promotion)
         {
@@ -28,7 +28,7 @@ namespace FurnitureProject.Services
             await _promotionRepo.UpdateAsync(promotion);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var promo = await _promotionRepo.GetByIdAsync(id);
             if (promo != null)

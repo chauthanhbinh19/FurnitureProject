@@ -14,7 +14,7 @@ namespace FurnitureProject.Services
 
         public async Task<IEnumerable<Product>> GetAllAsync() => await _productRepo.GetAllAsync();
 
-        public async Task<Product?> GetByIdAsync(int id) => await _productRepo.GetByIdAsync(id);
+        public async Task<Product?> GetByIdAsync(Guid id) => await _productRepo.GetByIdAsync(id);
 
         public async Task CreateAsync(Product product)
         {
@@ -28,7 +28,7 @@ namespace FurnitureProject.Services
             await _productRepo.UpdateAsync(product);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var product = await _productRepo.GetByIdAsync(id);
             if (product != null)

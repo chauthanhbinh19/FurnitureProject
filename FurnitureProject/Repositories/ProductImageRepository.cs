@@ -20,14 +20,14 @@ namespace FurnitureProject.Repositories
                 .ToListAsync();
         }
 
-        public async Task<ProductImage?> GetByIdAsync(int id)
+        public async Task<ProductImage?> GetByIdAsync(Guid id)
         {
             return await _context.ProductImages
                 .Include(x => x.Product)
                 .FirstOrDefaultAsync(x => x.ImageId == id && !x.IsDeleted);
         }
 
-        public async Task<IEnumerable<ProductImage>> GetByProductIdAsync(int productId)
+        public async Task<IEnumerable<ProductImage>> GetByProductIdAsync(Guid productId)
         {
             return await _context.ProductImages
                 .Where(x => x.ProductId == productId && !x.IsDeleted)

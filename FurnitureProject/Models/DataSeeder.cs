@@ -48,7 +48,14 @@ namespace FurnitureProject.Models
                 context.Categories.AddRange(
                     new Category { Name = "Bàn", CreatedAt = DateTime.UtcNow },
                     new Category { Name = "Ghế", CreatedAt = DateTime.UtcNow },
-                    new Category { Name = "Tủ", CreatedAt = DateTime.UtcNow }
+                    new Category { Name = "Tủ", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Giường", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Kệ sách", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Tủ giày", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Sofa", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Bàn học", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Bàn làm việc", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Bàn ăn", CreatedAt = DateTime.UtcNow }
                 );
                 await context.SaveChangesAsync();
             }
@@ -94,6 +101,44 @@ namespace FurnitureProject.Models
                         CreatedAt = DateTime.UtcNow
                     }
                 );
+            }
+
+            if (!context.Tags.Any())
+            {
+                context.Tags.AddRange(
+                    new Tag { Name = "Mới", CreatedAt = DateTime.UtcNow },
+                    new Tag { Name = "Giảm giá", CreatedAt = DateTime.UtcNow },
+                    new Tag { Name = "Bán chạy", CreatedAt = DateTime.UtcNow },
+                    new Tag { Name = "Hàng hot", CreatedAt = DateTime.UtcNow },
+                    new Tag { Name = "Cao cấp", CreatedAt = DateTime.UtcNow },
+                    new Tag { Name = "Giá rẻ", CreatedAt = DateTime.UtcNow },
+                    new Tag { Name = "Thiết kế mới", CreatedAt = DateTime.UtcNow },
+                    new Tag { Name = "Sản phẩm nổi bật", CreatedAt = DateTime.UtcNow }
+                );
+                await context.SaveChangesAsync();
+            }
+
+            if (!context.ProductTag.Any())
+            {
+                var products = context.Products.Take(3).ToList(); // Lấy 3 sản phẩm đầu tiên
+                var tags = context.Tags.Take(3).ToList();         // Lấy 3 tag đầu tiên
+
+                var productTags = new List<ProductTag>();
+
+                foreach (var product in products)
+                {
+                    foreach (var tag in tags)
+                    {
+                        productTags.Add(new ProductTag
+                        {
+                            ProductId = product.Id,
+                            TagId = tag.Id
+                        });
+                    }
+                }
+
+                context.ProductTag.AddRange(productTags);
+                await context.SaveChangesAsync();
             }
 
             if (!context.Promotions.Any())

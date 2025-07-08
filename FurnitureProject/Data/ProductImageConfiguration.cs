@@ -12,9 +12,6 @@ namespace FurnitureProject.Data
 
             builder.HasKey(u => u.ImageId); // Khóa chính
 
-            builder.Property(u => u.ImageId)
-                .ValueGeneratedOnAdd(); // Tự tăng (cho PostgreSQL dùng Identity)
-
             builder.Property(u => u.ProductId)
                 .IsRequired();
 

@@ -14,9 +14,9 @@ namespace FurnitureProject.Services
 
         public async Task<IEnumerable<ProductImage>> GetAllAsync() => await _imageRepo.GetAllAsync();
 
-        public async Task<ProductImage?> GetByIdAsync(int id) => await _imageRepo.GetByIdAsync(id);
+        public async Task<ProductImage?> GetByIdAsync(Guid id) => await _imageRepo.GetByIdAsync(id);
 
-        public async Task<IEnumerable<ProductImage>> GetByProductIdAsync(int productId)
+        public async Task<IEnumerable<ProductImage>> GetByProductIdAsync(Guid productId)
             => await _imageRepo.GetByProductIdAsync(productId);
 
         public async Task CreateAsync(ProductImage image)
@@ -25,7 +25,7 @@ namespace FurnitureProject.Services
             await _imageRepo.AddAsync(image);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var image = await _imageRepo.GetByIdAsync(id);
             if (image != null)

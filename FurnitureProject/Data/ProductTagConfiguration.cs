@@ -4,13 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FurnitureProject.Data
 {
-    public class ProductPromotionConfiguration : IEntityTypeConfiguration<ProductPromotion>
+    public class ProductTagConfiguration : IEntityTypeConfiguration<ProductTag>
     {
-        public void Configure(EntityTypeBuilder<ProductPromotion> builder)
+        public void Configure(EntityTypeBuilder<ProductTag> builder)
         {
-            builder.ToTable("product_promotion"); // Tên bảng
+            builder.ToTable("product_tag"); // Tên bảng
 
-            builder.Property(u => u.PromotionId)
+            //builder.HasKey(u => u.ProductId);
+
+            builder.Property(u => u.TagId)
                 .IsRequired();
 
             builder.Property(u => u.ProductId)

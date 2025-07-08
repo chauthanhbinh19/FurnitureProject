@@ -16,7 +16,7 @@ namespace FurnitureProject.Services
 
         public async Task<IEnumerable<User>> GetAllAsync() => await _userRepo.GetAllAsync();
 
-        public async Task<User?> GetByIdAsync(int id) => await _userRepo.GetByIdAsync(id);
+        public async Task<User?> GetByIdAsync(Guid id) => await _userRepo.GetByIdAsync(id);
 
         public async Task<User?> GetByUsernameAsync(string username) => await _userRepo.GetByUsernameAsync(username);
 
@@ -34,7 +34,7 @@ namespace FurnitureProject.Services
             await _userRepo.UpdateAsync(user);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var user = await _userRepo.GetByIdAsync(id);
             if (user != null)

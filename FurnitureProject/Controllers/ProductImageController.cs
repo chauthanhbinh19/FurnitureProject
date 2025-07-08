@@ -22,7 +22,7 @@ namespace FurnitureProject.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _imageService.GetByIdAsync(id);
             if (result == null) return NotFound();
@@ -30,7 +30,7 @@ namespace FurnitureProject.Controllers
         }
 
         [HttpGet("product/{productId}")]
-        public async Task<IActionResult> GetByProductId(int productId)
+        public async Task<IActionResult> GetByProductId(Guid productId)
         {
             var result = await _imageService.GetByProductIdAsync(productId);
             return Ok(result);
@@ -44,7 +44,7 @@ namespace FurnitureProject.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             await _imageService.DeleteAsync(id);
             return NoContent();

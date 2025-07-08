@@ -5,7 +5,7 @@ namespace FurnitureProject.Models
 {
     public class User : BaseEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         public string Username { get; set; }

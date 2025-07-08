@@ -4,7 +4,7 @@ namespace FurnitureProject.Models
 {
     public class Promotion : BaseEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         public string Title { get; set; }

@@ -24,7 +24,7 @@ namespace FurnitureProject.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var promotion = await _promotionService.GetByIdAsync(id);
             if (promotion == null) return NotFound();
@@ -39,7 +39,7 @@ namespace FurnitureProject.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Promotion promotion)
+        public async Task<IActionResult> Update(Guid id, Promotion promotion)
         {
             if (id != promotion.Id) return BadRequest();
             await _promotionService.UpdateAsync(promotion);
@@ -47,7 +47,7 @@ namespace FurnitureProject.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             await _promotionService.DeleteAsync(id);
             return NoContent();

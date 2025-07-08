@@ -5,7 +5,7 @@ namespace FurnitureProject.Models
 {
     public class Product : BaseEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         public string Name { get; set; }
@@ -16,12 +16,13 @@ namespace FurnitureProject.Models
 
         public int Stock { get; set; }
 
-        public int CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
         public Category Category { get; set; }
         public string Status { get; set; } = "active";
 
         public ICollection<ProductImage> ProductImages { get; set; }
 
         public ICollection<ProductPromotion> ProductPromotions { get; set; }
+        public ICollection<ProductTag> ProductTags { get; set; }
     }
 }

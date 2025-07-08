@@ -21,7 +21,7 @@ namespace FurnitureProject.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Category?> GetByIdAsync(int id)
+        public async Task<Category?> GetByIdAsync(Guid id)
         {
             return await _context.Categories
                 .Include(c => c.Products)
