@@ -1,4 +1,5 @@
 ﻿using FurnitureProject.Models;
+using FurnitureProject.Models.DTO;
 
 namespace FurnitureProject.Services
 {
@@ -6,8 +7,8 @@ namespace FurnitureProject.Services
     {
         Task<IEnumerable<Product>> GetAllAsync();
         Task<Product?> GetByIdAsync(Guid id);
-        Task CreateAsync(Product product);
-        Task UpdateAsync(Product product);
+        Task CreateAsync(ProductDTO dto);
+        Task UpdateAsync(ProductDTO dto);
         Task DeleteAsync(Guid id);
     }
 }

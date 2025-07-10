@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FurnitureProject.Models.User>
+﻿@model FurnitureProject.Models.ViewModels.UserViewModel
 @{
     ViewData["Title"] = "Người dùng";
 }
@@ -24,66 +24,96 @@
         <span class="title ms-2">Danh sách người dùng</span>
     </div>
     <div>
-        <form method="get" asp-controller="AdminUser" asp-action="Index" class="link-custom">
-            <div class="input-group">
-                <input type="text" name="search" value="@keyword" class="form-control" placeholder="Nhập từ khóa...">
-                <button type="submit" class="btn btn-custom bg-conflowerblue">
-                    <i class="bi bi-search"></i> Tìm kiếm
-                </button>
-            </div>
-        </form>
-    </div>
-    <div>
         <a asp-area="" asp-controller="AdminUser" asp-action="Create" class="link-custom btn-custom bg-conflowerblue">Thêm người dùng</a>
     </div>
 </div>
 <div class="table-responsive title-box">
-    <table class="table table-hover align-middle">
-        <thead class="table-background">
-            <tr>
-                <th>ID</th>
-                <th>Tên</th>
-                <th>Email</th>
-                <th>Tài khoản</th>
-                @* <th>Mật khẩu</th> *@
-                <th>Vai trò</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var user in Model)
-            {
-                <tr>
-                    <td>@user.Id</td>
-                    <td>@user.FullName</td>
-                    <td>@user.Email</td>
-                    <td>@user.Username</td>
-                    @* <td>@user.password</td> *@
-                    <td>@user.Role</td>
-                    <td>@user.Status</td>
-                    <td>
-                        <form asp-controller="AdminUser" asp-action="Update" method="get" style="display:inline;">
-                            <input type="hidden" name="id" value="@user.Id" />
-                            <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                        </form>
-                        @* <form asp-controller="User" asp-action="Delete" method="post" style="display:inline;"
+    <div class="container">
+        <form method="get" asp-controller="AdminUser" asp-action="Index" class="link-custom">
+            <div class="row mb-3 justify-content-around">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="text" name="search" value="@keyword" class="form-control" placeholder="Nhập từ khóa...">
+                        <button type="submit" class="btn-custom bg-conflowerblue">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+                <!-- Sort by Create Time -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.SortOrder" name="Filter.SortOrder" class="form-select" asp-items="@ViewBag.SortOptions">
+                        <option value="">Sắp xếp</option>
+                    </select>
+                </div>
+                <!-- Filter by Status -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.FilterByStatus" name="Filter.FilterByStatus" class="form-select" asp-items="@ViewBag.StatusList">
+                        <option value="">Trạng thái</option>
+                    </select>
+                </div>
+                <!-- Filter by Roles -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.FilterByRole" name="Filter.FilterByRole" class="form-select" asp-items="@ViewBag.RoleList">
+                        <option value="">Vai trò</option>
+                    </select>
+                </div>
+                <!-- Optional: Nút Reset -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <a href="/admin/product/" class="btn btn-secondary w-100">Reset bộ lọc</a>
+                </div>
+            </div>
+        </form>
+        <div class="row mb-3">
+            <table class="table table-hover align-middle">
+                <thead class="table-background">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>Tài khoản</th>
+                        @* <th>Mật khẩu</th> *@
+                        <th>Vai trò</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td>@user.Id.ToString().Substring(0, 16)</td>
+                            <td>@user.FullName</td>
+                            <td>@user.Email</td>
+                            <td>@user.Username</td>
+                            @* <td>@user.password</td> *@
+                            <td>@user.Role</td>
+                            <td>@user.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                            <td>@user.Status</td>
+                            <td>
+                                <form asp-controller="AdminUser" asp-action="Update" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="@user.Id" />
+                                    <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </form>
+                                @* <form asp-controller="User" asp-action="Delete" method="post" style="display:inline;"
                               onsubmit="return confirm('Bạn có chắc muốn xoá user này?');">
                             <input type="hidden" name="id" value="@user.Id" />
                             <button type="submit" class="btn btn-sm btn-danger" title="Xoá">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form> *@
-                        <button type="submit" class="btn btn-sm btn-danger delete-user" data-id="@user.Id" title="Xoá">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                                <button type="submit" class="btn btn-sm btn-danger delete-user" data-id="@user.Id" title="Xoá">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <div class="pagination-box">
     <nav>

@@ -11,7 +11,7 @@ namespace FurnitureProject.Repositories
 
         public async Task<IEnumerable<Tag>> GetAllAsync() => await _context.Tags.ToListAsync();
 
-        public async Task<Tag?> GetByIdAsync(Guid id)
+        public async Task<Tag>? GetByIdAsync(Guid id)
         {
             return await _context.Tags
                 //.Include(c => c.Products)

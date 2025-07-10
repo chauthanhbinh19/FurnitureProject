@@ -5,7 +5,8 @@ namespace FurnitureProject.Models
 {
     public class User : BaseEntity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
 
         [Required]
         public string Username { get; set; }

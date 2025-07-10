@@ -1,53 +1,191 @@
-﻿@model FurnitureProject.Models.Product
+﻿@model FurnitureProject.Models.DTO.ProductDTO
 @* <div>
     <a class="btn bg-conflowerblue" href="##" onClick="history.go(-1); return false;">Go back</a>
 </div> *@
 @{
     ViewData["Title"] = "Chỉnh sửa sản phẩm";
+    var Categories = ViewBag.Categories;
+    var selectedTagIds = Model?.TagIds ?? new List<Guid>();
+    var tagList = ViewBag.Tags as List<Tag> ?? new List<Tag>();
 }
 <div class="title-box">
     <div class="text-box">
         <span class="title">Chỉnh sửa sản phẩm</span>
     </div>
 </div>
-<div class="title-box">
-        <div class="card-body">
-        <form asp-controller="AdminProduct" asp-action="Edit" method="post">
-                <input type="hidden" asp-for="Id" value="@Model.Id" />
-            <div class="d-flex flex-wrap gap-4">
-                <div style="flex: 0 0 30%;">
-                    <label asp-for="Name" class="form-label"></label>
-                    <input asp-for="Name" class="form-control" value="@Model.Name"/>
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
+<div class="container mt-4">
+    <form id="productForm" asp-controller="AdminProduct" asp-action="Update" method="post" enctype="multipart/form-data">
+        <div class="row gx-4 gy-3 justify-content-between">
+            <!-- Card 1: Thông tin sản phẩm -->
+            <div class="col-md-6-5">
+                <div class="card shadow">
+                    <div class="card-header text-black fs-5">
+                        Thông tin sản phẩm
+                    </div>
+                    <div class="card-body">
+                        <div class="row justify-content-between">
+                            <input asp-for="Id" class="form-control" hidden/>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Name" class="form-label"></label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-5 mb-3">
+                                <label asp-for="CategoryId" class="form-label"></label>
+                                <select asp-for="CategoryId" class="form-select" asp-items="@Categories"></select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row justify-content-between">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Price" class="form-label"></label>
+                                <input asp-for="Price" class="form-control" />
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
 
-                <div style="flex: 0 0 30%;">
-                    <label asp-for="Description" class="form-label"></label>
-                    <input asp-for="Description" class="form-control" value="@Model.Description" />
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
+                            <div class="col-md-5 mb-3">
+                                <label asp-for="Stock" class="form-label"></label>
+                                <input asp-for="Stock" class="form-control" />
+                                <span asp-validation-for="Stock" class="text-danger"></span>
+                            </div>
+                        </div>
 
-                <div style="flex: 0 0 30%;">
-                    <label asp-for="Price" class="form-label"></label>
-                    <input asp-for="Price" class="form-control" value="@Model.Price" />
-                    <span asp-validation-for="Price" class="text-danger"></span>
-                </div>
-
-                <div style="flex: 0 0 30%;">
-                    <label asp-for="Stock" class="form-label"></label>
-                    <input asp-for="Stock" class="form-control" value="@Model.Stock" />
-                    <span asp-validation-for="Stock" class="text-danger"></span>
-                </div>
-
-                <div style="flex: 0 0 30%;">
-                    <label asp-for="CategoryId" class="form-label"></label>
-                    <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories"></select>
-                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <input asp-for="Description" class="form-control" />
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-end mt-4">
-                <button type="submit" class="btn-custom bg-conflowerblue px-4">Lưu sản phẩm</button>
+
+            <!-- Card 2: Upload hình ảnh -->
+            <div class="col-md-5">
+                <div class="card shadow">
+                    <div class="card-header text-black fs-5">
+                        Tải ảnh sản phẩm
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="TagIds" class="form-label">Tag</label>
+                            <select asp-for="TagIds" id="tagSelect" name="TagIds" multiple>
+                                @foreach (var tag in tagList)
+                                {
+                                    <option value="@tag.Id" selected="@(selectedTagIds.Contains(tag.Id))">@tag.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="TagIds" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Upload Images</label>
+                            <input class="form-control" type="file" id="fileInput" name="files" multiple accept="image/*" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Old images</label>
+                            <div id="" class="d-flex flex-wrap gap-3 mt-3">
+                                @if (Model.ImageUrls != null)
+                                {
+                                    foreach (var imageUrl in Model.ImageUrls)
+                                    {
+                                        <div class="position-relative d-inline-block m-2" style="width: 120px; height: 120px;">
+                                            <img src="@imageUrl"
+                                                 alt="Product Image"
+                                                 class="img-thumbnail"
+                                                 style="width: 100%; height: 100%; object-fit: cover;" />
+
+                                            <button type="button"
+                                                    class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
+                                                    onclick="this.parentElement.remove();">
+                                                &times;
+                                            </button>
+
+                                            <input type="hidden" name="ExistingImageUrls" value="@imageUrl" />
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Images</label>
+                            <div id="imagePreviewList" class="d-flex flex-wrap gap-3 mt-3"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            </form>
         </div>
+
+        <!-- Submit button -->
+        <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-primary px-4">Lưu sản phẩm</button>
+        </div>
+    </form>
 </div>
+@section Scripts{
+    <script>
+        let selectedFiles = [];
+
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            const newFiles = Array.from(e.target.files);
+            newFiles.forEach(f => {
+                if (!selectedFiles.some(sf => sf.name === f.name && sf.size === f.size)) {
+                    selectedFiles.push(f);
+                }
+            });
+            updateFileInput();
+            renderImagePreviews();
+        });
+
+        function updateFileInput() {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(f => dataTransfer.items.add(f));
+            document.getElementById('fileInput').files = dataTransfer.files;
+        }
+
+        function renderImagePreviews() {
+            const previewList = document.getElementById('imagePreviewList');
+            previewList.innerHTML = '';
+            selectedFiles.forEach((file, idx) => {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const div = document.createElement('div');
+                    div.className = 'position-relative d-inline-block m-2';
+                    div.style.width = '120px';
+                    div.style.height = '120px';
+
+                    const img = document.createElement('img');
+                    img.src = event.target.result;
+                    img.className = 'img-thumbnail';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn btn-danger btn-sm position-absolute top-0 end-0 m-1';
+                    btn.innerHTML = '&times;';
+                    btn.onclick = function () {
+                        selectedFiles.splice(idx, 1);
+                        updateFileInput();
+                        renderImagePreviews();
+                    };
+
+                    div.appendChild(img);
+                    div.appendChild(btn);
+                    previewList.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tagSelect = document.getElementById('tagSelect');
+            const choices = new Choices(tagSelect, {
+                removeItemButton: true,
+                placeholderValue: 'Chọn tag...',
+                searchEnabled: false,
+                shouldSort: false,
+            });
+        });
+    </script>
+}

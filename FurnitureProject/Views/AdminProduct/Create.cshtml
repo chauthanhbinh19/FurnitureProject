@@ -8,55 +8,86 @@
         <span class="title">Thêm sản phẩm</span>
     </div>
 </div>
-<div class="title-box">
-        <div class="card-body">
-        <form id="productForm" asp-controller="AdminProduct" asp-action="Create" method="post" enctype="multipart/form-data">
-                @* <input type="hidden" asp-for="Id" value="(DateTime.Now.Ticks)" /> *@
-                <div class="d-flex flex-wrap gap-4">
-                    <div style="flex: 0 0 30%;">
-                        <label asp-for="Name" class="form-label"></label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+<div class="container mt-4">
+    <form id="productForm" asp-controller="AdminProduct" asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="row gx-4 gy-3 justify-content-between">
+            <!-- Card 1: Thông tin sản phẩm -->
+            <div class="col-md-6-5">
+                <div class="card shadow">
+                    <div class="card-header text-black fs-5">
+                        Thông tin sản phẩm
                     </div>
+                    <div class="card-body">
+                        <div class="row justify-content-between">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Name" class="form-label"></label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-5 mb-3">
+                                <label asp-for="CategoryId" class="form-label"></label>
+                                <select asp-for="CategoryId" class="form-select" asp-items="@Categories"></select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row justify-content-between">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Price" class="form-label"></label>
+                                <input asp-for="Price" class="form-control" />
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
 
-                    <div style="flex: 0 0 30%;">
-                        <label asp-for="Description" class="form-label"></label>
-                        <input asp-for="Description" class="form-control" />
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
+                            <div class="col-md-5 mb-3">
+                                <label asp-for="Stock" class="form-label"></label>
+                                <input asp-for="Stock" class="form-control" />
+                                <span asp-validation-for="Stock" class="text-danger"></span>
+                            </div>
+                        </div>
 
-                    <div style="flex: 0 0 30%;">
-                        <label asp-for="Price" class="form-label"></label>
-                        <input asp-for="Price" class="form-control" />
-                        <span asp-validation-for="Price" class="text-danger"></span>
-                    </div>
-
-                    <div style="flex: 0 0 30%;">
-                        <label asp-for="Stock" class="form-label"></label>
-                        <input asp-for="Stock" class="form-control" />
-                        <span asp-validation-for="Stock" class="text-danger"></span>
-                    </div>
-
-                    <div style="flex: 0 0 30%;">
-                        <label asp-for="CategoryId" class="form-label"></label>
-                        <select asp-for="CategoryId" class="form-select" asp-items="@Categories"></select>
-                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <input asp-for="Description" class="form-control" />
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
                     </div>
                 </div>
-                <div class="d-flex flex-wrap gap-4 my-4">
-                    <div class="flex: 0 0 30%;">
-                        <label class="form-label">Upload Images</label>
-                        <input class="form-control" type="file" id="fileInput" name="files" multiple accept="image/*" />
-                        <div id="imagePreviewList" class="d-flex flex-wrap gap-3 mt-3"></div>
+            </div>
+
+            <!-- Card 2: Upload hình ảnh -->
+            <div class="col-md-5">
+                <div class="card shadow">
+                    <div class="card-header text-black fs-5">
+                        Tải ảnh sản phẩm
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="TagIds" class="form-label">Tag</label>
+                            <select asp-for="TagIds" id="tagSelect" name="TagIds" multiple>
+                                @foreach (var tag in ViewBag.Tags as List<Tag>)
+                                {
+                                    <option value="@tag.Id">@tag.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="TagIds" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Upload Images</label>
+                            <input class="form-control" type="file" id="fileInput" name="files" multiple accept="image/*" />
+                            <div id="imagePreviewList" class="d-flex flex-wrap gap-3 mt-3"></div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="submit" class="btn-custom bg-conflowerblue px-4">Lưu sản phẩm</button>
-                </div>
-            </form>
+            </div>
         </div>
+
+        <!-- Submit button -->
+        <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-primary px-4">Lưu sản phẩm</button>
+        </div>
+    </form>
 </div>
+
+
 @section Scripts {
     <script>
 
@@ -117,14 +148,16 @@
                 reader.readAsDataURL(file);
             });
         }
-
-        // document.getElementById('productForm').addEventListener('submit', function (e) {
-        //     if (!selectedFiles || selectedFiles.length === 0) {
-        //         alert('Bạn chưa chọn file ảnh nào!');
-        //         e.preventDefault();
-        //     }
-        //     console.log(document.getElementById('fileInput').files.length);
-        //     e.preventDefault();
-        // });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tagSelect = document.getElementById('tagSelect');
+            const choices = new Choices(tagSelect, {
+                removeItemButton: true,
+                placeholderValue: 'Chọn tag...',
+                searchEnabled: false,
+                shouldSort: false,
+            });
+        });
     </script>
 }

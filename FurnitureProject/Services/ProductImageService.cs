@@ -17,7 +17,9 @@ namespace FurnitureProject.Services
         public async Task<ProductImage?> GetByIdAsync(Guid id) => await _imageRepo.GetByIdAsync(id);
 
         public async Task<IEnumerable<ProductImage>> GetByProductIdAsync(Guid productId)
-            => await _imageRepo.GetByProductIdAsync(productId);
+        {
+            return await _imageRepo.GetByProductIdAsync(productId);
+        }
 
         public async Task CreateAsync(ProductImage image)
         {

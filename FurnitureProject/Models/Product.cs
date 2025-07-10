@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace FurnitureProject.Models
 {
     public class Product : BaseEntity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -21,8 +23,8 @@ namespace FurnitureProject.Models
         public string Status { get; set; } = "active";
 
         public ICollection<ProductImage> ProductImages { get; set; }
-
         public ICollection<ProductPromotion> ProductPromotions { get; set; }
+        public ICollection<ProductDiscountCode> ProductDiscountCodes { get; set; }
         public ICollection<ProductTag> ProductTags { get; set; }
     }
 }

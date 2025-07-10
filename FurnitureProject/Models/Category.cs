@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace FurnitureProject.Models
 {
     public class Category : BaseEntity
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
 
         [Required]
         public string Name { get; set; }

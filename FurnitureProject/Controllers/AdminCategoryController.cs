@@ -1,8 +1,10 @@
 ﻿using FurnitureProject.Models;
 using FurnitureProject.Models.DTO;
+using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FurnitureProject.Controllers
 {
@@ -16,8 +18,31 @@ namespace FurnitureProject.Controllers
             _categoryService = categoryService;
         }
 
+        private void SetStatusViewBag(string? status = null)
+        {
+            ViewBag.StatusList = new SelectList(
+                new[] {
+                    new { Value = "active", Text = "Đang hoạt động" },
+                    new { Value = "inactive", Text = "Đã ẩn" }
+                },
+                "Value", "Text", status
+            );
+        }
+        private void SetSortOptions(string? selectedSort = null)
+        {
+            var sortOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Mới nhất", Value = "newest" },
+                new SelectListItem { Text = "Cũ nhất", Value = "oldest" },
+                //new SelectListItem { Text = "Giá tăng dần", Value = "price-asc" },
+                //new SelectListItem { Text = "Giá giảm dần", Value = "price-desc" }
+            };
+
+            ViewBag.SortOptions = new SelectList(sortOptions, "Value", "Text", selectedSort);
+        }
+
         [HttpGet("")]
-        public async Task<IActionResult> Index(int page = 1, string search = "")
+        public async Task<IActionResult> Index(CategoryFilterDTO filter, int page = 1)
         {
             ViewBag.UserId = HttpContext.Session.GetString("UserID");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
@@ -30,14 +55,36 @@ namespace FurnitureProject.Controllers
                 Id = category.Id,
                 Name = category.Name,
                 Description = category.Description,
-                Status = category.Status
+                Status = category.Status,
+                CreatedAt = category.CreatedAt,
             }).ToList();
-            // Search
-            if (!string.IsNullOrEmpty(search))
+
+            // Search by key word
+            if (!string.IsNullOrEmpty(filter.SearchKeyWord))
             {
                 categoryDTOs = categoryDTOs
-                    .Where(u => u.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
+                    .Where(u => u.Name.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase) ||
+                                u.Description.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase))
                     .ToList();
+            }
+
+            // Filter by status
+            if (filter.FilterByStatus != null && filter.FilterByStatus.Any())
+            {
+                categoryDTOs = categoryDTOs
+                   .Where(p => !string.IsNullOrEmpty(p.Status) && filter.FilterByStatus.Equals(p.Status))
+                   .ToList();
+            }
+
+            // Sort Order
+            switch (filter.SortOrder)
+            {
+                case "newest":
+                    categoryDTOs = categoryDTOs.OrderByDescending(p => p.CreatedAt).ToList();
+                    break;
+                case "oldest":
+                    categoryDTOs = categoryDTOs.OrderBy(p => p.CreatedAt).ToList();
+                    break;
             }
 
             int totalCategories = categoryDTOs.Count();
@@ -46,11 +93,20 @@ namespace FurnitureProject.Controllers
                 .Take(pageSize)
                 .ToList();
 
+            var categoryViewModel = new CategoryViewModel
+            {
+                Categories = pagedCategories,
+                Filter = filter
+            };
+
+            SetStatusViewBag(filter.FilterByStatus);
+            SetSortOptions(filter.SortOrder);
+
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;
-            ViewBag.Search = search;
+            ViewBag.Search = filter.SearchKeyWord;
             ViewBag.TotalCategories = totalCategories;
-            return View(pagedCategories);
+            return View(categoryViewModel);
         }
 
         [HttpGet("{id}")]

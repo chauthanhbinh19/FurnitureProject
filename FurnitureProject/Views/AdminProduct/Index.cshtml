@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FurnitureProject.Models.DTO.ProductDTO>
+﻿@model FurnitureProject.Models.ViewModels.ProductViewModel
 @{
     ViewData["Title"] = "Sản phẩm";
 }
@@ -23,68 +23,115 @@
         <span class="title ms-2">Danh sách sản phẩm</span>
     </div>
     <div>
-        <form method="get" asp-controller="AdminProduct" asp-action="Index" class="link-custom">
-            <div class="input-group">
-                <input type="text" name="search" value="@keyword" class="form-control" placeholder="Nhập từ khóa...">
-                <button type="submit" class="btn-custom bg-conflowerblue">
-                    <i class="bi bi-search"></i> Tìm kiếm
-                </button>
-            </div>
-        </form>
-    </div>
-    <div>
         <a asp-area="" asp-controller="AdminProduct" asp-action="Create" class="link-custom btn-custom bg-conflowerblue">Thêm sản phẩm</a>
     </div>
 </div>
 <div class="table-responsive title-box">
-    <table class="table table-hover align-middle">
-        <thead class="table-background">
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Hình ảnh</th>
-                <th scope="col">Tên</th>
-                <th scope="col">Mô tả</th>
-                <th scope="col">Giá</th>
-                <th scope="col">Tồn kho</th>
-                <th scope="col">Danh mục</th>
-                <th scope="col">Ngày tạo</th>
-                <th scope="col">Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model)
-            {
-                <tr>
-                    <td>@product.Id</td>
-                    <td><img class="" src="@product.ImageUrls[0]" alt="@product.ImageUrls[0]" style="width: 120px; height: 90px; border-radius:5px"/></td>
-                    <td>@product.Name</td>
-                    <td>@product.Description</td>
-                    <td>@product.Price.ToString("#,##0.##") $</td>
-                    <td>@product.Stock</td>
-                    <td>@product.Category.Name</td>
-                    <td>@product.CreatedAt?.ToString("dd/MM/yyyy")</td>
-                    <td>
-                        <form asp-controller="AdminProduct" asp-action="Update" method="get" style="display:inline;">
-                            <input type="hidden" name="id" value="@product.Id" />
-                            <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                        </form>
-                        @* <form asp-controller="Product" asp-action="Delete" method="post" style="display:inline;"
+    <div class="container">
+        <form method="get" asp-controller="AdminProduct" asp-action="Index" class="link-custom">
+            <div class="row mb-3 justify-content-around">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="text" asp-for="Filter.SearchKeyWord" name="Filter.SearchKeyWord" value="@Model.Filter?.SearchKeyWord" class="form-control" placeholder="Nhập từ khóa...">
+                        <button type="submit" class="btn-custom bg-conflowerblue">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+                <!-- Filter by Category -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.FilterCategoryId" name="Filter.FilterCategoryId" class="form-select" asp-items="@ViewBag.Categories">
+                        <option value="">Chọn danh mục</option>
+                    </select>
+                </div>
+                <!-- Sort by Create Time -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.SortOrder" name="Filter.SortOrder" class="form-select" asp-items="@ViewBag.SortOptions">
+                        <option value="">Sắp xếp</option>
+                    </select>
+                </div>
+                <!-- Filter by Status -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.FilterByStatus" name="Filter.FilterByStatus" class="form-select" asp-items="@ViewBag.StatusList">
+                        <option value="">Trạng thái</option>
+                    </select>
+                </div>
+                <!-- Filter by Tag -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.FilterTagId" name="Filter.FilterTagId" class="form-select" asp-items="@ViewBag.Tags">
+                        <option value="">Chọn nhãn</option>
+                    </select>
+                </div>
+                <!-- Optional: Nút Reset -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <a href="/admin/product/" class="btn btn-secondary w-100">Reset bộ lọc</a>
+                </div>
+            </div>
+        </form>
+        <div class="row mb-3">
+            <table class="table table-hover align-middle">
+                <thead class="table-background">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Hình ảnh</th>
+                        <th scope="col">Tên</th>
+                        <th scope="col">Mô tả</th>
+                        <th scope="col">Giá</th>
+                        <th scope="col">Tồn kho</th>
+                        <th scope="col">Danh mục</th>
+                        <th scope="col">Ngày tạo</th>
+                        <th scope="col">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model.Products)
+                    {
+                        <tr>
+                            <td>@product.Id.ToString().Substring(0, 16)</td>
+                            <td>
+                                <img src="@(product.ImageUrls != null && product.ImageUrls.Count > 0
+                                                                                  ? product.ImageUrls[0]
+                                                                                  : Url.Content("~/images/No_Image_Available.jpg"))"
+                                 alt="Product image"
+                                 style="width: 120px; height: 90px; border-radius:5px;" />
+                        </td>
+                        <td>@product.Name</td>
+                        <td>
+                            @foreach (var tagId in product.TagIds)
+                                {
+                                    <span class="badge bg-primary me-1">
+                                        @(ViewBag.TagMap[tagId])
+                                    </span>
+                                }
+                        </td>
+                        <td>@product.Price.ToString("#,##0.##") $</td>
+                        <td>@product.Stock</td>
+                        <td>@product.Category.Name</td>
+                        <td>@product.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <form asp-controller="AdminProduct" asp-action="Update" method="get" style="display:inline;">
+                                <input type="hidden" name="id" value="@product.Id" />
+                                <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </form>
+                            @* <form asp-controller="Product" asp-action="Delete" method="post" style="display:inline;"
                               onsubmit="return confirm('Bạn có chắc muốn xoá sản phẩm này?');">
                             <input type="hidden" name="id" value="@product.Id" />
                             <button type="submit" class="btn btn-sm btn-danger" title="Xoá">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form> *@
-                        <button type="submit" class="btn btn-sm btn-danger delete-product" data-id="@product.Id" title="Xoá">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                                <button type="submit" class="btn btn-sm btn-danger delete-product" data-id="@product.Id" title="Xoá">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                                        }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <div class="pagination-box">
     <nav>

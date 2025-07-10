@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FurnitureProject.Models.DTO.TagDTO>
+﻿@model FurnitureProject.Models.ViewModels.TagViewModel
 @{
     ViewData["Title"] = "Nhãn";
 }
@@ -23,56 +23,80 @@
         <span class="title ms-2">Danh sách nhãn</span>
     </div>
     <div>
-        <form method="get" asp-controller="AdminTag" asp-action="Index" class="link-custom">
-            <div class="input-group">
-                <input type="text" name="search" value="@keyword" class="form-control" placeholder="Nhập từ khóa...">
-                <button type="submit" class="btn-custom bg-conflowerblue">
-                    <i class="bi bi-search"></i> Tìm kiếm
-                </button>
-            </div>
-        </form>
-    </div>
-    <div>
         <a asp-area="" asp-controller="AdminTag" asp-action="Create" class="link-custom btn-custom bg-conflowerblue">Thêm danh mục</a>
     </div>
 </div>
 <div class="table-responsive title-box">
-    <table class="table table-hover align-middle">
-        <thead class="table-background">
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Tên</th>
-                <th scope="col">Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var category in Model)
-            {
-                <tr>
-                    <td>@category.Id</td>
-                    <td>@category.Name</td>
-                    <td>
-                        <form asp-controller="AdminTag" asp-action="Update" method="get" style="display:inline;">
-                            <input type="hidden" name="id" value="@category.Id" />
-                            <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                        </form>
-                        @* <form asp-controller="Category" asp-action="Delete" method="post" style="display:inline;"
+    <div class="container">
+        <form method="get" asp-controller="AdminTag" asp-action="Index" class="link-custom">
+            <div class="row mb-3 justify-content-around">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="text" name="search" value="@keyword" class="form-control" placeholder="Nhập từ khóa...">
+                        <button type="submit" class="btn-custom bg-conflowerblue">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+                <!-- Sort by Create Time -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.SortOrder" name="Filter.SortOrder" class="form-select" asp-items="@ViewBag.SortOptions">
+                        <option value="">Sắp xếp</option>
+                    </select>
+                </div>
+                <!-- Filter by Status -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.FilterByStatus" name="Filter.FilterByStatus" class="form-select" asp-items="@ViewBag.StatusList">
+                        <option value="">Trạng thái</option>
+                    </select>
+                </div>
+                <!-- Optional: Nút Reset -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <a href="/admin/product/" class="btn btn-secondary w-100">Reset bộ lọc</a>
+                </div>
+            </div>
+        </form>
+        <div class="row mb-3">
+            <table class="table table-hover align-middle">
+                <thead class="table-background">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Tên</th>
+                        <th scope="col">Ngày tạo</th>
+                        <th scope="col">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <tr>
+                            <td>@tag.Id.ToString().Substring(0, 16)</td>
+                            <td>@tag.Name</td>
+                            <td>@tag.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <form asp-controller="AdminTag" asp-action="Update" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="@tag.Id" />
+                                    <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </form>
+                                @* <form asp-controller="Category" asp-action="Delete" method="post" style="display:inline;"
                               onsubmit="return confirm('Bạn có chắc muốn xoá user này?');">
                             <input type="hidden" name="id" value="@category.Id" />
                             <button type="submit" class="btn btn-sm btn-danger" title="Xoá">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form> *@
-                        <button type="submit" class="btn btn-sm btn-danger delete-category" data-id="@category.Id" title="Xoá">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                                <button type="submit" class="btn btn-sm btn-danger delete-category" data-id="@tag.Id" title="Xoá">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <div class="pagination-box">
     <nav>

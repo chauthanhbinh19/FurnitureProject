@@ -20,7 +20,7 @@ namespace FurnitureProject.Services
             return await _tagRepo.GetAllAsync();
         }
 
-        public async Task<Tag?> GetByIdAsync(Guid id)
+        public async Task<Tag>? GetByIdAsync(Guid id)
         {
             return await _tagRepo.GetByIdAsync(id);
         }
