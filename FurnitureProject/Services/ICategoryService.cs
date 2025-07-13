@@ -7,9 +7,9 @@ namespace FurnitureProject.Services
         Task<IEnumerable<Category>> GetAllAsync();
         Task<Category?> GetByIdAsync(Guid id);
         Task<Category?> GetByNameAsync(string name);
-        Task CreateAsync(Category category);
-        Task UpdateAsync(Category category);
-        Task DeleteAsync(Guid id);
+        Task<(bool Success, string? Message)> CreateAsync(Category category);
+        Task<(bool Success, string? Message)> UpdateAsync(Category category);
+        Task<(bool Success, string? Message)> DeleteAsync(Guid id);
     }
 
 }

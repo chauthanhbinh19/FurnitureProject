@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using FurnitureProject.Helper;
 using FurnitureProject.Models;
 using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
@@ -26,7 +27,11 @@ namespace FurnitureProject.Controllers
             _categoryService = categoryService;
             _tagService = tagService;
         }
-
+        private void GetUserInformationFromSession()
+        {
+            ViewBag.UserId = HttpContext.Session.GetString("UserID");
+            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+        }
         private async Task SetCategoryViewBag(Guid? categoryId = null)
         {
             var categories = await _categoryService.GetAllAsync();
@@ -41,8 +46,8 @@ namespace FurnitureProject.Controllers
         {
             ViewBag.StatusList = new SelectList(
                 new[] {
-                    new { Value = "active", Text = "Đang hoạt động" },
-                    new { Value = "inactive", Text = "Đã ẩn" }
+                    new { Value = AppConstants.Status.Active, Text = AppConstants.LogMessages.Active },
+                    new { Value = AppConstants.Status.Inactive, Text = AppConstants.LogMessages.Inactive }
                 },
                 "Value", "Text", status
             );
@@ -51,10 +56,10 @@ namespace FurnitureProject.Controllers
         {
             var sortOptions = new List<SelectListItem>
             {
-                new SelectListItem { Text = "Mới nhất", Value = "newest" },
-                new SelectListItem { Text = "Cũ nhất", Value = "oldest" },
-                new SelectListItem { Text = "Giá tăng dần", Value = "price-asc" },
-                new SelectListItem { Text = "Giá giảm dần", Value = "price-desc" }
+                new SelectListItem { Text = AppConstants.LogMessages.Newest, Value = AppConstants.Status.Newest },
+                new SelectListItem { Text = AppConstants.LogMessages.Oldest, Value = AppConstants.Status.Oldest },
+                new SelectListItem { Text = AppConstants.LogMessages.PriceAscending, Value = AppConstants.Status.PriceAscending },
+                new SelectListItem { Text = AppConstants.LogMessages.PriceDescending, Value = AppConstants.Status.PriceDescending }
             };
 
             ViewBag.SortOptions = new SelectList(sortOptions, "Value", "Text", selectedSort);
@@ -63,8 +68,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index(ProductFilterDTO filter, int page = 1)
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            GetUserInformationFromSession();
 
             int pageSize = 10;
             var products = await _productService.GetAllAsync();
@@ -176,8 +180,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            GetUserInformationFromSession();
 
             await SetCategoryViewBag();
             await SetTagViewBag();
@@ -188,15 +191,28 @@ namespace FurnitureProject.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromForm] ProductDTO dto)
         {
-            await _productService.CreateAsync(dto);
-            return RedirectToAction("Index","AdminProduct");
+            try
+            {
+                var(success, message) = await _productService.CreateAsync(dto);
+                if (!success)
+                {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateProductError;
+                    return RedirectToAction("Create", "AdminProduct");
+                }
+                
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateProductSuccess;
+                return RedirectToAction("Index", "AdminProduct");
+            }
+            catch (Exception ex) {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateProductError;
+                return RedirectToAction("Create", "AdminProduct");
+            }
         }
 
         [HttpGet("update")]
         public async Task<IActionResult> Update(Guid id)
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            GetUserInformationFromSession();
             var product = await _productService.GetByIdAsync(id);
 
             var productDTO = new ProductDTO
@@ -221,15 +237,43 @@ namespace FurnitureProject.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> Update(ProductDTO dto)
         {
-            await _productService.UpdateAsync(dto);
-            return RedirectToAction("Index","AdminProduct");
+            try
+            {
+                var(success, message) = await _productService.UpdateAsync(dto);
+                if (!success) {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateProductError;
+                    return RedirectToAction("Index", "AdminProduct");
+                }
+
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdateProductSuccess;
+                return RedirectToAction("Index", "AdminProduct");
+            }
+            catch (Exception ex)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateProductError;
+                return RedirectToAction("Update", "AdminProduct");
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _productService.DeleteAsync(id);
-            return NoContent();
+            try
+            {
+                var(success, message) = await _productService.DeleteAsync(id);
+                if (!success) {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteProductError;
+                    return RedirectToAction("Index", "AdminProduct");
+                }
+
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteProductSuccess;
+                return RedirectToAction("Index", "AdminProduct");
+            }
+            catch (Exception ex)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteProductError;
+                return RedirectToAction("Index", "AdminProduct");
+            }
         }
     }
 }

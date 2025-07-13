@@ -8,14 +8,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FurnitureProject.Controllers
 {
-    [Route("admin/promotion")]
-    public class AdminPromotionController : Controller
+    [Route("admin/voucher")]
+    public class AdminVoucherController : Controller
     {
-        private readonly IPromotionService _promotionService;
+        private readonly IVoucherService _voucherService;
 
-        public AdminPromotionController(IPromotionService promotionService)
+        public AdminVoucherController(IVoucherService voucherService)
         {
-            _promotionService = promotionService;
+            _voucherService = voucherService;
         }
         private void GetUserInformationFromSession()
         {
@@ -46,33 +46,39 @@ namespace FurnitureProject.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Index(PromotionFilterDTO filter, int page = 1)
+        public async Task<IActionResult> Index(VoucherFilterDTO filter, int page = 1)
         {
             GetUserInformationFromSession();
 
             int pageSize = 10;
-            var promotions = await _promotionService.GetAllAsync();
+            var vouchers = await _voucherService.GetAllAsync();
 
-            var promotionDTOs = promotions.Select(tag => new PromotionDTO
+            var voucherDTOs = vouchers.Select(voucher => new VoucherDTO
             {
-                Id = tag.Id,
-                Title = tag.Title,
-                Status = tag.Status,
-                CreatedAt = tag.CreatedAt,
+                Id = voucher.Id,
+                Code = voucher.Code,
+                DiscountPercent = voucher.DiscountPercent,
+                DiscountAmount = voucher.DiscountAmount,
+                ExpiryDate = voucher.ExpiryDate,
+                UsageLimit = voucher.UsageLimit,
+                TimeUsed = voucher.TimeUsed,
+                IsValid = voucher.IsValid,
+                Status = voucher.Status,
+                CreatedAt = voucher.CreatedAt,
             }).ToList();
 
             // Search by key word
             if (!string.IsNullOrEmpty(filter.SearchKeyWord))
             {
-                promotionDTOs = promotionDTOs
-                    .Where(u => u.Title.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase))
+                voucherDTOs = voucherDTOs
+                    .Where(u => u.Code.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase))
                     .ToList();
             }
 
             // Filter by status
             if (filter.FilterByStatus != null && filter.FilterByStatus.Any())
             {
-                promotionDTOs = promotionDTOs
+                voucherDTOs = voucherDTOs
                    .Where(p => !string.IsNullOrEmpty(p.Status) && filter.FilterByStatus.Equals(p.Status))
                    .ToList();
             }
@@ -81,22 +87,22 @@ namespace FurnitureProject.Controllers
             switch (filter.SortOrder)
             {
                 case "newest":
-                    promotionDTOs = promotionDTOs.OrderByDescending(p => p.CreatedAt).ToList();
+                    voucherDTOs = voucherDTOs.OrderByDescending(p => p.CreatedAt).ToList();
                     break;
                 case "oldest":
-                    promotionDTOs = promotionDTOs.OrderBy(p => p.CreatedAt).ToList();
+                    voucherDTOs = voucherDTOs.OrderBy(p => p.CreatedAt).ToList();
                     break;
             }
 
-            int totalPromotions = promotionDTOs.Count();
-            var pagedPromotions = promotionDTOs
+            int totalvouchers = voucherDTOs.Count();
+            var pagedvouchers = voucherDTOs
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
-            var promotionViewModel = new PromotionViewModel
+            var voucherViewModel = new VoucherViewModel
             {
-                Promotions = pagedPromotions,
+                Vouchers = pagedvouchers,
                 Filter = filter
             };
 
@@ -106,14 +112,14 @@ namespace FurnitureProject.Controllers
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;
             ViewBag.Search = filter.SearchKeyWord;
-            ViewBag.TotalPromotions = totalPromotions;
-            return View(promotionViewModel);
+            ViewBag.TotalVouchers = totalvouchers;
+            return View(voucherViewModel);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var promotion = await _promotionService.GetByIdAsync(id);
+            var promotion = await _voucherService.GetByIdAsync(id);
             if (promotion == null) return NotFound();
             return View(promotion);
         }
@@ -127,24 +133,24 @@ namespace FurnitureProject.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(Promotion dto)
+        public async Task<IActionResult> Create(Voucher dto)
         {
             try
             {
-                var (success, message) = await _promotionService.CreateAsync(dto);
+                var (success, message) = await _voucherService.CreateAsync(dto);
                 if (!success)
                 {
-                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateProductError;
-                    return RedirectToAction("Create", "AdminPromotion");
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateVoucherError;
+                    return RedirectToAction("Create", "AdminVoucher");
                 }
 
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateProductSuccess;
-                return RedirectToAction("Index", "AdminPromotion");
+                return RedirectToAction("Index", "AdminVoucher");
             }
             catch (Exception ex)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateProductError;
-                return RedirectToAction("Create", "AdminPromotion");
+                return RedirectToAction("Create", "AdminVoucher");
             }
         }
 
@@ -152,39 +158,44 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Update(Guid id)
         {
             GetUserInformationFromSession();
-            var promotion = await _promotionService.GetByIdAsync(id);
+            var Voucher = await _voucherService.GetByIdAsync(id);
 
-            var productDTO = new PromotionDTO
+            var productDTO = new VoucherDTO
             {
-                Id = promotion.Id,
-                Title = promotion.Title,
-                Description = promotion.Description,
-                StartDate = promotion.StartDate,
-                EndDate = promotion.EndDate,
+                Id = Voucher.Id,
+                Code = Voucher.Code,
+                DiscountPercent = Voucher.DiscountPercent,
+                DiscountAmount = Voucher.DiscountAmount,
+                ExpiryDate = Voucher.ExpiryDate,
+                UsageLimit = Voucher.UsageLimit,
+                TimeUsed = Voucher.TimeUsed,
+                IsValid = Voucher.IsValid,
+                Status = Voucher.Status,
+                CreatedAt = Voucher.CreatedAt,
             };
 
             return View(productDTO);
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> Update(Promotion dto)
+        public async Task<IActionResult> Update(Voucher dto)
         {
             try
             {
-                var (success, message) = await _promotionService.UpdateAsync(dto);
+                var (success, message) = await _voucherService.UpdateAsync(dto);
                 if (!success)
                 {
-                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdatePromotionError;
-                    return RedirectToAction("Index", "AdminPromotion");
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateVoucherError;
+                    return RedirectToAction("Index", "AdminVoucher");
                 }
 
-                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdatePromotionSuccess;
-                return RedirectToAction("Index", "AdminPromotion");
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdateVoucherSuccess;
+                return RedirectToAction("Index", "AdminVoucher");
             }
             catch (Exception ex)
             {
-                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdatePromotionError;
-                return RedirectToAction("Update", "AdminPromotion");
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateVoucherError;
+                return RedirectToAction("Update", "AdminVoucher");
             }
         }
 
@@ -193,22 +204,21 @@ namespace FurnitureProject.Controllers
         {
             try
             {
-                var (success, message) = await _promotionService.DeleteAsync(id);
+                var (success, message) = await _voucherService.DeleteAsync(id);
                 if (!success)
                 {
-                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeletePromotionError;
-                    return RedirectToAction("Index", "AdminPromotion");
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteVoucherError;
+                    return RedirectToAction("Index", "AdminVoucher");
                 }
 
-                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeletePromotionSuccess;
-                return RedirectToAction("Index", "AdminPromotion");
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteVoucherSuccess;
+                return RedirectToAction("Index", "AdminVoucher");
             }
             catch (Exception ex)
             {
-                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeletePromotionError;
-                return RedirectToAction("Index", "AdminPromotion");
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteVoucherError;
+                return RedirectToAction("Index", "AdminVoucher");
             }
         }
     }
-
 }

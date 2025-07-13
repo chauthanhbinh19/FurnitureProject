@@ -88,7 +88,7 @@
                                 <!-- Khuyến mãi -->
                                 <li class="nav-item">
                                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Promotion" ? "active" : "")"
-                                       asp-area="" asp-controller="Promotion" asp-action="Index">
+                                       asp-area="" asp-controller="AdminPromotion" asp-action="Index">
                                         <i class="bi bi-megaphone me-2"></i>Khuyến mãi
                                     </a>
                                 </li>
@@ -96,7 +96,7 @@
                                 <!-- Mã giảm giá -->
                                 <li class="nav-item">
                                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Voucher" ? "active" : "")"
-                                       asp-area="" asp-controller="Voucher" asp-action="Index">
+                                       asp-area="" asp-controller="AdminVoucher" asp-action="Index">
                                         <i class="bi bi-ticket-perforated me-2"></i>Mã giảm giá
                                     </a>
                                 </li>

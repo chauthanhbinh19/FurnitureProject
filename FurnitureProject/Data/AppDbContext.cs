@@ -15,6 +15,8 @@ namespace FurnitureProject.Data
         public DbSet<ProductTag> ProductTag { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<ProductPromotion> ProductPromotions { get; set; }
+        public DbSet<Voucher> DiscountCodes { get; set; }
+        public DbSet<ProductVoucher> ProductVouchers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
@@ -32,8 +34,8 @@ namespace FurnitureProject.Data
             modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
             modelBuilder.ApplyConfiguration(new TagConfiguration());
             modelBuilder.ApplyConfiguration(new ProductTagConfiguration());
-            modelBuilder.ApplyConfiguration(new DiscountCodeConfiguration());
-            modelBuilder.ApplyConfiguration(new ProductDiscountCodeConfiguration());
+            modelBuilder.ApplyConfiguration(new VoucherConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductVoucherConfiguration());
 
             // Cấu hình khóa chính kết hợp cho bảng nối nhiều-nhiều
             modelBuilder.Entity<ProductPromotion>()
@@ -62,18 +64,18 @@ namespace FurnitureProject.Data
                 .WithMany(t => t.ProductTags)
                 .HasForeignKey(pt => pt.TagId);
 
-            modelBuilder.Entity<ProductDiscountCode>()
-            .HasKey(pt => new { pt.ProductId, pt.DiscountCodeId });
+            modelBuilder.Entity<ProductVoucher>()
+            .HasKey(pt => new { pt.ProductId, pt.VoucherId });
 
-            modelBuilder.Entity<ProductDiscountCode>()
+            modelBuilder.Entity<ProductVoucher>()
                 .HasOne(pt => pt.Product)
                 .WithMany(p => p.ProductDiscountCodes)
                 .HasForeignKey(pt => pt.ProductId);
 
-            modelBuilder.Entity<ProductDiscountCode>()
-                .HasOne(pt => pt.DiscountCode)
+            modelBuilder.Entity<ProductVoucher>()
+                .HasOne(pt => pt.Voucher)
                 .WithMany(t => t.ProductDiscountCodes)
-                .HasForeignKey(pt => pt.DiscountCodeId);
+                .HasForeignKey(pt => pt.VoucherId);
 
             // Soft-delete global filter (tùy chọn)
             modelBuilder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
@@ -83,6 +85,10 @@ namespace FurnitureProject.Data
             modelBuilder.Entity<Promotion>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<Order>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<OrderItem>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Tag>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<ProductTag>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Voucher>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<ProductVoucher>().HasQueryFilter(e => !e.IsDeleted);
         }
     }
 }

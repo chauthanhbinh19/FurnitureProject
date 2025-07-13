@@ -64,6 +64,7 @@
                         <th scope="col">Tên</th>
                         <th scope="col">Mô tả</th>
                         <th scope="col">Ngày tạo</th>
+                        <th scope="col">Trạng thái</th>
                         <th scope="col">Hành động</th>
                     </tr>
                 </thead>
@@ -75,6 +76,7 @@
                             <td>@category.Name</td>
                             <td>@category.Description</td>
                             <td>@category.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                            <td>@category.Status</td>
                             <td>
                                 <form asp-controller="AdminCategory" asp-action="Update" method="get" style="display:inline;">
                                     <input type="hidden" name="id" value="@category.Id" />
@@ -139,7 +141,7 @@
 
             if (confirm("Bạn có chắc muốn xóa?")) {
                 $.ajax({
-                    url: '/Category/Delete',
+                    url: '/admin/category/Delete',
                     type: 'POST',
                     data: {
                         id: id,

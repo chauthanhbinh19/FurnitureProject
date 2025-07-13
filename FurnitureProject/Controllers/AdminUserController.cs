@@ -1,4 +1,5 @@
-﻿using FurnitureProject.Models;
+﻿using FurnitureProject.Helper;
+using FurnitureProject.Models;
 using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Services;
@@ -17,26 +18,17 @@ namespace FurnitureProject.Controllers
         {
             _userService = userService;
         }
-        private void SetViewBags(string? selectedRole = null, string? selectedStatus = null)
+        private void GetUserInformationFromSession()
         {
-            ViewBag.Roles = new List<SelectListItem>
-            {
-                new SelectListItem {Text = "Admin", Value = "admin", Selected = selectedStatus == "admin"},
-                new SelectListItem {Text = "User", Value = "user", Selected = selectedStatus == "user"},
-            };
-
-            ViewBag.Status = new List<SelectListItem>
-            {
-                new SelectListItem {Text = "Active", Value = "active", Selected = selectedStatus == "active"},
-                new SelectListItem {Text = "Inactive", Value = "inactive", Selected = selectedStatus == "inactive"},
-            };
+            ViewBag.UserId = HttpContext.Session.GetString("UserID");
+            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
         }
         private void SetStatusViewBag(string? status = null)
         {
             ViewBag.StatusList = new SelectList(
                 new[] {
-                    new { Value = "active", Text = "Đang hoạt động" },
-                    new { Value = "inactive", Text = "Đã ẩn" }
+                    new { Value = AppConstants.Status.Active, Text = AppConstants.LogMessages.Active },
+                    new { Value = AppConstants.Status.Inactive, Text = AppConstants.LogMessages.Inactive }
                 },
                 "Value", "Text", status
             );
@@ -45,8 +37,8 @@ namespace FurnitureProject.Controllers
         {
             var sortOptions = new List<SelectListItem>
             {
-                new SelectListItem { Text = "Mới nhất", Value = "newest" },
-                new SelectListItem { Text = "Cũ nhất", Value = "oldest" },
+                new SelectListItem { Text = AppConstants.LogMessages.Newest, Value = AppConstants.Status.Newest },
+                new SelectListItem { Text = AppConstants.LogMessages.Oldest, Value = AppConstants.Status.Oldest },
                 //new SelectListItem { Text = "Giá tăng dần", Value = "price-asc" },
                 //new SelectListItem { Text = "Giá giảm dần", Value = "price-desc" }
             };
@@ -57,8 +49,8 @@ namespace FurnitureProject.Controllers
         {
             ViewBag.RoleList = new SelectList(
                 new[] {
-                    new { Value = "admin", Text = "Admin" },
-                    new { Value = "user", Text = "User" }
+                    new { Value = AppConstants.Status.Admin, Text = AppConstants.LogMessages.Admin },
+                    new { Value = AppConstants.Status.User, Text = AppConstants.LogMessages.User }
                 },
                 "Value", "Text", status
             );
@@ -67,8 +59,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index(UserFilterDTO filter, int page = 1)
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            GetUserInformationFromSession();
 
             int pageSize = 10;
             var users = await _userService.GetAllAsync();
@@ -143,49 +134,89 @@ namespace FurnitureProject.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-            SetViewBags();
+            GetUserInformationFromSession();
+            SetRoleViewBag();
             return View();
         }
 
         [HttpPost("create")]
         public async Task<IActionResult> Create(User user)
         {
-            await _userService.CreateAsync(user);
-            return RedirectToAction("Index","AdminUser");
+            try
+            {
+                var (success, message) = await _userService.CreateAsync(user);
+                if (!success)
+                {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateUserError;
+                    return RedirectToAction("Create", "AdminUser");
+                }
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateUserSuccess;
+                return RedirectToAction("Index", "AdminUser");
+            }
+            catch (Exception ex)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateUserError;
+                return RedirectToAction("Create", "AdminUser");
+            }
         }
 
         [HttpGet("update")]
         public async Task<IActionResult> Update(Guid id)
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            GetUserInformationFromSession();
             var user = await _userService.GetByIdAsync(id);
             if (user == null) return NotFound();
 
             TempData["UserPassword"] = user.Password;
-            SetViewBags(user.Role, user.Status);
+            SetRoleViewBag(user.Role);
             return View(user);
         }
 
         [HttpPost("update")]
         public async Task<IActionResult> Update(User user)
         {
-            if(user.Password == null)
-            {
-                user.Password = TempData["UserPassword"]?.ToString();
-            }
             
-            await _userService.UpdateAsync(user);
-            return RedirectToAction("Index", "AdminUser");
+            try
+            {
+                if (user.Password == null)
+                {
+                    user.Password = TempData["UserPassword"]?.ToString();
+                }
+
+                var (success, message) = await _userService.UpdateAsync(user);
+                if (!success)
+                {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateUserError;
+                    return RedirectToAction("Update", "AdminUser");
+                }
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdateUserSuccess;
+                return RedirectToAction("Index", "AdminUser");
+            }
+            catch (Exception ex)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateUserError;
+                return RedirectToAction("Update", "AdminUser");
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _userService.DeleteAsync(id);
-            return NoContent();
+            try
+            {
+                var (success, message) = await _userService.DeleteAsync(id);
+                if (!success)
+                {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteUserError;
+                    return RedirectToAction("Index", "AdminUser");
+                }
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteUserSuccess;
+                return RedirectToAction("Index", "AdminUser");
+            }
+            catch (Exception ex) {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteUserError;
+                return RedirectToAction("Index", "AdminUser");
+            }
         }
     }
 }

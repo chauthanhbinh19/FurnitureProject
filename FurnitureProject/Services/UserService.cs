@@ -22,24 +22,45 @@ namespace FurnitureProject.Services
 
         public async Task<User?> GetByEmailAsync(string email) => await _userRepo.GetByEmailAsync(email);
 
-        public async Task CreateAsync(User user)
+        public async Task<(bool Success, string? Message)> CreateAsync(User user)
         {
-            user.CreatedAt = DateTime.UtcNow;
-            await _userRepo.AddAsync(user);
-        }
-
-        public async Task UpdateAsync(User user)
-        {
-            user.UpdatedAt = DateTime.UtcNow;
-            await _userRepo.UpdateAsync(user);
-        }
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var user = await _userRepo.GetByIdAsync(id);
-            if (user != null)
+            try
             {
-                await _userRepo.DeleteAsync(user);
+                user.CreatedAt = DateTime.UtcNow;
+                await _userRepo.AddAsync(user);
+                return (true, null);
+            }
+            catch (Exception ex) { 
+                return (false, ex.Message);
+            }
+        }
+
+        public async Task<(bool Success, string? Message)> UpdateAsync(User user)
+        {
+            try
+            {
+                user.UpdatedAt = DateTime.UtcNow;
+                await _userRepo.UpdateAsync(user);
+                return (true, null);
+            }
+            catch (Exception ex) { 
+                return (false, ex.Message);
+            }
+        }
+
+        public async Task<(bool Success, string? Message)> DeleteAsync(Guid id)
+        {
+            try
+            {
+                var user = await _userRepo.GetByIdAsync(id);
+                if (user != null)
+                {
+                    await _userRepo.DeleteAsync(user);
+                }
+                return (true, null);
+            }
+            catch (Exception ex) { 
+                return (false, ex.Message);
             }
         }
 

@@ -57,9 +57,9 @@ namespace FurnitureProject.Controllers
 
                     switch (existingUsername.Role)
                     {
-                        case "admin":
+                        case AppConstants.Status.Admin:
                             return RedirectToAction("Index", "AdminHome");
-                        case "user":
+                        case AppConstants.Status.User:
                             return RedirectToAction("Index", "Home");
                         default:
                             return View(user);

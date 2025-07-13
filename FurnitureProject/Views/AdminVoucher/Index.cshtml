@@ -1,11 +1,11 @@
-﻿@model FurnitureProject.Models.ViewModels.TagViewModel
+﻿@model FurnitureProject.Models.ViewModels.VoucherViewModel
 @{
-    ViewData["Title"] = "Nhãn";
+    ViewData["Title"] = "Mã giảm giá";
 }
 @{
-    ViewBag.Title = "Search tags";
+    ViewBag.Title = "Search Voucher";
     string keyword = ViewBag.Keyword as string;
-    int totalPages = (int)Math.Ceiling((double)ViewBag.TotalTags / ViewBag.PageSize);
+    int totalPages = (int)Math.Ceiling((double)ViewBag.TotalVouchers / ViewBag.PageSize);
     int currentPage = ViewBag.CurrentPage;
 }
 @{
@@ -20,15 +20,15 @@
 
 <div class="title-box">
     <div class="text-box">
-        <span class="title ms-2">Danh sách nhãn</span>
+        <span class="title ms-2">Danh sách mã giảm giá</span>
     </div>
     <div>
-        <a asp-area="" asp-controller="AdminTag" asp-action="Create" class="link-custom btn-custom bg-conflowerblue">Thêm danh mục</a>
+        <a asp-area="" asp-controller="AdminDiscountCode" asp-action="Create" class="link-custom btn-custom bg-conflowerblue">Thêm mã</a>
     </div>
 </div>
 <div class="table-responsive title-box">
     <div class="container">
-        <form method="get" asp-controller="AdminTag" asp-action="Index" class="link-custom">
+        <form method="get" asp-controller="AdminDiscountCode" asp-action="Index" class="link-custom">
             <div class="row mb-3 justify-content-around">
                 <div class="col-md-3">
                     <div class="input-group">
@@ -62,22 +62,25 @@
                     <tr>
                         <th scope="col">ID</th>
                         <th scope="col">Tên</th>
+                        <th scope="col">Mô tả</th>
                         <th scope="col">Ngày tạo</th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var tag in Model.Tags)
+                    @foreach (var promotion in Model.Vouchers)
                     {
                         <tr>
-                            <td>@tag.Id.ToString().Substring(0, 16)</td>
-                            <td>@tag.Name</td>
-                            <td>@tag.CreatedAt?.ToString("dd/MM/yyyy")</td>
-                            <td>@tag.Status</td>
+                            <td>@promotion.Id.ToString().Substring(0, 16)</td>
+                            <td>@promotion.Code</td>
+                            <td>@promotion.DiscountAmount</td>
+                            <td>@promotion.DiscountPercent</td>
+                            <td>@promotion.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                            <td>@promotion.Status</td>
                             <td>
-                                <form asp-controller="AdminTag" asp-action="Update" method="get" style="display:inline;">
-                                    <input type="hidden" name="id" value="@tag.Id" />
+                                <form asp-controller="AdminDiscountCode" asp-action="Update" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="@promotion.Id" />
                                     <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
@@ -89,7 +92,7 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form> *@
-                                <button type="submit" class="btn btn-sm btn-danger delete-tag" data-id="@tag.Id" title="Xoá">
+                                <button type="submit" class="btn btn-sm btn-danger delete-voucher" data-id="@promotion.Id" title="Xoá">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>
@@ -133,13 +136,13 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('.delete-tag').click(function () {
+            $('.delete-voucher').click(function () {
             const btn = $(this);
             const id = btn.data('id');
 
             if (confirm("Bạn có chắc muốn xóa?")) {
                 $.ajax({
-                    url: '/admin/tag/Delete',
+                    url: '/admin/voucher/Delete',
                     type: 'POST',
                     data: {
                         id: id,

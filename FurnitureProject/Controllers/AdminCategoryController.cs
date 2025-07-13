@@ -1,4 +1,5 @@
-﻿using FurnitureProject.Models;
+﻿using FurnitureProject.Helper;
+using FurnitureProject.Models;
 using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Services;
@@ -17,13 +18,17 @@ namespace FurnitureProject.Controllers
         {
             _categoryService = categoryService;
         }
-
+        private void GetUserInformationFromSession()
+        {
+            ViewBag.UserId = HttpContext.Session.GetString("UserID");
+            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+        }
         private void SetStatusViewBag(string? status = null)
         {
             ViewBag.StatusList = new SelectList(
                 new[] {
-                    new { Value = "active", Text = "Đang hoạt động" },
-                    new { Value = "inactive", Text = "Đã ẩn" }
+                    new { Value = AppConstants.Status.Active, Text = AppConstants.LogMessages.Active },
+                    new { Value = AppConstants.Status.Inactive, Text = AppConstants.LogMessages.Inactive }
                 },
                 "Value", "Text", status
             );
@@ -32,8 +37,8 @@ namespace FurnitureProject.Controllers
         {
             var sortOptions = new List<SelectListItem>
             {
-                new SelectListItem { Text = "Mới nhất", Value = "newest" },
-                new SelectListItem { Text = "Cũ nhất", Value = "oldest" },
+                new SelectListItem { Text = AppConstants.LogMessages.Newest, Value = AppConstants.Status.Newest },
+                new SelectListItem { Text = AppConstants.LogMessages.Oldest, Value = AppConstants.Status.Oldest },
                 //new SelectListItem { Text = "Giá tăng dần", Value = "price-asc" },
                 //new SelectListItem { Text = "Giá giảm dần", Value = "price-desc" }
             };
@@ -44,8 +49,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index(CategoryFilterDTO filter, int page = 1)
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            GetUserInformationFromSession();
 
             int pageSize = 10;
             var categories = await _categoryService.GetAllAsync();
@@ -120,23 +124,34 @@ namespace FurnitureProject.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            GetUserInformationFromSession();
             return View();
         }
 
         [HttpPost("create")]
         public async Task<IActionResult> Create(Category category)
         {
-            await _categoryService.CreateAsync(category);
-            return RedirectToAction("Index", "AdminCategory");
+            try
+            {
+                var(success, message) = await _categoryService.CreateAsync(category);
+                if (!success)
+                {
+                    TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateCategoryError;
+                    return RedirectToAction("Create", "AdminCategory");
+                }
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateCategorySuccess;
+                return RedirectToAction("Index", "AdminCategory");
+            }
+            catch (Exception ex) {
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateCategoryError;
+                return RedirectToAction("Create", "AdminCategory");
+            }
         }
 
         [HttpGet("update")]
         public async Task<IActionResult> Update(Guid id)
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            GetUserInformationFromSession();
             var category = await _categoryService.GetByIdAsync(id);
             return View(category);
         }
@@ -144,15 +159,42 @@ namespace FurnitureProject.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> Update(Category category)
         {
-            await _categoryService.UpdateAsync(category);
-            return RedirectToAction("Index", "AdminCategory");
+            try
+            {
+                var(success, message) = await _categoryService.UpdateAsync(category);
+                if (!success) {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateCategoryError;
+                    return RedirectToAction("Update", "AdminCategory");
+                }
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdateCategorySuccess;
+                return RedirectToAction("Index", "AdminCategory");
+            }
+            catch (Exception ex) {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateCategoryError;
+                return RedirectToAction("Update", "AdminCategory");
+            }
+            
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _categoryService.DeleteAsync(id);
-            return NoContent();
+            try
+            {
+                var(success, message) = await _categoryService.DeleteAsync(id);
+                if (!success)
+                {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteCategoryError;
+                    return RedirectToAction("Index", "AdminCategory");
+                }
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteCategorySuccess;
+                return RedirectToAction("Index", "AdminCategory");
+            }
+            catch (Exception ex)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteCategoryError;
+                return RedirectToAction("Index", "AdminCategory");
+            }
         }
     }
 

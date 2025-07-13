@@ -23,7 +23,7 @@ namespace FurnitureProject.Services
 
         public async Task<Product?> GetByIdAsync(Guid id) => await _productRepo.GetByIdAsync(id);
 
-        public async Task CreateAsync(ProductDTO dto)
+        public async Task<(bool Success, string? Message)> CreateAsync(ProductDTO dto)
         {
             var imageList = new List<ProductImage>();
 
@@ -80,10 +80,18 @@ namespace FurnitureProject.Services
                 ProductTags = productTags
             };
             product.CreatedAt = DateTime.UtcNow;
-            await _productRepo.AddAsync(product);
+
+            try
+            {
+                await _productRepo.AddAsync(product);
+                return (true, null);
+            }
+            catch (Exception ex) {
+                return (false, null);
+            }
         }
 
-        public async Task UpdateAsync(ProductDTO dto)
+        public async Task<(bool Success, string? Message)> UpdateAsync(ProductDTO dto)
         {
             var product = await _productRepo.GetByIdAsync(dto.Id);
             product.Name = dto.Name;
@@ -157,16 +165,31 @@ namespace FurnitureProject.Services
                 });
             }
 
-
-            await _productRepo.UpdateAsync(product);
+            try
+            {
+                await _productRepo.UpdateAsync(product);
+                return (true, null);
+            }
+            catch (Exception ex) {
+                return (false, null);
+            }
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task<(bool Success, string? Message)> DeleteAsync(Guid id)
         {
-            var product = await _productRepo.GetByIdAsync(id);
-            if (product != null)
+            try
             {
-                await _productRepo.DeleteAsync(product);
+                var product = await _productRepo.GetByIdAsync(id);
+                if (product != null)
+                {
+                    await _productRepo.DeleteAsync(product);
+                }
+
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, null);
             }
         }
     }

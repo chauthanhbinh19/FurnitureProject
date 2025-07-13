@@ -1,4 +1,5 @@
 ﻿using CloudinaryDotNet;
+using FurnitureProject.Helper;
 using FurnitureProject.Models;
 using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
@@ -17,12 +18,17 @@ namespace FurnitureProject.Controllers
         {
             _tagService = tagService;
         }
+        private void GetUserInformationFromSession()
+        {
+            ViewBag.UserId = HttpContext.Session.GetString("UserID");
+            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+        }
         private void SetStatusViewBag(string? status = null)
         {
             ViewBag.StatusList = new SelectList(
                 new[] {
-                    new { Value = "active", Text = "Đang hoạt động" },
-                    new { Value = "inactive", Text = "Đã ẩn" }
+                    new { Value = AppConstants.Status.Active, Text = AppConstants.LogMessages.Active },
+                    new { Value = AppConstants.Status.Inactive, Text = AppConstants.LogMessages.Inactive }
                 },
                 "Value", "Text", status
             );
@@ -31,8 +37,8 @@ namespace FurnitureProject.Controllers
         {
             var sortOptions = new List<SelectListItem>
             {
-                new SelectListItem { Text = "Mới nhất", Value = "newest" },
-                new SelectListItem { Text = "Cũ nhất", Value = "oldest" },
+                new SelectListItem { Text = AppConstants.LogMessages.Newest, Value = AppConstants.Status.Newest },
+                new SelectListItem { Text = AppConstants.LogMessages.Oldest, Value = AppConstants.Status.Oldest },
                 //new SelectListItem { Text = "Giá tăng dần", Value = "price-asc" },
                 //new SelectListItem { Text = "Giá giảm dần", Value = "price-desc" }
             };
@@ -42,8 +48,7 @@ namespace FurnitureProject.Controllers
         [Route("")]
         public async Task<IActionResult> Index(TagFilterDTO filter, int page = 1)
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            GetUserInformationFromSession();
 
             int pageSize = 10;
             var tags = await _tagService.GetAllAsync();
@@ -107,23 +112,35 @@ namespace FurnitureProject.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            GetUserInformationFromSession();
             return View();
         }
 
         [HttpPost("create")]
         public async Task<IActionResult> Create(Tag tag)
         {
-            await _tagService.CreateAsync(tag);
-            return RedirectToAction("Index", "AdminTag");
+            try
+            {
+                var(success, message) = await _tagService.CreateAsync(tag);
+                if (!success)
+                {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateTagError;
+                    return RedirectToAction("Create", "AdminTag");
+                }
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateTagSuccess;
+                return RedirectToAction("Index", "AdminTag");
+            }
+            catch (Exception ex)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateTagError;
+                return RedirectToAction("Create", "AdminTag");
+            }
         }
 
         [HttpGet("update")]
         public async Task<IActionResult> Update(Guid id)
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            GetUserInformationFromSession();
             var tag = await _tagService.GetByIdAsync(id);
             return View(tag);
         }
@@ -131,8 +148,40 @@ namespace FurnitureProject.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> Update(Tag tag)
         {
-            await _tagService.UpdateAsync(tag);
-            return RedirectToAction("Index", "AdminTag");
+            try
+            {
+                var(success, message) = await _tagService.UpdateAsync(tag);
+                if (!success) {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateTagError;
+                    return RedirectToAction("Update", "AdminTag");
+                }
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdateTagSuccess;
+                return RedirectToAction("Index", "AdminTag");
+            }
+            catch (Exception ex)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateTagError;
+                return RedirectToAction("Update", "AdminTag");
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+                var(success, message) = await _tagService.DeleteAsync(id);
+                if (!success){
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteTagError;
+                    return RedirectToAction("Index", "AdminTag");
+                }
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteTagSuccess;
+                return RedirectToAction("Index", "AdminTag");
+            }
+            catch (Exception ex)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteTagError;
+                return RedirectToAction("Index", "AdminTag");
+            }
         }
     }
 }

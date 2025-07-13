@@ -3,6 +3,7 @@ using System;
 using FurnitureProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FurnitureProject.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250710073453_AddStatusColumn")]
+    partial class AddStatusColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,6 +59,52 @@ namespace FurnitureProject.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("categories", (string)null);
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.DiscountCode", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("DiscountPercent")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TimeUsed")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UsageLimit")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("discount_code", (string)null);
                 });
 
             modelBuilder.Entity("FurnitureProject.Models.Order", b =>
@@ -188,6 +237,32 @@ namespace FurnitureProject.Migrations
                     b.ToTable("products", (string)null);
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.ProductDiscountCode", b =>
+                {
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DiscountCodeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("ProductId", "DiscountCodeId");
+
+                    b.HasIndex("DiscountCodeId");
+
+                    b.ToTable("product_discount_code", (string)null);
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.ProductImage", b =>
                 {
                     b.Property<Guid>("ImageId")
@@ -269,32 +344,6 @@ namespace FurnitureProject.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("product_tag", (string)null);
-                });
-
-            modelBuilder.Entity("FurnitureProject.Models.ProductVoucher", b =>
-                {
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("VoucherId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("ProductId", "VoucherId");
-
-                    b.HasIndex("VoucherId");
-
-                    b.ToTable("product_voucher", (string)null);
                 });
 
             modelBuilder.Entity("FurnitureProject.Models.Promotion", b =>
@@ -431,52 +480,6 @@ namespace FurnitureProject.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("FurnitureProject.Models.Voucher", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("DiscountAmount")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("DiscountPercent")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("TimeUsed")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("UsageLimit")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("vouchers", (string)null);
-                });
-
             modelBuilder.Entity("FurnitureProject.Models.Order", b =>
                 {
                     b.HasOne("FurnitureProject.Models.User", "User")
@@ -516,6 +519,25 @@ namespace FurnitureProject.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.ProductDiscountCode", b =>
+                {
+                    b.HasOne("FurnitureProject.Models.DiscountCode", "DiscountCode")
+                        .WithMany("ProductDiscountCodes")
+                        .HasForeignKey("DiscountCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FurnitureProject.Models.Product", "Product")
+                        .WithMany("ProductDiscountCodes")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DiscountCode");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("FurnitureProject.Models.ProductImage", b =>
@@ -567,28 +589,14 @@ namespace FurnitureProject.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("FurnitureProject.Models.ProductVoucher", b =>
-                {
-                    b.HasOne("FurnitureProject.Models.Product", "Product")
-                        .WithMany("ProductDiscountCodes")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FurnitureProject.Models.Voucher", "Voucher")
-                        .WithMany("ProductDiscountCodes")
-                        .HasForeignKey("VoucherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Voucher");
-                });
-
             modelBuilder.Entity("FurnitureProject.Models.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.DiscountCode", b =>
+                {
+                    b.Navigation("ProductDiscountCodes");
                 });
 
             modelBuilder.Entity("FurnitureProject.Models.Order", b =>
@@ -615,11 +623,6 @@ namespace FurnitureProject.Migrations
             modelBuilder.Entity("FurnitureProject.Models.Tag", b =>
                 {
                     b.Navigation("ProductTags");
-                });
-
-            modelBuilder.Entity("FurnitureProject.Models.Voucher", b =>
-                {
-                    b.Navigation("ProductDiscountCodes");
                 });
 #pragma warning restore 612, 618
         }

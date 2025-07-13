@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FurnitureProject.Models
 {
-    public class DiscountCode : BaseEntity
+    public class Voucher : BaseEntity
     {
         public Guid Id { get; set; }
         [Required]
@@ -16,8 +16,9 @@ namespace FurnitureProject.Models
         public DateTime ExpiryDate { get; set;}
         public int UsageLimit { get; set;}
         public int TimeUsed { get; set;}
+        public string Status { get; set; } = "active";
         [NotMapped]
         public bool IsValid => DateTime.UtcNow < ExpiryDate && TimeUsed < UsageLimit;
-        public ICollection<ProductDiscountCode> ProductDiscountCodes { get; set;}
+        public ICollection<ProductVoucher> ProductDiscountCodes { get; set;}
     }
 }

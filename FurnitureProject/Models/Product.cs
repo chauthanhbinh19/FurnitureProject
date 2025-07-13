@@ -24,7 +24,7 @@ namespace FurnitureProject.Models
 
         public ICollection<ProductImage> ProductImages { get; set; }
         public ICollection<ProductPromotion> ProductPromotions { get; set; }
-        public ICollection<ProductDiscountCode> ProductDiscountCodes { get; set; }
+        public ICollection<ProductVoucher> ProductDiscountCodes { get; set; }
         public ICollection<ProductTag> ProductTags { get; set; }
     }
 }

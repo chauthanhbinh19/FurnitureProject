@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FurnitureProject.Data
 {
-    public class ProductDiscountCodeConfiguration : IEntityTypeConfiguration<ProductDiscountCode>
+    public class ProductVoucherConfiguration : IEntityTypeConfiguration<ProductVoucher>
     {
-        public void Configure(EntityTypeBuilder<ProductDiscountCode> builder)
+        public void Configure(EntityTypeBuilder<ProductVoucher> builder)
         {
-            builder.ToTable("product_discount_code"); // Tên bảng
+            builder.ToTable("product_voucher"); // Tên bảng
 
-            builder.Property(u => u.DiscountCodeId)
+            builder.Property(u => u.VoucherId)
                 .IsRequired();
 
             builder.Property(u => u.ProductId)

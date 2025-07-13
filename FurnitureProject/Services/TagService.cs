@@ -25,19 +25,40 @@ namespace FurnitureProject.Services
             return await _tagRepo.GetByIdAsync(id);
         }
 
-        public async Task CreateAsync(Tag tag)
+        public async Task<(bool Success, string? Message)> CreateAsync(Tag tag)
         {
-            await _tagRepo.CreateAsync(tag);
+            try
+            {
+                await _tagRepo.CreateAsync(tag);
+                return (true, null);
+            }
+            catch (Exception ex) {
+                return (false, null);
+            }
         }
 
-        public async Task UpdateAsync(Tag tag)
+        public async Task<(bool Success, string? Message)> UpdateAsync(Tag tag)
         {
-            await _tagRepo.UpdateAsync(tag);
+            try
+            {
+                await _tagRepo.UpdateAsync(tag);
+                return (true, null);
+            }
+            catch (Exception ex) {
+                return (false, null);
+            }
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task<(bool Success, string? Message)> DeleteAsync(Guid id)
         {
-            await _tagRepo.DeleteAsync(id);
+            try
+            {
+                await _tagRepo.DeleteAsync(id);
+                return (true, null);
+            }
+            catch (Exception ex) {
+                return (false, null);
+            }
         }
 
         public async Task<List<Tag>> GetTagsByProductIdAsync(Guid productId)

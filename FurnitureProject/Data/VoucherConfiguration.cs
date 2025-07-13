@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FurnitureProject.Data
 {
-    public class DiscountCodeConfiguration : IEntityTypeConfiguration<DiscountCode>
+    public class VoucherConfiguration : IEntityTypeConfiguration<Voucher>
     {
-        public void Configure(EntityTypeBuilder<DiscountCode> builder)
+        public void Configure(EntityTypeBuilder<Voucher> builder)
         {
-            builder.ToTable("discount_code"); // Tên bảng
+            builder.ToTable("vouchers"); // Tên bảng
 
             builder.HasKey(u => u.Id); // Khóa chính
 
@@ -28,8 +28,8 @@ namespace FurnitureProject.Data
             builder.Property(u => u.TimeUsed)
                 .IsRequired();
 
-            //builder.Property(u => u.IsValid)
-            //    .IsRequired();
+            builder.Property(u => u.Status)
+                .IsRequired();
 
             builder.Property(u => u.CreatedAt);
 

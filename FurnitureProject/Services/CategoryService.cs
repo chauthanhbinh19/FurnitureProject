@@ -18,24 +18,47 @@ namespace FurnitureProject.Services
 
         public async Task<Category?> GetByNameAsync(string name) => await _categoryRepo.GetByNameAsync(name);
 
-        public async Task CreateAsync(Category category)
+        public async Task<(bool Success, string? Message)> CreateAsync(Category category)
         {
-            category.CreatedAt = DateTime.UtcNow;
-            await _categoryRepo.AddAsync(category);
-        }
-
-        public async Task UpdateAsync(Category category)
-        {
-            category.UpdatedAt = DateTime.UtcNow;
-            await _categoryRepo.UpdateAsync(category);
-        }
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var category = await _categoryRepo.GetByIdAsync(id);
-            if (category != null)
+            try
             {
-                await _categoryRepo.DeleteAsync(category);
+                category.CreatedAt = DateTime.UtcNow;
+                await _categoryRepo.AddAsync(category);
+                return (true, null);
+            }
+            catch (Exception ex) {
+                return (false, null);
+            }
+        }
+
+        public async Task<(bool Success, string? Message)> UpdateAsync(Category category)
+        {
+            try
+            {
+                category.UpdatedAt = DateTime.UtcNow;
+                await _categoryRepo.UpdateAsync(category);
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, null);
+            }
+        }
+
+        public async Task<(bool Success, string? Message)> DeleteAsync(Guid id)
+        {
+            try
+            {
+                var category = await _categoryRepo.GetByIdAsync(id);
+                if (category != null)
+                {
+                    await _categoryRepo.DeleteAsync(category);
+                }
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, null);
             }
         }
     }
