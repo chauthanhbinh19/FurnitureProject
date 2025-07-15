@@ -19,6 +19,9 @@ namespace FurnitureProject.Data
         public DbSet<ProductVoucher> ProductVouchers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<PostCategory> PostCategories { get; set; }
+        public DbSet<PostCategoryLink> PostCategoryLinks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +39,9 @@ namespace FurnitureProject.Data
             modelBuilder.ApplyConfiguration(new ProductTagConfiguration());
             modelBuilder.ApplyConfiguration(new VoucherConfiguration());
             modelBuilder.ApplyConfiguration(new ProductVoucherConfiguration());
+            modelBuilder.ApplyConfiguration(new PostConfiguration());
+            modelBuilder.ApplyConfiguration(new PostCategoryConfiguration());
+            modelBuilder.ApplyConfiguration(new PostCategoryLinkConfiguration());
 
             // Cấu hình khóa chính kết hợp cho bảng nối nhiều-nhiều
             modelBuilder.Entity<ProductPromotion>()
@@ -89,6 +95,9 @@ namespace FurnitureProject.Data
             modelBuilder.Entity<ProductTag>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<Voucher>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<ProductVoucher>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Post>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<PostCategory>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<PostCategoryLink>().HasQueryFilter(e => !e.IsDeleted);
         }
     }
 }

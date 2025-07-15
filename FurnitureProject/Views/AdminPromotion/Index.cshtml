@@ -76,7 +76,24 @@
                             <td>@promotion.Title</td>
                             <td>@promotion.Description</td>
                             <td>@promotion.CreatedAt?.ToString("dd/MM/yyyy")</td>
-                            <td>@promotion.Status</td>
+                            <td>
+                                @if (promotion.Status == "active")
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else if (promotion.Status == "inactive")
+                                {
+                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                }
+                                else if (promotion.Status == "banned")
+                                {
+                                    <span class="badge bg-danger">Bị khóa</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@promotion.Status</span>
+                                }
+                            </td>
                             <td>
                                 <form asp-controller="AdminPromotion" asp-action="Update" method="get" style="display:inline;">
                                     <input type="hidden" name="id" value="@promotion.Id" />

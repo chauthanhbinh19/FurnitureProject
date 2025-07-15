@@ -18,7 +18,7 @@
         <div class="row gx-4 gy-3 justify-content-between">
             <!-- Card 1: Thông tin sản phẩm -->
             <div class="col-md-6-5">
-                <div class="card shadow">
+                <div class="card shadow mb-3">
                     <div class="card-header text-black fs-5">
                         Thông tin sản phẩm
                     </div>
@@ -26,33 +26,34 @@
                         <div class="row justify-content-between">
                             <input asp-for="Id" class="form-control" hidden/>
                             <div class="col-md-6 mb-3">
-                                <label asp-for="Name" class="form-label"></label>
-                                <input asp-for="Name" class="form-control" />
+                                <label asp-for="Name" class="form-label fw-medium"></label>
+                                <input asp-for="Name" class="form-control custom-gray-input" />
                                 <span asp-validation-for="Name" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-5 mb-3">
-                                <label asp-for="CategoryId" class="form-label"></label>
-                                <select asp-for="CategoryId" class="form-select" asp-items="@Categories"></select>
-                                <span asp-validation-for="CategoryId" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row justify-content-between">
                             <div class="col-md-6 mb-3">
-                                <label asp-for="Price" class="form-label"></label>
-                                <input asp-for="Price" class="form-control" />
+                                <label asp-for="Price" class="form-label fw-medium"></label>
+                                <input asp-for="Price" class="form-control custom-gray-input" />
                                 <span asp-validation-for="Price" class="text-danger"></span>
                             </div>
 
                             <div class="col-md-5 mb-3">
-                                <label asp-for="Stock" class="form-label"></label>
-                                <input asp-for="Stock" class="form-control" />
+                                <label asp-for="Stock" class="form-label fw-medium"></label>
+                                <input asp-for="Stock" class="form-control custom-gray-input" />
                                 <span asp-validation-for="Stock" class="text-danger"></span>
                             </div>
                         </div>
-
+                    </div>
+                </div>
+                <div class="card shadow">
+                    <div class="card-header text-black fs-5">
+                        Mô tả sản phẩm
+                    </div>
+                    <div class="card-body">
                         <div class="mb-3">
-                            <label asp-for="Description" class="form-label"></label>
-                            <input asp-for="Description" class="form-control" />
+                            <label asp-for="Description" class="form-label fw-medium"></label>
+                            <input id="editor" asp-for="Description" class="form-control custom-gray-input" />
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                     </div>
@@ -61,27 +62,17 @@
 
             <!-- Card 2: Upload hình ảnh -->
             <div class="col-md-5">
-                <div class="card shadow">
+                <div class="card shadow mb-3">
                     <div class="card-header text-black fs-5">
                         Tải ảnh sản phẩm
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label asp-for="TagIds" class="form-label">Tag</label>
-                            <select asp-for="TagIds" id="tagSelect" name="TagIds" multiple>
-                                @foreach (var tag in tagList)
-                                {
-                                    <option value="@tag.Id" selected="@(selectedTagIds.Contains(tag.Id))">@tag.Name</option>
-                                }
-                            </select>
-                            <span asp-validation-for="TagIds" class="text-danger"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Upload Images</label>
+                            <label class="form-label fw-medium">Upload Images</label>
                             <input class="form-control" type="file" id="fileInput" name="files" multiple accept="image/*" />
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Old images</label>
+                            <label class="form-label fw-medium">Old images</label>
                             <div id="" class="d-flex flex-wrap gap-3 mt-3">
                                 @if (Model.ImageUrls != null)
                                 {
@@ -108,6 +99,28 @@
                         <div class="mb-3">
                             <label class="form-label">New Images</label>
                             <div id="imagePreviewList" class="d-flex flex-wrap gap-3 mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card shadow">
+                    <div class="card-header text-black fs-5">
+                        Danh mục  & nhãn
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="TagIds" class="form-label fw-medium"></label>
+                            <select asp-for="TagIds" id="tagSelect" name="TagIds" multiple>
+                                @foreach (var tag in tagList)
+                                {
+                                    <option value="@tag.Id" selected="@(selectedTagIds.Contains(tag.Id))">@tag.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="TagIds" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label asp-for="CategoryId" class="form-label fw-medium"></label>
+                            <select asp-for="CategoryId" class="form-select custom-gray-input" asp-items="@Categories"></select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -187,5 +200,12 @@
                 shouldSort: false,
             });
         });
+    </script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'))
+            .catch(error => {
+                console.error(error);
+            });
     </script>
 }

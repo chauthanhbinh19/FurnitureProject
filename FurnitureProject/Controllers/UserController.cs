@@ -54,6 +54,8 @@ namespace FurnitureProject.Controllers
                 {
                     HttpContext.Session.SetString("UserID", existingUsername.Id.ToString());
                     HttpContext.Session.SetString("UserRole", existingUsername.Role);
+                    HttpContext.Session.SetString("UserFullName", existingUsername.FullName);
+                    HttpContext.Session.SetString("UserEmail", existingUsername.Email);
 
                     switch (existingUsername.Role)
                     {
@@ -276,11 +278,14 @@ namespace FurnitureProject.Controllers
             }
         }
 
-        [HttpGet("/logout")]
+        [HttpPost("/logout")]
         public IActionResult Logout()
         {
-            HttpContext.SignOutAsync();
-            return Redirect("/user/sign-in");
+            HttpContext.Session.SetString("UserID", "");
+            HttpContext.Session.SetString("UserRole", "");
+            HttpContext.Session.SetString("UserFullName", "");
+            HttpContext.Session.SetString("UserEmail", "");
+            return RedirectToAction("SignIn", "User");
         }
     }
 

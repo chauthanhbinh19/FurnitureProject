@@ -28,6 +28,7 @@
             public const string UpdateCategoryError = "Update category failed!";
             public const string DeleteCategorySuccess = "Category deleted successfully!";
             public const string DeleteCategoryError = "Delete category failed!";
+            public const string CategoryNameCannotBeEmpty = "Category name cannot be empty";
 
             public const string CreateTagSuccess = "Tag created successfully!";
             public const string CreateTagError = "Create tag failed!";
@@ -35,6 +36,7 @@
             public const string UpdateTagError = "Update tag failed!";
             public const string DeleteTagSuccess = "Tag deleted successfully!";
             public const string DeleteTagError = "Delete tag failed!";
+            public const string TagNameCannotBeEmpty = "Tag name cannot be empty";
 
             public const string CreateProductSuccess = "Product created successfully!";
             public const string CreateProductError = "Create product failed!";
@@ -49,6 +51,13 @@
             public const string UpdatePromotionError = "Update promotion failed!";
             public const string DeletePromotionSuccess = "Promotion deleted successfully!";
             public const string DeletePromotionError = "Delete promotion failed!";
+            public const string PromotionTitleCannotBeEmpty = "Promotion title cannot be empty";
+            public const string PromotionDescriptionCannotBeEmpty = "Promotion description cannot be empty";
+            public const string PromotionDiscountPercentCannotBeEmpty = "Promotion discount percent cannot be empty";
+            public const string PromotionStartDateCannotBeEmpty = "Promotion start date cannot be empty";
+            public const string PromotionStartDateCannotBeInPast = "Promotion start date cannot be earlier than today.";
+            public const string PromotionEndDateCannotBeEmpty = "Promotion end date cannot be empty";
+            public const string PromotionEndDateCannotBeBeforeStart = "Promotion end date cannot be earlier than the start date.";
 
             public const string CreateVoucherSuccess = "Voucher created successfully!";
             public const string CreateVoucherError = "Create voucher failed!";
@@ -109,6 +118,50 @@
         public static class ConfigKeys
         {
             public const string SomeApiKey = "MyApp:SomeApiKey";
+        }
+
+        public static class  Display
+        {
+            public const string CategoryName = "Tên danh mục";
+            public const string CategoryDescription = "Mô tả danh mục";
+            public const string CategoryStatus = "Trạng thái danh mục";
+
+            public const string ProductName = "Tên sản phẩm";
+            public const string ProductDescription = "Mô tả sản phẩm";
+            public const string ProductStock = "Số lượng tồn kho";
+            public const string ProductPrice = "Giá sản phẩm";
+            public const string ProductCategory = "Danh mục sản phẩm";
+            public const string ProductTag = "Nhãn sản phẩm";
+            public const string ProductStatus = "Trạng thái sản phẩm";
+
+            public const string PromotionName = "Tên khuyến mãi";
+            public const string PromotionDescription = "Mô tả khuyến mãi";
+            public const string PromotionDiscountPercent = "Phần trăm giảm giá";
+            public const string PromotionStartDate = "Ngày bắt đầu";
+            public const string PromotionEndDate = "Ngày kết thúc";
+            public const string PromotionStatus = "Trạng thái khuyến mãi";
+
+            public const string TagName = "Tên nhãn";
+            public const string TagStatus = "Trạng thái nhãn";
+
+            public const string UserUsername = "Tên đăng nhập";
+            public const string UserEmail = "Email";
+            public const string UserPassword = "Mật khẩu";
+            public const string UserFullname = "Họ tên đầy đủ";
+            public const string UserPhoneNumber = "Số điện thoại";
+            public const string UserRole = "Vai trò";
+            public const string UserStatus = "Trạng thái người dùng";
+
+            public const string VoucherCode = "Mã voucher";
+            public const string VoucherDiscountPercent = "Phần trăm giảm";
+            public const string VoucherDiscountAmount = "Số tiền giảm";
+            public const string VoucherExpiryDate = "Ngày hết hạn";
+            public const string VoucherUsageLimit = "Số lượt sử dụng tối đa";
+            public const string VoucherTimeUsed = "Số lần đã sử dụng";
+            public const string VoucherIsValid = "Còn hiệu lực";
+            public const string VoucherStatus = "Trạng thái";
+
+            public const string Status = "Trạng thái";
         }
     }
 }

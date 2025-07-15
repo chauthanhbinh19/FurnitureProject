@@ -31,6 +31,8 @@ namespace FurnitureProject.Controllers
         {
             ViewBag.UserId = HttpContext.Session.GetString("UserID");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
+            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
         }
         private async Task SetCategoryViewBag(Guid? categoryId = null)
         {

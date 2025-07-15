@@ -74,7 +74,24 @@
                             <td>@tag.Id.ToString().Substring(0, 16)</td>
                             <td>@tag.Name</td>
                             <td>@tag.CreatedAt?.ToString("dd/MM/yyyy")</td>
-                            <td>@tag.Status</td>
+                            <td>
+                                @if (tag.Status == "active")
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else if (tag.Status == "inactive")
+                                {
+                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                }
+                                else if (tag.Status == "banned")
+                                {
+                                    <span class="badge bg-danger">Bị khóa</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@tag.Status</span>
+                                }
+                            </td>
                             <td>
                                 <form asp-controller="AdminTag" asp-action="Update" method="get" style="display:inline;">
                                     <input type="hidden" name="id" value="@tag.Id" />

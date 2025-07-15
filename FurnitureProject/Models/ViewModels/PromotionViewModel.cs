@@ -1,4 +1,5 @@
 ﻿using FurnitureProject.Models.DTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace FurnitureProject.Models.ViewModels
 {

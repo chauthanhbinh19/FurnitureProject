@@ -16,8 +16,9 @@ namespace FurnitureProject.Middleware
         {
             var path = context.Request.Path.ToString().ToLower();
 
+            string[] staticExtensions = { ".js", ".css", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".map", ".woff", ".woff2", ".ttf", ".eot" };
 
-            if (path.Contains("."))
+            if (staticExtensions.Any(ext => path.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
             {
                 await _next(context);
                 return;
@@ -43,7 +44,7 @@ namespace FurnitureProject.Middleware
                 "/error/maintenance"
             };
 
-            if (bypassPaths.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+            if (bypassPaths.Contains(path, StringComparer.OrdinalIgnoreCase))
             {
                 await _next(context);
                 return;

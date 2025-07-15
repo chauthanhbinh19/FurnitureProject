@@ -12,15 +12,19 @@ namespace FurnitureProject.Controllers
     public class AdminPromotionController : Controller
     {
         private readonly IPromotionService _promotionService;
+        private readonly IProductService _productService;
 
-        public AdminPromotionController(IPromotionService promotionService)
+        public AdminPromotionController(IPromotionService promotionService, IProductService productService)
         {
             _promotionService = promotionService;
+            _productService = productService;
         }
         private void GetUserInformationFromSession()
         {
             ViewBag.UserId = HttpContext.Session.GetString("UserID");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
+            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
         }
         private void SetStatusViewBag(string? status = null)
         {
@@ -53,12 +57,13 @@ namespace FurnitureProject.Controllers
             int pageSize = 10;
             var promotions = await _promotionService.GetAllAsync();
 
-            var promotionDTOs = promotions.Select(tag => new PromotionDTO
+            var promotionDTOs = promotions.Select(promotion => new PromotionDTO
             {
-                Id = tag.Id,
-                Title = tag.Title,
-                Status = tag.Status,
-                CreatedAt = tag.CreatedAt,
+                Id = promotion.Id,
+                Title = promotion.Title,
+                Description = promotion.Description,
+                Status = promotion.Status,
+                CreatedAt = promotion.CreatedAt,
             }).ToList();
 
             // Search by key word
@@ -122,28 +127,96 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Create()
         {
             GetUserInformationFromSession();
-
-            return View();
+            SetStatusViewBag();
+            var products = await _productService.GetAllAsync();
+            var promotionDto = new PromotionDTO
+            {
+                Products = products.Select(product => new ProductDTO
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    Stock = product.Stock,
+                    Status = product.Status,
+                    //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                    CreatedAt = product.CreatedAt,
+                    ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                    TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new()
+                }).ToList()
+            };
+            return View(promotionDto);
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(Promotion dto)
+        public async Task<IActionResult> Create(PromotionDTO dto)
         {
+            if (dto.DiscountPercent <= 0)
+            {
+                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.PromotionDiscountPercentCannotBeEmpty);
+            }
+            if (dto.DiscountPercent > 100)
+            {
+                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.PromotionDiscountPercentCannotBeEmpty);
+            }
+
+            if (dto.StartDate == default)
+            {
+                ModelState.AddModelError(nameof(dto.StartDate), AppConstants.LogMessages.PromotionStartDateCannotBeEmpty);
+            }
+            if (dto.StartDate.Date < DateTime.Today)
+            {
+                ModelState.AddModelError(nameof(dto.StartDate), AppConstants.LogMessages.PromotionStartDateCannotBeInPast);
+            }
+
+            if (dto.EndDate == default)
+            {
+                ModelState.AddModelError(nameof(dto.EndDate), AppConstants.LogMessages.PromotionEndDateCannotBeEmpty);
+            }
+            if (dto.EndDate.Date < dto.StartDate.Date)
+            {
+                ModelState.AddModelError(nameof(dto.EndDate), AppConstants.LogMessages.PromotionEndDateCannotBeBeforeStart);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                GetUserInformationFromSession();
+                SetStatusViewBag();
+                var products = await _productService.GetAllAsync();
+                var promotionDto = new PromotionDTO
+                {
+                    Products = products.Select(product => new ProductDTO
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Stock = product.Stock,
+                        Status = product.Status,
+                        //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                        CreatedAt = product.CreatedAt,
+                        ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                        TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new()
+                    }).ToList()
+                };
+                return View(promotionDto);
+            }
+
             try
             {
                 var (success, message) = await _promotionService.CreateAsync(dto);
                 if (!success)
                 {
-                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateProductError;
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreatePromotionError;
                     return RedirectToAction("Create", "AdminPromotion");
                 }
 
-                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateProductSuccess;
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreatePromotionSuccess;
                 return RedirectToAction("Index", "AdminPromotion");
             }
             catch (Exception ex)
             {
-                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateProductError;
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreatePromotionError;
                 return RedirectToAction("Create", "AdminPromotion");
             }
         }
@@ -153,6 +226,7 @@ namespace FurnitureProject.Controllers
         {
             GetUserInformationFromSession();
             var promotion = await _promotionService.GetByIdAsync(id);
+            var products = await _productService.GetAllAsync();
 
             var productDTO = new PromotionDTO
             {
@@ -161,14 +235,82 @@ namespace FurnitureProject.Controllers
                 Description = promotion.Description,
                 StartDate = promotion.StartDate,
                 EndDate = promotion.EndDate,
+                DiscountPercent = promotion.DiscountPercent,
+                Status = promotion.Status,
+                Products = products.Select(product => new ProductDTO
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    Stock = product.Stock,
+                    Status = product.Status,
+                    //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                    CreatedAt = product.CreatedAt,
+                    ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                    TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new()
+                }).ToList(),
+                SelectedProductIds = promotion.ProductPromotions?.Select(pp => pp.ProductId).ToList() ?? new List<Guid>()
             };
+            SetStatusViewBag(promotion.Status);
 
             return View(productDTO);
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> Update(Promotion dto)
+        public async Task<IActionResult> Update(PromotionDTO dto)
         {
+            if (dto.DiscountPercent <= 0)
+            {
+                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.PromotionDiscountPercentCannotBeEmpty);
+            }
+            if (dto.DiscountPercent > 100)
+            {
+                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.PromotionDiscountPercentCannotBeEmpty);
+            }
+
+            if (dto.StartDate == default)
+            {
+                ModelState.AddModelError(nameof(dto.StartDate), AppConstants.LogMessages.PromotionStartDateCannotBeEmpty);
+            }
+            if (dto.StartDate.Date == DateTime.Today)
+            {
+                ModelState.AddModelError(nameof(dto.StartDate), AppConstants.LogMessages.PromotionStartDateCannotBeInPast);
+            }
+
+            if (dto.EndDate == default)
+            {
+                ModelState.AddModelError(nameof(dto.EndDate), AppConstants.LogMessages.PromotionEndDateCannotBeEmpty);
+            }
+            if (dto.EndDate.Date < dto.StartDate.Date)
+            {
+                ModelState.AddModelError(nameof(dto.EndDate), AppConstants.LogMessages.PromotionEndDateCannotBeBeforeStart);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                GetUserInformationFromSession();
+                var products = await _productService.GetAllAsync();
+                var promotionDto = new PromotionDTO
+                {
+                    Products = products.Select(product => new ProductDTO
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Stock = product.Stock,
+                        Status = product.Status,
+                        //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                        CreatedAt = product.CreatedAt,
+                        ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                        TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new()
+                    }).ToList()
+                };
+                SetStatusViewBag(dto.Status);
+                return View(promotionDto);
+            }
+
             try
             {
                 var (success, message) = await _promotionService.UpdateAsync(dto);

@@ -75,7 +75,7 @@
                         <th scope="col">ID</th>
                         <th scope="col">Hình ảnh</th>
                         <th scope="col">Tên</th>
-                        <th scope="col">Mô tả</th>
+                        <th scope="col">Nhãn</th>
                         <th scope="col">Giá</th>
                         <th scope="col">Tồn kho</th>
                         <th scope="col">Danh mục</th>
@@ -104,7 +104,7 @@
                                     </span>
                                 }
                         </td>
-                        <td>@product.Price.ToString("#,##0.##") $</td>
+                        <td>@product.Price.ToString("N0") ₫</td>
                         <td>@product.Stock</td>
                         <td>@product.Category.Name</td>
                         <td>@product.CreatedAt?.ToString("dd/MM/yyyy")</td>

@@ -1,4 +1,6 @@
-﻿using FurnitureProject.Models;
+﻿using FurnitureProject.Helper;
+using FurnitureProject.Models;
+using FurnitureProject.Models.DTO;
 using FurnitureProject.Repositories;
 
 namespace FurnitureProject.Services
@@ -16,11 +18,28 @@ namespace FurnitureProject.Services
 
         public async Task<Promotion?> GetByIdAsync(Guid id) => await _promotionRepo.GetByIdAsync(id);
 
-        public async Task<(bool Success, string? Message)> CreateAsync(Promotion promotion)
+        public async Task<(bool Success, string? Message)> CreateAsync(PromotionDTO dto)
         {
+            var promotion = new Promotion
+            {
+                Id = Guid.NewGuid(),
+                Title = dto.Title,
+                Description = dto.Description,
+                DiscountPercent = dto.DiscountPercent,
+                StartDate = dto.StartDate,
+                EndDate = dto.EndDate,
+                Status = AppConstants.Status.Active,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            promotion.ProductPromotions = dto.SelectedProductIds.Select(productId => new ProductPromotion
+            {
+                ProductId = productId,
+                PromotionId = promotion.Id
+            }).ToList();
+
             try
             {
-                promotion.CreatedAt = DateTime.UtcNow;
                 await _promotionRepo.AddAsync(promotion);
                 return (true, null);
             }
@@ -29,11 +48,26 @@ namespace FurnitureProject.Services
             }
         }
 
-        public async Task<(bool Success, string? Message)> UpdateAsync(Promotion promotion)
-        { 
+        public async Task<(bool Success, string? Message)> UpdateAsync(PromotionDTO dto)
+        {
+            var promotion = new Promotion
+            {
+                Id = dto.Id,
+                Title = dto.Title,
+                Description = dto.Description,
+                StartDate = dto.StartDate,
+                EndDate = dto.EndDate,
+                Status = AppConstants.Status.Active, // Default status
+                CreatedAt = dto.CreatedAt,
+                UpdatedAt = DateTime.UtcNow,
+                ProductPromotions = dto.SelectedProductIds.Select(id => new ProductPromotion
+                {
+                    ProductId = id,
+                    PromotionId = dto.Id
+                }).ToList()
+            };
             try
             {
-                promotion.UpdatedAt = DateTime.UtcNow;
                 await _promotionRepo.UpdateAsync(promotion);
                 return (true, null);
             }

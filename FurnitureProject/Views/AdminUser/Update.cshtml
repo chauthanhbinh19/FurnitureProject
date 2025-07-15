@@ -1,4 +1,4 @@
-﻿@model FurnitureProject.Models.User
+﻿@model FurnitureProject.Models.DTO.UserDTO
 @* @using WebApplication1.Enums *@
 @{
     ViewData["Title"] = "Chỉnh sửa người dùng";
@@ -14,46 +14,46 @@
                 <input type="hidden" asp-for="Id" value="@Model.Id" />
             <div class="d-flex flex-wrap gap-4">
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="FullName"></label>
-                    <input asp-for="FullName" class="form-control" value="@Model.FullName" />
+                    <label asp-for="FullName" class="form-label fw-medium"></label>
+                    <input asp-for="FullName" class="form-control custom-gray-input" value="@Model.FullName" />
                     <span asp-validation-for="FullName" class="text-danger"></span>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="Email"></label>
-                    <input asp-for="Email" class="form-control" value="@Model.Email" />
+                    <label asp-for="Email" class="form-label fw-medium"></label>
+                    <input asp-for="Email" class="form-control custom-gray-input" value="@Model.Email" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="PhoneNumber"></label>
-                    <input asp-for="PhoneNumber" class="form-control" value="@Model.PhoneNumber" />
+                    <label asp-for="PhoneNumber" class="form-label fw-medium"></label>
+                    <input asp-for="PhoneNumber" class="form-control custom-gray-input" value="@Model.PhoneNumber" />
                     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="Username"></label>
-                    <input asp-for="Username" class="form-control" value="@Model.Username" />
+                    <label asp-for="Username" class="form-label fw-medium"></label>
+                    <input asp-for="Username" class="form-control custom-gray-input" value="@Model.Username" />
                     <span asp-validation-for="Username" class="text-danger"></span>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="Password"></label>
-                    <input type="Password" asp-for="Password" class="form-control"/>
+                    <label asp-for="Password" class="form-label fw-medium"></label>
+                    <input type="Password" asp-for="Password" class="form-control custom-gray-input" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                     <small class="form-text text-muted">Leave blank to keep current password.</small>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="Role"></label>
-                    <select asp-for="Role" class="form-control" asp-items="ViewBag.Roles"></select>
+                    <label asp-for="Role" class="form-label fw-medium"></label>
+                    <select asp-for="Role" class="form-control custom-gray-input" asp-items="ViewBag.RoleList"></select>
                     <span asp-validation-for="Role" class="text-danger"></span>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="Status"></label>
-                    <select asp-for="Status" class="form-control" asp-items="ViewBag.Status"></select>
-                    <span asp-validation-for="Role" class="text-danger"></span>
+                    <label asp-for="Status" class="form-label fw-medium"></label>
+                    <select asp-for="Status" class="form-control custom-gray-input" asp-items="ViewBag.StatusList"></select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
                 </div>
             </div>
             <div class="d-flex justify-content-end mt-4">

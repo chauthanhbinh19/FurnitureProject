@@ -22,6 +22,8 @@ namespace FurnitureProject.Controllers
         {
             ViewBag.UserId = HttpContext.Session.GetString("UserID");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
+            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
         }
         private void SetStatusViewBag(string? status = null)
         {
@@ -49,11 +51,12 @@ namespace FurnitureProject.Controllers
         {
             ViewBag.RoleList = new SelectList(
                 new[] {
-                    new { Value = AppConstants.Status.Admin, Text = AppConstants.LogMessages.Admin },
-                    new { Value = AppConstants.Status.User, Text = AppConstants.LogMessages.User }
+                    new { Value = AppConstants.Status.Admin.ToLower(), Text = AppConstants.LogMessages.Admin },
+                    new { Value = AppConstants.Status.User.ToLower(), Text = AppConstants.LogMessages.User }
                 },
                 "Value", "Text", status
             );
+            var a = 1;
         }
 
         [HttpGet("")]
@@ -136,12 +139,33 @@ namespace FurnitureProject.Controllers
         {
             GetUserInformationFromSession();
             SetRoleViewBag();
+            SetStatusViewBag();
             return View();
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(User user)
+        public async Task<IActionResult> Create(UserDTO dto)
         {
+            if (!ModelState.IsValid)
+            {
+                GetUserInformationFromSession();
+                SetRoleViewBag();
+                SetStatusViewBag();
+                return View(dto);
+            }
+
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                FullName = dto.FullName,
+                Username = dto.Username,
+                Email = dto.Email,
+                Password = dto.Password, // Ensure password is hashed in the service
+                Role = dto.Role,
+                Status = dto.Status,
+                CreatedAt = dto.CreatedAt
+            };
+
             try
             {
                 var (success, message) = await _userService.CreateAsync(user);
@@ -169,13 +193,37 @@ namespace FurnitureProject.Controllers
 
             TempData["UserPassword"] = user.Password;
             SetRoleViewBag(user.Role);
+            SetStatusViewBag(user.Status);
             return View(user);
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> Update(User user)
+        public async Task<IActionResult> Update(UserDTO dto)
         {
-            
+            if (!ModelState.IsValid)
+            {
+                GetUserInformationFromSession();
+                var tempUser = await _userService.GetByIdAsync(dto.Id);
+                if (tempUser == null) return NotFound();
+
+                TempData["UserPassword"] = tempUser.Password;
+                SetRoleViewBag(tempUser.Role);
+                SetStatusViewBag(tempUser.Status);
+                return View(dto);
+            }
+
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                FullName = dto.FullName,
+                Username = dto.Username,
+                Email = dto.Email,
+                Password = dto.Password, // Ensure password is hashed in the service
+                Role = dto.Role,
+                Status = dto.Status,
+                CreatedAt = dto.CreatedAt
+            };
+
             try
             {
                 if (user.Password == null)

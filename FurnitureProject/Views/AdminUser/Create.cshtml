@@ -1,4 +1,4 @@
-﻿@model FurnitureProject.Models.User
+﻿@model FurnitureProject.Models.DTO.UserDTO
 @* @using WebApplication1.Enums *@
 @{
     ViewData["Title"] = "Thêm người dùng";
@@ -13,44 +13,44 @@
         <form asp-controller="AdminUser" asp-action="Create" method="post">
             <div class="d-flex flex-wrap gap-4">
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="FullName" class="form-label"></label>
-                    <input asp-for="FullName" class="form-control" />
+                    <label asp-for="FullName" class="form-label fw-medium"></label>
+                    <input asp-for="FullName" class="form-control custom-gray-input" />
                     <span asp-validation-for="FullName" class="text-danger small"></span>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email" class="form-control" />
+                    <label asp-for="Email" class="form-label fw-medium"></label>
+                    <input asp-for="Email" class="form-control custom-gray-input" />
                     <span asp-validation-for="Email" class="text-danger small"></span>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="PhoneNumber" class="form-label"></label>
-                    <input asp-for="PhoneNumber" class="form-control" />
+                    <label asp-for="PhoneNumber" class="form-label fw-medium"></label>
+                    <input asp-for="PhoneNumber" class="form-control custom-gray-input" />
                     <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="Username" class="form-label"></label>
-                    <input asp-for="Username" class="form-control" />
+                    <label asp-for="Username" class="form-label fw-medium"></label>
+                    <input asp-for="Username" class="form-control custom-gray-input" />
                     <span asp-validation-for="Username" class="text-danger small"></span>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input type="password" asp-for="Password" class="form-control" />
+                    <label asp-for="Password" class="form-label fw-medium"></label>
+                    <input type="password" asp-for="Password" class="form-control custom-gray-input" />
                     <span asp-validation-for="Password" class="text-danger small"></span>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="Role" class="form-label"></label>
-                    <select asp-for="Role" class="form-select" asp-items="ViewBag.Roles"></select>
+                    <label asp-for="Role" class="form-label fw-medium"></label>
+                    <select asp-for="Role" class="form-select custom-gray-input" asp-items="ViewBag.RoleList"></select>
                     <span asp-validation-for="Role" class="text-danger small"></span>
                 </div>
 
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="Status" class="form-label"></label>
-                    <select asp-for="Status" class="form-select" asp-items="ViewBag.Status"></select>
+                    <label asp-for="Status" class="form-label fw-medium"></label>
+                    <select asp-for="Status" class="form-select custom-gray-input" asp-items="ViewBag.StatusList"></select>
                     <span asp-validation-for="Status" class="text-danger small"></span>
                 </div>
             </div>

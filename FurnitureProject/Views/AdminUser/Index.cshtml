@@ -89,7 +89,24 @@
                             @* <td>@user.password</td> *@
                             <td>@user.Role</td>
                             <td>@user.CreatedAt?.ToString("dd/MM/yyyy")</td>
-                            <td>@user.Status</td>
+                            <td>
+                                @if (user.Status == "active")
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else if (user.Status == "inactive")
+                                {
+                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                }
+                                else if (user.Status == "banned")
+                                {
+                                    <span class="badge bg-danger">Bị khóa</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@user.Status</span>
+                                }
+                            </td>
                             <td>
                                 <form asp-controller="AdminUser" asp-action="Update" method="get" style="display:inline;">
                                     <input type="hidden" name="id" value="@user.Id" />

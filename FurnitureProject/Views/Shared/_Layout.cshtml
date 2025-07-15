@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true" />
+    <script src="~/ckeditor/ckeditor.js"></script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
@@ -80,7 +82,7 @@
                                 <!-- Đơn hàng -->
                                 <li class="nav-item">
                                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Order" ? "active" : "")"
-                                       asp-area="" asp-controller="Order" asp-action="Index">
+                                       asp-area="" asp-controller="AdminOrder" asp-action="Index">
                                         <i class="bi bi-cart-check me-2"></i>Đơn hàng
                                     </a>
                                 </li>
@@ -104,7 +106,7 @@
                                 <!-- Bài viết -->
                                 <li class="nav-item">
                                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Post" ? "active" : "")"
-                                       asp-area="" asp-controller="Post" asp-action="Index">
+                                       asp-area="" asp-controller="AdminPost" asp-action="Index">
                                         <i class="bi bi-file-earmark-text me-2"></i>Bài viết
                                     </a>
                                 </li>
@@ -164,7 +166,8 @@
                                                         <li><hr class="dropdown-divider"></li>
                                                         <li><form method="post" asp-controller="User" asp-action="Logout">
                                                             <button class="dropdown-item" type="submit">Đăng xuất</button>
-                                                        </form></li>
+                                                        </form>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             }

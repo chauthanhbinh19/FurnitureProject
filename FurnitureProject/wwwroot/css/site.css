@@ -196,3 +196,20 @@ body {
 .col-md-1-5 {
     width: 12.5%;
 }
+.custom-gray-input {
+    background-color: #F5F5F5;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+    .custom-gray-input::placeholder {
+        color: #777;
+    }
+.fw-medium {
+    font-weight: 500;
+}
+
+.fw-semibold {
+    font-weight: 600;
+}
+

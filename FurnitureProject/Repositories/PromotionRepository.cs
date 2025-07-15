@@ -18,6 +18,7 @@ namespace FurnitureProject.Repositories
             return await _context.Promotions
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.ProductPromotions)
+                    .ThenInclude(pp => pp.Product)
                 .ToListAsync();
         }
 
@@ -30,12 +31,16 @@ namespace FurnitureProject.Repositories
 
         public async Task AddAsync(Promotion promotion)
         {
+            promotion.StartDate = DateTime.SpecifyKind(promotion.StartDate, DateTimeKind.Utc);
+            promotion.EndDate = DateTime.SpecifyKind(promotion.EndDate, DateTimeKind.Utc);
             await _context.Promotions.AddAsync(promotion);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Promotion promotion)
         {
+            promotion.StartDate = DateTime.SpecifyKind(promotion.StartDate, DateTimeKind.Utc);
+            promotion.EndDate = DateTime.SpecifyKind(promotion.EndDate, DateTimeKind.Utc);
             _context.Promotions.Update(promotion);
             await _context.SaveChangesAsync();
         }

@@ -7,6 +7,7 @@ using FurnitureProject.Services;
 using FurnitureProject.Services.Email;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,11 @@ builder.Services.AddScoped<IProductTagRepository, ProductTagRepository>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
 builder.Services.AddScoped<IVoucherService, VoucherService>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<IPostCategoryRepository, PostCategoryRepository>();
+builder.Services.AddScoped<IPostCategoryService, PostCategoryService>();
+
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
@@ -53,6 +59,12 @@ builder.Services.AddSession(option =>
      option.Cookie.IsEssential = true;
  });
 
+//var cultureInfo = new System.Globalization.CultureInfo("vi-VN");
+//cultureInfo.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
+
+//CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+//CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -62,6 +74,29 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate(); // Auto create database data if not exist
+    await DataSeeder.SeedAsync(db);
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseSession();
+
+app.UseMiddleware<RoleAuthorizationMiddleware>();
+
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapGet("/test-db", async (AppDbContext db) =>
 {
     try
@@ -74,26 +109,5 @@ app.MapGet("/test-db", async (AppDbContext db) =>
         return $"❌ Error: {ex.Message}";
     }
 });
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate(); // Auto create database data if not exist
-    await DataSeeder.SeedAsync(db);
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseSession();
-app.UseMiddleware<RoleAuthorizationMiddleware>();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

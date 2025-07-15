@@ -1,4 +1,4 @@
-﻿@model FurnitureProject.Models.Tag
+﻿@model FurnitureProject.Models.DTO.TagDTO
 @* @using WebApplication1.Enums *@
 @{
     ViewData["Title"] = "Chỉnh sửa nhãn";
@@ -10,20 +10,20 @@
 </div>
 <div class="title-box">
         <div class="card-body">
-        <form asp-controller="AdminCategory" asp-action="Update" method="post">
+        <form asp-controller="AdminTag" asp-action="Update" method="post">
                 <input type="hidden" asp-for="Id" value="@Model.Id" />
             <div class="d-flex flex-wrap gap-4">
                 <div style="flex: 0 0 30%;">
-                    <label asp-for="Name" class="form-label"></label>
+                    <label asp-for="Name" class="form-label fw-medium"></label>
                     <input asp-for="Name" class="form-control" value="@Model.Name"/>
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
-                @* <div style="flex: 0 0 30%;">
-                    <label asp-for="Description" class="form-label"></label>
-                    <input asp-for="Description" class="form-control" value="@Model.Description"/>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div> *@
+                <div style="flex: 0 0 30%;">
+                    <label asp-for="Status" class="form-label fw-medium"></label>
+                    <select asp-for="Status" class="form-control custom-gray-input" asp-items="ViewBag.StatusList"></select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
             </div>
             <div class="d-flex justify-content-end mt-4">
                 <button type="submit" class="btn-custom bg-conflowerblue px-4">Lưu nhãn</button>

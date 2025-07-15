@@ -22,6 +22,8 @@ namespace FurnitureProject.Controllers
         {
             ViewBag.UserId = HttpContext.Session.GetString("UserID");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
+            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
         }
         private void SetStatusViewBag(string? status = null)
         {
@@ -113,12 +115,28 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Create()
         {
             GetUserInformationFromSession();
+            SetStatusViewBag();
             return View();
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(Tag tag)
+        public async Task<IActionResult> Create(TagDTO dto)
         {
+            if (!ModelState.IsValid)
+            {
+                GetUserInformationFromSession();
+                SetStatusViewBag(dto.Status);
+                return View(dto);
+            }
+
+            var tag = new Tag
+            {
+                Id = Guid.NewGuid(),
+                Name = dto.Name,
+                Status = dto.Status,
+                CreatedAt = dto.CreatedAt
+            };
+
             try
             {
                 var(success, message) = await _tagService.CreateAsync(tag);
@@ -142,12 +160,36 @@ namespace FurnitureProject.Controllers
         {
             GetUserInformationFromSession();
             var tag = await _tagService.GetByIdAsync(id);
-            return View(tag);
+            SetStatusViewBag(tag.Status);
+            var tagDTO = new TagDTO
+            {
+                Id = tag.Id,
+                Name = tag.Name,
+                Status = tag.Status,
+                CreatedAt = tag.CreatedAt
+            };
+            return View(tagDTO);
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> Update(Tag tag)
+        public async Task<IActionResult> Update(TagDTO dto)
         {
+
+            if (!ModelState.IsValid)
+            {
+                GetUserInformationFromSession();
+                SetStatusViewBag(dto.Status);
+                return View(dto);
+            }
+
+            var tag = new Tag
+            {
+                Id = Guid.NewGuid(),
+                Name = dto.Name,
+                Status = dto.Status,
+                CreatedAt = DateTime.UtcNow
+            };
+
             try
             {
                 var(success, message) = await _tagService.UpdateAsync(tag);

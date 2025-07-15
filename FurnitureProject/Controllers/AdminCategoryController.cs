@@ -22,6 +22,8 @@ namespace FurnitureProject.Controllers
         {
             ViewBag.UserId = HttpContext.Session.GetString("UserID");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
+            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
         }
         private void SetStatusViewBag(string? status = null)
         {
@@ -118,6 +120,7 @@ namespace FurnitureProject.Controllers
         {
             var result = await _categoryService.GetByIdAsync(id);
             if (result == null) return NotFound();
+            SetStatusViewBag(result.Status);
             return Ok(result);
         }
 
@@ -125,12 +128,29 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Create()
         {
             GetUserInformationFromSession();
+            SetStatusViewBag();
             return View();
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(Category category)
+        public async Task<IActionResult> Create(CategoryDTO dto)
         {
+            if (!ModelState.IsValid)
+            {
+                GetUserInformationFromSession();
+                SetStatusViewBag(dto.Status);
+                return View(dto);
+            }
+
+            var category = new Category
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                Description = dto.Description,
+                Status = dto.Status,
+                CreatedAt = dto.CreatedAt // Ensure CreatedAt is set if not provided
+            };
+
             try
             {
                 var(success, message) = await _categoryService.CreateAsync(category);
@@ -153,12 +173,38 @@ namespace FurnitureProject.Controllers
         {
             GetUserInformationFromSession();
             var category = await _categoryService.GetByIdAsync(id);
-            return View(category);
+            SetStatusViewBag(category.Status);
+            var categoryDTO = new CategoryDTO
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description,
+                Status = category.Status,
+                CreatedAt = category.CreatedAt,
+            };
+            return View(categoryDTO);
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> Update(Category category)
+        public async Task<IActionResult> Update(CategoryDTO dto)
         {
+            if (!ModelState.IsValid)
+            {
+                GetUserInformationFromSession();
+                var tempCategory = await _categoryService.GetByIdAsync(dto.Id);
+                SetStatusViewBag(tempCategory.Status);
+                return View(dto);
+            }
+
+            var category = new Category
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                Description = dto.Description,
+                Status = dto.Status,
+                CreatedAt = dto.CreatedAt ?? DateTime.UtcNow // Ensure CreatedAt is set if not provided
+            };
+
             try
             {
                 var(success, message) = await _categoryService.UpdateAsync(category);

@@ -76,7 +76,24 @@
                             <td>@category.Name</td>
                             <td>@category.Description</td>
                             <td>@category.CreatedAt?.ToString("dd/MM/yyyy")</td>
-                            <td>@category.Status</td>
+                            <td>
+                                @if (category.Status == "active")
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else if (category.Status == "inactive")
+                                {
+                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                }
+                                else if (category.Status == "banned")
+                                {
+                                    <span class="badge bg-danger">Bị khóa</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@category.Status</span>
+                                }
+                            </td>
                             <td>
                                 <form asp-controller="AdminCategory" asp-action="Update" method="get" style="display:inline;">
                                     <input type="hidden" name="id" value="@category.Id" />

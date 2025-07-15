@@ -29,6 +29,7 @@ namespace FurnitureProject.Services
         {
             try
             {
+                tag.CreatedAt = DateTime.UtcNow;
                 await _tagRepo.CreateAsync(tag);
                 return (true, null);
             }
@@ -41,6 +42,7 @@ namespace FurnitureProject.Services
         {
             try
             {
+                tag.UpdatedAt = DateTime.UtcNow;
                 await _tagRepo.UpdateAsync(tag);
                 return (true, null);
             }

@@ -141,6 +141,131 @@ namespace FurnitureProject.Migrations
                     b.ToTable("order_item", (string)null);
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.Post", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("MetaDescription")
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.Property<string>("MetaKeywords")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("MetaTitle")
+                        .HasMaxLength(70)
+                        .HasColumnType("character varying(70)");
+
+                    b.Property<DateTime>("PublishedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ShortDescription")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("published");
+
+                    b.Property<string>("ThumbnailUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("posts", (string)null);
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.PostCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("post_categories", (string)null);
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.PostCategoryLink", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PostCategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("PostId", "PostCategoryId");
+
+                    b.HasIndex("PostCategoryId");
+
+                    b.ToTable("post_category_links", (string)null);
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.Product", b =>
                 {
                     b.Property<Guid>("Id")
@@ -507,6 +632,35 @@ namespace FurnitureProject.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.Post", b =>
+                {
+                    b.HasOne("FurnitureProject.Models.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.PostCategoryLink", b =>
+                {
+                    b.HasOne("FurnitureProject.Models.PostCategory", "PostCategory")
+                        .WithMany("PostCategoryLinks")
+                        .HasForeignKey("PostCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FurnitureProject.Models.Post", "Post")
+                        .WithMany("PostCategoryLinks")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("PostCategory");
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.Product", b =>
                 {
                     b.HasOne("FurnitureProject.Models.Category", "Category")
@@ -594,6 +748,16 @@ namespace FurnitureProject.Migrations
             modelBuilder.Entity("FurnitureProject.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.Post", b =>
+                {
+                    b.Navigation("PostCategoryLinks");
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.PostCategory", b =>
+                {
+                    b.Navigation("PostCategoryLinks");
                 });
 
             modelBuilder.Entity("FurnitureProject.Models.Product", b =>
