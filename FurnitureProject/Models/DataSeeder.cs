@@ -99,13 +99,13 @@ namespace FurnitureProject.Models
                     new ProductImage
                     {
                         ProductId = products[0].Id,
-                        ImageUrl = "https://res.cloudinary.com/dewf4msbe/image/upload/v1751963408/No_Image_Available_arromx.jpg",
+                        ImageUrl = "",
                         CreatedAt = DateTime.UtcNow
                     },
                     new ProductImage
                     {
                         ProductId = products[1].Id,
-                        ImageUrl = "https://res.cloudinary.com/dewf4msbe/image/upload/v1751963408/No_Image_Available_arromx.jpg",
+                        ImageUrl = "",
                         CreatedAt = DateTime.UtcNow
                     }
                 );

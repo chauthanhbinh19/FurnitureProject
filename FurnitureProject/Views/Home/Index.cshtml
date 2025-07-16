@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FurnitureProject.Models.Product>
+﻿@model FurnitureProject.Models.ViewModels.ProductViewModel
 @{
     ViewData["Title"] = "Trang chủ";
 }
@@ -66,24 +66,42 @@
 
     </section>
 
-    <section>
+    <section class="mb-5 mt-5">
         <h3 class="mb-4 text-center">Sản phẩm nổi bật</h3>
-        @* <div class="row row-cols-1 row-cols-md-4 g-4">
-            @foreach (var product in Model)
+
+        <div class="d-flex flex-wrap justify-content-start gap-4">
+            @foreach (var product in Model.Products)
             {
-                <div class="col">
-                    @Html.Partial("Component/Product/_ProductBox", product)
+                <div class="product-card-wrapper">
+                    <div class="card shadow-sm rounded-3 border-0 h-100 p-2" style="width: 240px; min-width: 220px;">
+                        <img src="@(product.ImageUrls != null && product.ImageUrls.Count > 0
+                                                                 ? product.ImageUrls[0]
+                                                                 : Url.Content("~/images/No_Image_Available.jpg"))"
+                                                                 class="card-img-top rounded-top" style="height: 200px; object-fit: cover;" alt="@product.Name">
+                        <div class="card-body text-center">
+                            <h6 class="card-title text-truncate" title="@product.Name">@product.Name</h6>
+                            <p class="card-text fw-bold text-danger">@product.Price.ToString("N0") ₫</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 text-center">
+                        <form asp-controller="Product" asp-action="ProductDetail" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@product.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill" title="Chỉnh sửa">
+                                Xem chi tiết
+                            </button>
+                        </form>
+                        </div>
+                    </div>
                 </div>
             }
-        </div> *@
+        </div>
     </section>
     
     <section class="mb-5 mt-5">
         <h3 class="text-center mb-4">Khám phá theo phong cách</h3>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="d-flex flex-nowrap justify-content-between gap-3 overflow-auto py-3">
             <div class="col">
                 <div class="card h-100 shadow-sm">
-                    <img src="~/images/style-modern.jpg" class="card-img-top" alt="Hiện đại">
+                    <img src="~/images/style-modern.jpg" class="card-img-top" alt="Hiện đại" style="height: 300px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title">Phong cách hiện đại</h5>
                         <p class="card-text">Thiết kế tối giản, tinh tế phù hợp với không gian sống hiện đại.</p>
@@ -92,7 +110,7 @@
             </div>
             <div class="col">
                 <div class="card h-100 shadow-sm">
-                    <img src="~/images/style-classic.jpg" class="card-img-top" alt="Cổ điển">
+                    <img src="~/images/style-classic.jpg" class="card-img-top" alt="Cổ điển" style="height: 300px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title">Cổ điển sang trọng</h5>
                         <p class="card-text">Đường nét tinh xảo và chất liệu cao cấp thể hiện đẳng cấp sống.</p>
@@ -101,7 +119,7 @@
             </div>
             <div class="col">
                 <div class="card h-100 shadow-sm">
-                    <img src="~/images/style-boho.jpg" class="card-img-top" alt="Bohemian">
+                    <img src="~/images/style-boho.jpg" class="card-img-top" alt="Bohemian" style="height: 300px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title">Bohemian phóng khoáng</h5>
                         <p class="card-text">Sắc màu rực rỡ và cá tính cho những ai yêu nghệ thuật tự do.</p>
@@ -131,6 +149,7 @@
             </div>
         </div>
     </section>
+    
     <section class="mb-5 mt-5">
         <h3 class="text-center mb-4">Khách hàng nói gì về chúng tôi</h3>
         <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">

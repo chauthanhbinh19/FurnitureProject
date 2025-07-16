@@ -1,0 +1,79 @@
+﻿@model FurnitureProject.Models.ViewModels.ProductViewModel
+@{
+    ViewData["Title"] = "Sản phẩm";
+}
+@{
+    ViewBag.Title = "Tìm kiếm sản phẩm";
+    // string keyword = ViewBag.Keyword as string;
+    int totalPages = (int)Math.Ceiling((double)ViewBag.TotalProducts / ViewBag.PageSize);
+    int currentPage = ViewBag.CurrentPage;
+}
+@{
+    int maxPagesToShow = 8;
+    int startPage = Math.Max(1, currentPage - maxPagesToShow / 2);
+    int endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+    if (endPage - startPage + 1 < maxPagesToShow)
+    {
+        startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+    }
+}
+<div class="container">
+    <section class="mb-5 mt-5">
+        <h3 class="mb-4 text-center">Sản phẩm nổi bật</h3>
+
+        <div class="d-flex flex-wrap justify-content-start gap-4">
+            @foreach (var product in Model.Products)
+            {
+                <div class="product-card-wrapper">
+                    <div class="card shadow-sm rounded-3 border-0 h-100 p-2" style="width: 240px; min-width: 220px;">
+                        <img src="@(product.ImageUrls != null && product.ImageUrls.Count > 0
+                                                                                              ? product.ImageUrls[0]
+                                                                                              : Url.Content("~/images/No_Image_Available.jpg"))"
+                         class="card-img-top rounded-top" style="height: 200px; object-fit: cover;" alt="@product.Name">
+                    <div class="card-body text-center">
+                        <h6 class="card-title text-truncate" title="@product.Name">@product.Name</h6>
+                        <p class="card-text fw-bold text-danger">@product.Price.ToString("N0") ₫</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 text-center">
+                        <form asp-controller="Product" asp-action="ProductDetail" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@product.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill" title="Chỉnh sửa">
+                                Xem chi tiết
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+                        }
+        </div>
+    </section>
+</div>
+<div class="pagination-box">
+    <nav>
+        <ul class="pagination justify-content-center">
+
+            <!-- Previous button -->
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1 })" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                </li>
+            }
+
+            <!-- Next button -->
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1 })" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+</div>

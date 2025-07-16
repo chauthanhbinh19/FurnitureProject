@@ -12,10 +12,16 @@ namespace FurnitureProject.Controllers
             ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
             ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
         }
+        private void SetViewBagForLayout()
+        {
+            ViewBag.UseLayout = true;
+            ViewBag.LayoutType = "admin";
+        }
         [HttpGet("")]
         public IActionResult Index()
         {
             GetUserInformationFromSession();
+            SetViewBagForLayout();
             return View();
         }
     }

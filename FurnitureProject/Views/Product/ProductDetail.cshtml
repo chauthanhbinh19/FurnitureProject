@@ -1,22 +1,104 @@
-﻿@{
+﻿@model FurnitureProject.Models.DTO.ProductDTO;
+@{
     ViewData["Title"] = "Chi tiết sản phẩm";
 }
 
-<div class="container py-4">
-    <div class="row">
-        <div class="col-md-6">
-            <img src="~/images/sample.jpg" class="img-fluid" />
-        </div>
-        <div class="col-md-6">
-            <h2>Tên sản phẩm</h2>
-            <p>Mã SP: SP001</p>
-            <h4 class="text-danger">1.000.000₫</h4>
-            <p>Mô tả sản phẩm ở đây...</p>
+<div class="container">
+    <div class="row g-4">
+        <!-- Hình ảnh -->
+        <div class="col-md-6 text-center px-4">
+            <!-- Ảnh chính -->
+            <img id="mainImage"
+                 src="@(Model.ImageUrls?.FirstOrDefault() ?? Url.Content("~/images/No_Image_Available.jpg"))"
+                 class="img-fluid rounded-4 shadow-sm mb-3"
+                 style="max-height: 500px; object-fit: cover;" alt="@Model.Name" />
 
-            <form method="post" action="/cart/add">
-                <input type="hidden" name="productId" value="1" />
-                <button type="submit" class="btn btn-success">Thêm vào giỏ</button>
+            <!-- Thumbnail -->
+            @if (Model.ImageUrls != null && Model.ImageUrls.Count > 1)
+            {
+                <div class="d-flex flex-wrap justify-content-start gap-2 mt-2 mx-5">
+                    @foreach (var imgUrl in Model.ImageUrls)
+                    {
+                        var isActive = imgUrl == Model.ImageUrls.FirstOrDefault() ? "active-thumb" : "";
+                        <div class="product-card-wrapper">
+                            <img src="@imgUrl"
+                                 class="img-thumbnail thumbnail-img @isActive"
+                                 style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
+                                 onclick="updateMainImage(this)" />
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+
+        <!-- Thông tin sản phẩm -->
+        <div class="col-md-6">
+            <h2 class="fw-bold">@Model.Name</h2>
+            <p class="text-danger fs-4 fw-semibold">@Model.Price.ToString("N0") ₫</p>
+
+            <!-- Danh mục -->
+            <p>
+                <strong>Danh mục:</strong>
+                <a href="/Product/ByCategory/@Model.Category?.Id" class="text-decoration-none text-primary">
+                    @Model.Category?.Name
+                </a>
+            </p>
+
+            <!-- Tag -->
+            @if (Model.TagIds != null && Model.TagIds.Any())
+            {
+                <p>
+                    <strong>Nhãn</strong>
+                    @foreach (var tagId in Model.TagIds)
+                    {
+                        <span class="badge bg-primary me-1">
+                            @(ViewBag.TagMap[tagId])
+                        </span>
+                    }
+                </p>
+            }
+
+            <!-- Mô tả -->
+            <p class="text-muted mt-3">@Model.Description</p>
+
+            <!-- Tùy chọn và nút -->
+            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="mt-4">
+                <input type="hidden" name="productId" value="@Model.Id" />
+
+                <div class="d-flex align-items-center mb-3">
+                    <label for="quantity" class="form-label me-3">Số lượng:</label>
+                    <input type="number" name="quantity" id="quantity" min="1" value="1" class="form-control w-auto" style="width: 80px;" />
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-outline-primary px-4 rounded-pill">
+                        <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ hàng
+                    </button>
+
+                    <a href="/Order/BuyNow?productId=@Model.Id" class="btn btn-danger px-4 rounded-pill">
+                        <i class="bi bi-lightning me-1"></i> Mua ngay
+                    </a>
+                </div>
             </form>
         </div>
     </div>
 </div>
+@section Scripts {
+    <script>
+            function updateMainImage(thumbnail) {
+            const mainImage = document.getElementById('mainImage');
+            if (mainImage && thumbnail?.src) {
+                mainImage.src = thumbnail.src;
+            }
+
+            // Remove active class from all thumbnails
+            document.querySelectorAll('.thumbnail-img').forEach(img => {
+                img.classList.remove('active-thumb');
+            });
+
+            // Add active class to clicked thumbnail
+            thumbnail.classList.add('active-thumb');
+        }
+    </script>
+}

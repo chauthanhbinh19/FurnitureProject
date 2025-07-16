@@ -25,6 +25,11 @@ namespace FurnitureProject.Controllers
             ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
             ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
         }
+        private void SetViewBagForLayout()
+        {
+            ViewBag.UseLayout = true;
+            ViewBag.LayoutType = "admin";
+        }
         private void SetStatusViewBag(string? status = null)
         {
             ViewBag.StatusList = new SelectList(
@@ -51,6 +56,7 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Index(TagFilterDTO filter, int page = 1)
         {
             GetUserInformationFromSession();
+            SetViewBagForLayout();
 
             int pageSize = 10;
             var tags = await _tagService.GetAllAsync();
@@ -115,6 +121,7 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Create()
         {
             GetUserInformationFromSession();
+            SetViewBagForLayout();
             SetStatusViewBag();
             return View();
         }
@@ -159,6 +166,7 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Update(Guid id)
         {
             GetUserInformationFromSession();
+            SetViewBagForLayout();
             var tag = await _tagService.GetByIdAsync(id);
             SetStatusViewBag(tag.Status);
             var tagDTO = new TagDTO

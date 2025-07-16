@@ -3,7 +3,7 @@
     ViewData["Title"] = "Sản phẩm";
 }
 @{
-    ViewBag.Title = "Search Products";
+    ViewBag.Title = "Tìm kiếm sản phẩm";
     string keyword = ViewBag.Keyword as string;
     int totalPages = (int)Math.Ceiling((double)ViewBag.TotalProducts / ViewBag.PageSize);
     int currentPage = ViewBag.CurrentPage;

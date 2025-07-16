@@ -25,6 +25,11 @@ namespace FurnitureProject.Controllers
             ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
             ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
         }
+        private void SetViewBagForLayout()
+        {
+            ViewBag.UseLayout = true;
+            ViewBag.LayoutType = "admin";
+        }
         private void SetStatusViewBag(string? status = null)
         {
             ViewBag.StatusList = new SelectList(
@@ -63,6 +68,7 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Index(UserFilterDTO filter, int page = 1)
         {
             GetUserInformationFromSession();
+            SetViewBagForLayout();
 
             int pageSize = 10;
             var users = await _userService.GetAllAsync();
@@ -129,6 +135,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
+            GetUserInformationFromSession();
+            SetViewBagForLayout();
             var user = await _userService.GetByIdAsync(id);
             if (user == null) return NotFound();
             return Ok(user);
@@ -138,6 +146,7 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Create()
         {
             GetUserInformationFromSession();
+            SetViewBagForLayout();
             SetRoleViewBag();
             SetStatusViewBag();
             return View();
@@ -190,6 +199,7 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Update(Guid id)
         {
             GetUserInformationFromSession();
+            SetViewBagForLayout();
             var user = await _userService.GetByIdAsync(id);
             if (user == null) return NotFound();
 

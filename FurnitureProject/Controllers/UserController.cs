@@ -21,9 +21,15 @@ namespace FurnitureProject.Controllers
             _userService = userService;
             _emailSender = emailSender;
         }
+        private void SetViewBagForLayout()
+        {
+            ViewBag.UseLayout = false;
+            ViewBag.LayoutType = "user";
+        }
         [HttpGet("sign-in")]
         public IActionResult SignIn()
         {
+            SetViewBagForLayout();
             return View();
         }
         [HttpPost("sign-in")]
@@ -79,6 +85,7 @@ namespace FurnitureProject.Controllers
 
         public IActionResult SignUp()
         {
+            SetViewBagForLayout();
             return View();
         }
         [HttpPost("sign-up")]
@@ -121,6 +128,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("verify-code")]
         public IActionResult VerifyCode()
         {
+            SetViewBagForLayout();
             return View(new EmailVerificationViewModel
             {
                 Email = TempData["PendingEmail"]?.ToString()
@@ -171,6 +179,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("forgot-password")]
         public async Task<IActionResult> ForgotPassword()
         {
+            SetViewBagForLayout();
             return View();
         }
 
@@ -199,6 +208,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("verify-code-forgot-password")]
         public IActionResult VerifyCodeForgotPassword()
         {
+            SetViewBagForLayout();
             string? email = TempData["VerificationEmail"]?.ToString();
             ViewBag.Email = email;
             TempData["VerificationEmail"] = email;
@@ -229,6 +239,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("reset-password")]
         public IActionResult ResetPassword()
         {
+            SetViewBagForLayout();
             string? email = TempData["VerificationEmail"]?.ToString();
             ViewBag.Email = email;
             return View();

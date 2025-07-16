@@ -41,7 +41,10 @@ namespace FurnitureProject.Middleware
                 "/support/terms",
                 "/error/not-found",
                 "/error/server-error",
-                "/error/maintenance"
+                "/error/maintenance",
+                "product/category",
+                "product/detail",
+                "product/all",
             };
 
             if (bypassPaths.Contains(path, StringComparer.OrdinalIgnoreCase))
