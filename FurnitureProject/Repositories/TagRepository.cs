@@ -9,12 +9,17 @@ namespace FurnitureProject.Repositories
         private readonly AppDbContext _context;
         public TagRepository(AppDbContext context) => _context = context;
 
-        public async Task<IEnumerable<Tag>> GetAllAsync() => await _context.Tags.ToListAsync();
-
-        public async Task<Tag>? GetByIdAsync(Guid id)
+        public async Task<IEnumerable<Tag>> GetAllAsync()
         {
             return await _context.Tags
-                //.Include(c => c.Products)
+                .Where(p => !p.IsDeleted)
+                .ToListAsync();
+        }
+
+        public async Task<Tag?> GetByIdAsync(Guid id)
+        {
+            return await _context.Tags
+                .Include(c => c.ProductTags)
                 .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
         }
 
@@ -35,7 +40,8 @@ namespace FurnitureProject.Repositories
             var tag = await _context.Tags.FindAsync(id);
             if (tag != null)
             {
-                _context.Tags.Remove(tag);
+                tag.IsDeleted = true;
+                _context.Tags.Update(tag);
                 await _context.SaveChangesAsync();
             }
         }

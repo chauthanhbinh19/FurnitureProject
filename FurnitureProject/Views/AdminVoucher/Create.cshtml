@@ -1,11 +1,11 @@
-﻿@model FurnitureProject.Models.Voucher
+﻿@model FurnitureProject.Models.DTO.VoucherDTO
 
 @{
     ViewBag.Title = "Tạo mã giảm giá";
 }
 <div class="title-box">
     <div class="text-box">
-        <span class="title">Tạo mã giảm giá</span>
+        <span class="title ms-2">Tạo mã giảm giá</span>
     </div>
 </div>
 <div class="title-box">
@@ -19,12 +19,12 @@
                 </div>
                 <div class="col-md-3">
                     <label asp-for="DiscountPercent" class="form-label fw-semibold">Giảm giá (%)</label>
-                    <input asp-for="DiscountPercent" type="number" min="0" max="100" class="form-control" placeholder="0 - 100" />
+                    <input asp-for="DiscountPercent" type="number" min="0" max="100" class="form-control custom-gray-input" placeholder="0 - 100" />
                     <span asp-validation-for="DiscountPercent" class="text-danger small"></span>
                 </div>
                 <div class="col-md-3">
                     <label asp-for="DiscountAmount" class="form-label fw-semibold">Số tiền giảm</label>
-                    <input asp-for="DiscountAmount" type="number" step="1000" min="0" class="form-control" placeholder="VND" />
+                    <input asp-for="DiscountAmount" type="number" step="1000" min="0" class="form-control custom-gray-input" placeholder="VND" />
                     <span asp-validation-for="DiscountAmount" class="text-danger small"></span>
                 </div>
             </div>
@@ -32,22 +32,80 @@
             <div class="row mb-3 d-flex flex-wrap gap-4">
                 <div class="col-md-3">
                     <label asp-for="ExpiryDate" class="form-label fw-semibold">Ngày hết hạn</label>
-                    <input asp-for="ExpiryDate" type="date" class="form-control" />
+                    <input asp-for="ExpiryDate" type="date" class="form-control custom-gray-input" />
                     <span asp-validation-for="ExpiryDate" class="text-danger small"></span>
                 </div>
                 <div class="col-md-3">
                     <label asp-for="UsageLimit" class="form-label fw-semibold">Số lượt sử dụng</label>
-                    <input asp-for="UsageLimit" type="number" class="form-control" min="1" />
+                    <input asp-for="UsageLimit" type="number" class="form-control custom-gray-input" min="1" />
                     <span asp-validation-for="UsageLimit" class="text-danger small"></span>
                 </div>
                 <div class="col-md-3">
                     <label asp-for="Status" class="form-label fw-semibold">Trạng thái</label>
-                    <select asp-for="Status" class="form-select">
-                        <option value="active">Hoạt động</option>
-                        <option value="inactive">Tạm ngưng</option>
+                    <select asp-for="Status" class="form-select custom-gray-input" asp-items="ViewBag.StatusList">
                     </select>
                     <span asp-validation-for="Status" class="text-danger small"></span>
                 </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-medium">Áp dụng cho sản phẩm</label>
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th></th>
+                            <th>Hình ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model.Products)
+                        {
+                            <tr class="@(product.VoucherStatus == "In Voucher" ? "table-secondary" : "")"
+                                title="@(product.VoucherStatus == "In Voucher" ? "This product is currently in a voucher and cannot be selected." : "")">
+                                <td>
+                                    <input class="form-check-input" type="checkbox"
+                                           name="SelectedProductIds"
+                                           value="@product.Id"
+                                           id="product_@product.Id"
+                                           @(Model.SelectedProductIds.Contains(product.Id) ? "checked" : "")
+                                           @(product.VoucherStatus == "In Voucher" ? "disabled" : "")
+                                           title="@(product.VoucherStatus == "In Voucher" ? "This product is in a voucher" : "")" />
+                                </td>
+                                <td>
+                                    <img src="@(product.ImageUrls != null && product.ImageUrls.Count > 0
+                                                                                          ? product.ImageUrls[0]
+                                                                                          : Url.Content("~/images/No_Image_Available.jpg"))"
+                                         alt="Product image"
+                                         style="width: 120px; height: 90px; border-radius:5px;" />
+                                </td>
+                                <td>
+                                    <label class="form-check-label" for="product_@product.Id">
+                                        @product.Name
+                                    </label>
+                                </td>
+                                <td>
+                                    @product.Price.ToString("N0") ₫
+                                </td>
+                                <td>
+                                    @if (product.VoucherStatus == "In Voucher")
+                                    {
+                                        <span class="badge bg-danger">In Voucher</span>
+                                    }
+                                    else if (product.VoucherStatus == "Available")
+                                    {
+                                        <span class="badge bg-success">Available</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@product.VoucherStatus</span> <!-- fallback -->
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
 
             <div class="mt-4 d-flex justify-content-end">

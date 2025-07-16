@@ -146,6 +146,7 @@ namespace FurnitureProject.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(UserDTO dto)
         {
+            ModelState.Remove("ConfirmPassword");
             if (!ModelState.IsValid)
             {
                 GetUserInformationFromSession();
@@ -160,6 +161,7 @@ namespace FurnitureProject.Controllers
                 FullName = dto.FullName,
                 Username = dto.Username,
                 Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
                 Password = dto.Password, // Ensure password is hashed in the service
                 Role = dto.Role,
                 Status = dto.Status,
@@ -194,7 +196,20 @@ namespace FurnitureProject.Controllers
             TempData["UserPassword"] = user.Password;
             SetRoleViewBag(user.Role);
             SetStatusViewBag(user.Status);
-            return View(user);
+
+            var userDTO = new UserDTO
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Username = user.Username,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Password = user.Password, // Ensure password is hashed in the service
+                Role = user.Role,
+                Status = user.Status,
+                CreatedAt = user.CreatedAt
+            };
+            return View(userDTO);
         }
 
         [HttpPost("update")]
@@ -218,6 +233,7 @@ namespace FurnitureProject.Controllers
                 FullName = dto.FullName,
                 Username = dto.Username,
                 Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
                 Password = dto.Password, // Ensure password is hashed in the service
                 Role = dto.Role,
                 Status = dto.Status,
@@ -247,7 +263,7 @@ namespace FurnitureProject.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpPost("delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try

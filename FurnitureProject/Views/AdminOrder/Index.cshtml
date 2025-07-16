@@ -1,5 +1,176 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model FurnitureProject.Models.ViewModels.OrderViewModel
 @{
+    ViewData["Title"] = "Danh sách đơn hàng";
+}
+@{
+    ViewBag.Title = "Tìm kiếm đơn hàng";
+    string keyword = ViewBag.Keyword as string;
+    int totalPages = (int)Math.Ceiling((double)ViewBag.TotalOrders / ViewBag.PageSize);
+    int currentPage = ViewBag.CurrentPage;
+}
+@{
+    int maxPagesToShow = 8;
+    int startPage = Math.Max(1, currentPage - maxPagesToShow / 2);
+    int endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+    if (endPage - startPage + 1 < maxPagesToShow)
+    {
+        startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+    }
+}
+
+<div class="title-box">
+    <div class="text-box">
+        <span class="title ms-2">Danh sách đơn hàng</span>
+    </div>
+    <div>
+        <a asp-area="" asp-controller="AdminOrder" asp-action="Create" class="link-custom btn-custom bg-conflowerblue">Thêm khuyến mãi</a>
+    </div>
+</div>
+<div class="table-responsive title-box">
+    <div class="container">
+        <form method="get" asp-controller="AdminOrder" asp-action="Index" class="link-custom">
+            <div class="row mb-3 justify-content-around">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="text" name="search" value="@keyword" class="form-control" placeholder="Nhập từ khóa...">
+                        <button type="submit" class="btn-custom bg-conflowerblue">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+                <!-- Sort by Create Time -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.SortOrder" name="Filter.SortOrder" class="form-select" asp-items="@ViewBag.SortOptions">
+                        <option value="">Sắp xếp</option>
+                    </select>
+                </div>
+                <!-- Filter by Status -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.FilterByStatus" name="Filter.FilterByStatus" class="form-select" asp-items="@ViewBag.StatusList">
+                        <option value="">Trạng thái</option>
+                    </select>
+                </div>
+                <!-- Optional: Nút Reset -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <a href="/admin/order/" class="btn btn-secondary w-100">Reset bộ lọc</a>
+                </div>
+            </div>
+        </form>
+        <div class="row mb-3">
+            <table class="table table-hover align-middle">
+                <thead class="table-background">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Khách hàng</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Ngày tạo</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col">Tổng tiền</th>
+                        <th scope="col">Số lượng</th>
+                        <th scope="col">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td>@order.Id.ToString().Substring(0, 16)</td>
+                            <td>@order.User.FullName</td>
+                            <td>@order.User.Email</td>
+                            <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (order.Status == "active")
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else if (order.Status == "inactive")
+                                {
+                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                }
+                                else if (order.Status == "banned")
+                                {
+                                    <span class="badge bg-danger">Bị khóa</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@order.Status</span>
+                                }
+                            </td>
+                            <td>@order.TotalAmount.ToString("N0") ₫</td>
+                            <td>@order.TotalItems</td>
+                            <td>
+                                <form asp-controller="AdminOrder" asp-action="Update" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </form>
+                                <form asp-controller="AdminOrder" asp-action="Delete" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger delete-tag" data-id="@order.Id" title="Xoá">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="pagination-box">
+    <nav>
+        <ul class="pagination justify-content-center">
+
+            <!-- Previous button -->
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1 })" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                </li>
+            }
+
+            <!-- Next button -->
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1 })" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+</div>
+
+@section Scripts {
+    <script>
+        // Hàm toast đơn giản
+                    function showToast(type, message) {
+            let toastId = 'toast-' + type;
+            let existing = $('#' + toastId);
+
+            if (existing.length) existing.remove();
+
+            let toast = `
+                <div id="${toastId}" class="toast show text-white ${toastId}"
+                     style="position: fixed; top: 20px; right: 20px; z-index: 9999">
+                    ${message}
+                </div>`;
+            $('body').append(toast);
+
+            setTimeout(function () {
+                $('#' + toastId).remove();
+            }, 2000); // ✅ thời gian hiển thị: 2.5 giây
+        }
+
+        });
+    </script>
 }

@@ -12,10 +12,12 @@ namespace FurnitureProject.Controllers
     public class AdminVoucherController : Controller
     {
         private readonly IVoucherService _voucherService;
+        private readonly IProductService _productService;
 
-        public AdminVoucherController(IVoucherService voucherService)
+        public AdminVoucherController(IVoucherService voucherService, IProductService productService)
         {
             _voucherService = voucherService;
+            _productService = productService;
         }
         private void GetUserInformationFromSession()
         {
@@ -130,13 +132,81 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Create()
         {
             GetUserInformationFromSession();
+            SetStatusViewBag();
+            var products = await _productService.GetAllAsync();
+            var vouchers = await _voucherService.GetAllAsync();
+            var voucherDto = new VoucherDTO
+            {
+                Products = products.Select(product =>
+                {
+                    var isInActiveVoucher = vouchers.Any(p =>
+                        p.ExpiryDate >= DateTime.Today &&
+                        p.ProductVouchers.Any(pp => pp.ProductId == product.Id));
 
-            return View();
+                    return new ProductDTO
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Stock = product.Stock,
+                        Status = product.Status,
+                        //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                        CreatedAt = product.CreatedAt,
+                        ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                        TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                        VoucherStatus = isInActiveVoucher ? "In Voucher" : "Available"
+                    };
+                }).ToList()
+            };
+            return View(voucherDto);
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(Voucher dto)
+        public async Task<IActionResult> Create(VoucherDTO dto)
         {
+            if (dto.ExpiryDate == default)
+            {
+                ModelState.AddModelError(nameof(dto.ExpiryDate), AppConstants.LogMessages.VoucherExpiryDateCannotBeEmpty);
+            }
+            if (dto.ExpiryDate.Date == DateTime.Today)
+            {
+                ModelState.AddModelError(nameof(dto.ExpiryDate), AppConstants.LogMessages.VoucherExpiryDateCannotBeInPast);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                GetUserInformationFromSession();
+                SetStatusViewBag();
+                var products = await _productService.GetAllAsync();
+                var vouchers = await _voucherService.GetAllAsync();
+                var voucherDTO = new VoucherDTO
+                {
+                    Products = products.Select(product =>
+                    {
+                        var isInActiveVoucher = vouchers.Any(p =>
+                            p.ExpiryDate >= DateTime.Today &&
+                            p.ProductVouchers.Any(pp => pp.ProductId == product.Id));
+
+                        return new ProductDTO
+                        {
+                            Id = product.Id,
+                            Name = product.Name,
+                            Description = product.Description,
+                            Price = product.Price,
+                            Stock = product.Stock,
+                            Status = product.Status,
+                            //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                            CreatedAt = product.CreatedAt,
+                            ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                            TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                            VoucherStatus = isInActiveVoucher ? "In Voucher" : "Available"
+                        };
+                    }).ToList()
+                };
+                return View(voucherDTO);
+            }
+
             try
             {
                 var (success, message) = await _voucherService.CreateAsync(dto);
@@ -160,28 +230,107 @@ namespace FurnitureProject.Controllers
         public async Task<IActionResult> Update(Guid id)
         {
             GetUserInformationFromSession();
-            var Voucher = await _voucherService.GetByIdAsync(id);
+            var voucher = await _voucherService.GetByIdAsync(id);
+            var vouchers = await _voucherService.GetAllAsync();
+            var products = await _productService.GetAllAsync();
 
-            var productDTO = new VoucherDTO
+            var voucherDTO = new VoucherDTO
             {
-                Id = Voucher.Id,
-                Code = Voucher.Code,
-                DiscountPercent = Voucher.DiscountPercent,
-                DiscountAmount = Voucher.DiscountAmount,
-                ExpiryDate = Voucher.ExpiryDate,
-                UsageLimit = Voucher.UsageLimit,
-                TimeUsed = Voucher.TimeUsed,
-                IsValid = Voucher.IsValid,
-                Status = Voucher.Status,
-                CreatedAt = Voucher.CreatedAt,
-            };
+                Id = voucher.Id,
+                Code = voucher.Code,
+                DiscountPercent = voucher.DiscountPercent,
+                DiscountAmount = voucher.DiscountAmount,
+                ExpiryDate = voucher.ExpiryDate,
+                UsageLimit = voucher.UsageLimit,
+                TimeUsed = voucher.TimeUsed,
+                IsValid = voucher.IsValid,
+                Status = voucher.Status,
+                CreatedAt = voucher.CreatedAt,
+                Products = products.Select(product =>
+                {
+                    var isInActiveVoucher = vouchers.Any(p =>
+                        p.ExpiryDate >= DateTime.Today &&
+                        p.ProductVouchers.Any(pp => pp.ProductId == product.Id));
 
-            return View(productDTO);
+                    return new ProductDTO
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Stock = product.Stock,
+                        Status = product.Status,
+                        //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                        CreatedAt = product.CreatedAt,
+                        ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                        TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                        VoucherStatus = isInActiveVoucher ? "In Voucher" : "Available"
+                    };
+                }).ToList(),
+                SelectedProductIds = voucher.ProductVouchers?.Select(pp => pp.ProductId).ToList() ?? new List<Guid>()
+            };
+            SetStatusViewBag(voucher.Status);
+
+            return View(voucherDTO);
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> Update(Voucher dto)
+        public async Task<IActionResult> Update(VoucherDTO dto)
         {
+            if (dto.ExpiryDate == default)
+            {
+                ModelState.AddModelError(nameof(dto.ExpiryDate), AppConstants.LogMessages.VoucherExpiryDateCannotBeEmpty);
+            }
+            if (dto.ExpiryDate.Date < DateTime.Today)
+            {
+                ModelState.AddModelError(nameof(dto.ExpiryDate), AppConstants.LogMessages.VoucherExpiryDateCannotBeInPast);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                GetUserInformationFromSession();
+                var voucher = await _voucherService.GetByIdAsync(dto.Id);
+                var vouchers = await _voucherService.GetAllAsync();
+                var products = await _productService.GetAllAsync();
+                var voucherDTO = new VoucherDTO
+                {
+                    Id = voucher.Id,
+                    Code = voucher.Code,
+                    DiscountPercent = voucher.DiscountPercent,
+                    DiscountAmount = voucher.DiscountAmount,
+                    ExpiryDate = voucher.ExpiryDate,
+                    UsageLimit = voucher.UsageLimit,
+                    TimeUsed = voucher.TimeUsed,
+                    IsValid = voucher.IsValid,
+                    Status = voucher.Status,
+                    CreatedAt = voucher.CreatedAt,
+                    Products = products.Select(product =>
+                    {
+                        var isInActiveVoucher = vouchers.Any(p =>
+                            p.ExpiryDate >= DateTime.Today &&
+                            p.ProductVouchers.Any(pp => pp.ProductId == product.Id));
+
+                        return new ProductDTO
+                        {
+                            Id = product.Id,
+                            Name = product.Name,
+                            Description = product.Description,
+                            Price = product.Price,
+                            Stock = product.Stock,
+                            Status = product.Status,
+                            //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                            CreatedAt = product.CreatedAt,
+                            ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                            TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                            VoucherStatus = isInActiveVoucher ? "In Voucher" : "Available"
+                        };
+                    }).ToList(),
+                    SelectedProductIds = voucher.ProductVouchers?.Select(pp => pp.ProductId).ToList() ?? new List<Guid>()
+                };
+                SetStatusViewBag(dto.Status);
+                return View(voucherDTO);
+            }
+
             try
             {
                 var (success, message) = await _voucherService.UpdateAsync(dto);
@@ -201,7 +350,7 @@ namespace FurnitureProject.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpPost("delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try

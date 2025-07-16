@@ -1,0 +1,87 @@
+﻿@model FurnitureProject.Models.DTO.OrderDTO
+@{
+    ViewBag.Title = "Tạo đơn hàng";
+    var productList = ViewBag.Products as List<Product>;
+}
+
+<h2>Tạo đơn hàng mới</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label>Chọn khách hàng</label>
+        <select asp-for="@Model.User.FullName" class="form-control" asp-items="ViewBag.Users">
+            <option value="">-- Chọn người dùng --</option>
+        </select>
+    </div>
+
+    <table class="table" id="order-items-table">
+        <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.TotalItems; i++)
+            {
+                <tr>
+                    <td>
+                        <select name="orderItems[@i].productId" class="form-control">
+                            @foreach (var p in productList)
+                            {
+                                <option value="@p.Id">@p.Name - @p.Price.ToString("N0") VNĐ</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input name="orderItems[@i].quantity" class="form-control" value="1" type="number" min="1" />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger remove-row">X</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="button" class="btn btn-secondary" id="add-row">+ Thêm sản phẩm</button>
+    <button type="submit" class="btn btn-primary">Tạo đơn</button>
+</form>
+
+@section Scripts {
+    <script>
+        const productOptions = `@Html.Raw(Json.Serialize(
+                    productList.Select(p => new { value = p.Id, text = p.Name + " - " + p.Price.ToString("N0") + " VNĐ" })
+            ))`;
+
+    const products = JSON.parse(productOptions);
+
+        document.getElementById("add-row").addEventListener("click", function () {
+            const table = document.getElementById("order-items-table").getElementsByTagName("tbody")[0];
+            const rowCount = table.rows.length;
+
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                <td>
+                    <select name="orderItems[${rowCount}].productId" class="form-control">
+                        ${products.map(p => `<option value="${p.value}">${p.text}</option>`).join("")}
+                    </select>
+                </td>
+                <td>
+                    <input name="orderItems[${rowCount}].quantity" class="form-control" type="number" value="1" min="1" />
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger remove-row">X</button>
+                </td>
+            `;
+            table.appendChild(newRow);
+        });
+
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("remove-row")) {
+                e.target.closest("tr").remove();
+            }
+        });
+    </script>
+}

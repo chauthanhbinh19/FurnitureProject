@@ -1,4 +1,5 @@
 ﻿using FurnitureProject.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace FurnitureProject.Models
 {
@@ -8,38 +9,42 @@ namespace FurnitureProject.Models
         {
             if (!context.Users.Any())
             {
-                context.Users.AddRange(
-                    new User
-                    {
-                        FullName = "Nguyễn Văn A",
-                        Email = "a@example.com",
-                        Username = "thanhbinh19",
-                        Password = "123456",
-                        PhoneNumber = "0909123456",
-                        Role = "admin",
-                        CreatedAt = DateTime.UtcNow
-                    },
-                    new User
-                    {
-                        FullName = "Trần Thị B",
-                        Email = "b@example.com",
-                        Username = "thanhhiep19",
-                        Password = "123456",
-                        PhoneNumber = "0909123457",
-                        Role = "user",
-                        CreatedAt = DateTime.UtcNow
-                    },
-                    new User
-                    {
-                        FullName = "Nguyễn Thiên C",
-                        Email = "a@example.com",
-                        Username = "thanhthien20",
-                        Password = "123456",
-                        PhoneNumber = "0909123452",
-                        Role = "admin",
-                        CreatedAt = DateTime.UtcNow
-                    }
-                );
+                var hasher = new PasswordHasher<User>();
+                var user1 = new User
+                {
+                    FullName = "Nguyễn Văn A",
+                    Email = "a@example.com",
+                    Username = "thanhbinh19",
+                    PhoneNumber = "0909123456",
+                    Role = "admin",
+                    CreatedAt = DateTime.UtcNow
+                };
+                user1.Password = hasher.HashPassword(user1, "123456");
+
+                var user2 = new User
+                {
+                    FullName = "Trần Thị B",
+                    Email = "b@example.com",
+                    Username = "thanhhiep19",
+                    PhoneNumber = "0909123457",
+                    Role = "user",
+                    CreatedAt = DateTime.UtcNow
+                };
+                user2.Password = hasher.HashPassword(user2, "123456");
+
+                var user3 = new User
+                {
+                    FullName = "Nguyễn Thiên C",
+                    Email = "a@example.com",
+                    Username = "thanhthien20",
+                    PhoneNumber = "0909123452",
+                    Role = "admin",
+                    CreatedAt = DateTime.UtcNow
+                };
+                user3.Password = hasher.HashPassword(user3, "123456");
+
+                context.Users.AddRange(user1, user2, user3);
+
                 await context.SaveChangesAsync();
             }
 
@@ -50,12 +55,15 @@ namespace FurnitureProject.Models
                     new Category { Name = "Ghế", CreatedAt = DateTime.UtcNow },
                     new Category { Name = "Tủ", CreatedAt = DateTime.UtcNow },
                     new Category { Name = "Giường", CreatedAt = DateTime.UtcNow },
-                    new Category { Name = "Kệ sách", CreatedAt = DateTime.UtcNow },
-                    new Category { Name = "Tủ giày", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Kệ", CreatedAt = DateTime.UtcNow },
                     new Category { Name = "Sofa", CreatedAt = DateTime.UtcNow },
-                    new Category { Name = "Bàn học", CreatedAt = DateTime.UtcNow },
-                    new Category { Name = "Bàn làm việc", CreatedAt = DateTime.UtcNow },
-                    new Category { Name = "Bàn ăn", CreatedAt = DateTime.UtcNow }
+                    new Category { Name = "Nội thất phòng khách", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Nội thất phòng ngủ", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Nội thất phòng ăn", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Nội thất văn phòng", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Nội thất trẻ em", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Nội thất ngoài trời", CreatedAt = DateTime.UtcNow },
+                    new Category { Name = "Trang trí", CreatedAt = DateTime.UtcNow }
                 );
                 await context.SaveChangesAsync();
             }

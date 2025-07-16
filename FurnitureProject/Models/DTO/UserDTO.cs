@@ -9,17 +9,17 @@ namespace FurnitureProject.Models.DTO
         public Guid Id { get; set; }
         [Required]
         [Display(Name = AppConstants.Display.UserUsername)]
-        public string Username { get; set; }
+        public string? Username { get; set; }
         [Required]
         [Display(Name = AppConstants.Display.UserEmail)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
         [Required]
         [Display(Name = AppConstants.Display.UserPassword)]
-        public string Password { get; set; }
+        public string? Password { get; set; }
         [Required]
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Passwords do not match.")]
-        public string ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
         [Display(Name = AppConstants.Display.UserFullname)]
         public string? FullName { get; set; }
         [Display(Name = AppConstants.Display.UserPhoneNumber)]

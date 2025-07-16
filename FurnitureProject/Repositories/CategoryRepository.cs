@@ -46,11 +46,15 @@ namespace FurnitureProject.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Category category)
+        public async Task DeleteAsync(Guid id)
         {
-            category.IsDeleted = true;
-            _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
+            var category = await _context.Categories.FindAsync(id);
+            if (category != null)
+            {
+                category.IsDeleted = true;
+                _context.Categories.Update(category);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 

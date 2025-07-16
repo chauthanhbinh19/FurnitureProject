@@ -257,7 +257,7 @@ namespace FurnitureProject.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpPost("delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try

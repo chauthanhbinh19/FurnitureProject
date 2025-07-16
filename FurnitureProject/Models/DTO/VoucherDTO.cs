@@ -7,7 +7,7 @@ namespace FurnitureProject.Models.DTO
     public class VoucherDTO
     {
         public Guid Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = AppConstants.LogMessages.VoucherCodeCannotBeEmpty)]
         [Display(Name = AppConstants.Display.VoucherCode)]
         public string Code { get; set; }
         [Required]
@@ -15,13 +15,13 @@ namespace FurnitureProject.Models.DTO
         public int DiscountPercent { get; set; }
         [Display(Name = AppConstants.Display.VoucherDiscountAmount)]
         public decimal DiscountAmount { get; set; }
-        [Required]
+        [Required(ErrorMessage = AppConstants.LogMessages.VoucherExpiryDateCannotBeEmpty)]
         [Display(Name = AppConstants.Display.VoucherExpiryDate)]
         public DateTime ExpiryDate { get; set; }
-        [Required]
+        [Required(ErrorMessage = AppConstants.LogMessages.VoucherUsageLimitCannotBeEmpty)]
         [Display(Name = AppConstants.Display.VoucherUsageLimit)]
         public int UsageLimit { get; set; }
-        [Required]
+        //[Required]
         [Display(Name = AppConstants.Display.VoucherTimeUsed)]
         public int TimeUsed { get; set; }
         [Display(Name = AppConstants.Display.VoucherIsValid)]
@@ -29,5 +29,7 @@ namespace FurnitureProject.Models.DTO
         [Display(Name = AppConstants.Display.VoucherStatus)]
         public string? Status { get; set; }
         public DateTime? CreatedAt { get; set; }
+        public List<ProductDTO> Products { get; set; } = new();
+        public List<Guid> SelectedProductIds { get; set; } = new();
     }
 }

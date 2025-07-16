@@ -9,7 +9,7 @@ namespace FurnitureProject.Repositories
         Task<Category?> GetByNameAsync(string name);
         Task AddAsync(Category category);
         Task UpdateAsync(Category category);
-        Task DeleteAsync(Category category);
+        Task DeleteAsync(Guid id);
     }
 
 }

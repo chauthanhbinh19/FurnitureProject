@@ -52,7 +52,7 @@
                 </div>
                 <!-- Optional: Nút Reset -->
                 <div class="col-md-1-5 d-flex align-items-center">
-                    <a href="/admin/product/" class="btn btn-secondary w-100">Reset bộ lọc</a>
+                    <a href="/admin/voucher/" class="btn btn-secondary w-100">Reset bộ lọc</a>
                 </div>
             </div>
         </form>
@@ -62,39 +62,54 @@
                     <tr>
                         <th scope="col">ID</th>
                         <th scope="col">Tên</th>
-                        <th scope="col">Mô tả</th>
+                        <th scope="col">Phần trăm giảm</th>
+                        <th scope="col">Số tiền giảm</th>
                         <th scope="col">Ngày tạo</th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var promotion in Model.Vouchers)
+                    @foreach (var voucher in Model.Vouchers)
                     {
                         <tr>
-                            <td>@promotion.Id.ToString().Substring(0, 16)</td>
-                            <td>@promotion.Code</td>
-                            <td>@promotion.DiscountAmount</td>
-                            <td>@promotion.DiscountPercent</td>
-                            <td>@promotion.CreatedAt?.ToString("dd/MM/yyyy")</td>
-                            <td>@promotion.Status</td>
+                            <td>@voucher.Id.ToString().Substring(0, 16)</td>
+                            <td>@voucher.Code</td>
+                            <td>@voucher.DiscountPercent</td>
+                            <td>@voucher.DiscountAmount</td>
+                            <td>@voucher.CreatedAt?.ToString("dd/MM/yyyy")</td>
                             <td>
-                                <form asp-controller="AdminDiscountCode" asp-action="Update" method="get" style="display:inline;">
-                                    <input type="hidden" name="id" value="@promotion.Id" />
+                                @if (voucher.Status == "active")
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else if (voucher.Status == "inactive")
+                                {
+                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                }
+                                else if (voucher.Status == "banned")
+                                {
+                                    <span class="badge bg-danger">Bị khóa</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@voucher.Status</span>
+                                }
+                            </td>
+                            <td>
+                                <form asp-controller="AdminVoucher" asp-action="Update" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="@voucher.Id" />
                                     <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                 </form>
-                                @* <form asp-controller="Category" asp-action="Delete" method="post" style="display:inline;"
-                              onsubmit="return confirm('Bạn có chắc muốn xoá user này?');">
-                            <input type="hidden" name="id" value="@category.Id" />
-                            <button type="submit" class="btn btn-sm btn-danger" title="Xoá">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form> *@
-                                <button type="submit" class="btn btn-sm btn-danger delete-voucher" data-id="@promotion.Id" title="Xoá">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                                <form asp-controller="AdminVoucher" asp-action="Delete" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
+                                    <input type="hidden" name="id" value="@voucher.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger delete-tag" data-id="@voucher.Id" title="Xoá">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     }
@@ -135,33 +150,6 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            $('.delete-voucher').click(function () {
-            const btn = $(this);
-            const id = btn.data('id');
-
-            if (confirm("Bạn có chắc muốn xóa?")) {
-                $.ajax({
-                    url: '/admin/voucher/Delete',
-                    type: 'POST',
-                    data: {
-                        id: id,
-                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function (res) {
-                        if (res.success) {
-                            btn.closest('tr').remove();
-                            showToast('success', res.message); // tuỳ hàm hiển thị toast hoặc alert
-                        } else {
-                            showToast('error', res.message);
-                        }
-                    },
-                    error: function () {
-                        showToast('error', 'Có lỗi xảy ra.');
-                    }
-                });
-            }
-        });
         // Hàm toast đơn giản
                     function showToast(type, message) {
             let toastId = 'toast-' + type;

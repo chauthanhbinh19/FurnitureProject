@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Views\AdminOrder\" />
     <Folder Include="wwwroot\ckeditor\" />
   </ItemGroup>
 

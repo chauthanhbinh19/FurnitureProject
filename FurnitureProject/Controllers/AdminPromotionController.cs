@@ -129,20 +129,29 @@ namespace FurnitureProject.Controllers
             GetUserInformationFromSession();
             SetStatusViewBag();
             var products = await _productService.GetAllAsync();
+            var promotions = await _promotionService.GetAllAsync();
             var promotionDto = new PromotionDTO
             {
-                Products = products.Select(product => new ProductDTO
+                Products = products.Select(product => 
                 {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Description = product.Description,
-                    Price = product.Price,
-                    Stock = product.Stock,
-                    Status = product.Status,
-                    //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
-                    CreatedAt = product.CreatedAt,
-                    ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
-                    TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new()
+                    var isInActivePromotion = promotions.Any(p =>
+                        p.EndDate >= DateTime.Today &&
+                        p.ProductPromotions.Any(pp => pp.ProductId == product.Id));
+
+                    return new ProductDTO
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Stock = product.Stock,
+                        Status = product.Status,
+                        //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                        CreatedAt = product.CreatedAt,
+                        ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                        TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                        PromotionStatus = isInActivePromotion ? "In Promotion" : "Available"
+                    };
                 }).ToList()
             };
             return View(promotionDto);
@@ -183,23 +192,32 @@ namespace FurnitureProject.Controllers
                 GetUserInformationFromSession();
                 SetStatusViewBag();
                 var products = await _productService.GetAllAsync();
-                var promotionDto = new PromotionDTO
+                var promotions = await _promotionService.GetAllAsync();
+                var promotionDTO = new PromotionDTO
                 {
-                    Products = products.Select(product => new ProductDTO
+                    Products = products.Select(product =>
                     {
-                        Id = product.Id,
-                        Name = product.Name,
-                        Description = product.Description,
-                        Price = product.Price,
-                        Stock = product.Stock,
-                        Status = product.Status,
-                        //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
-                        CreatedAt = product.CreatedAt,
-                        ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
-                        TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new()
+                        var isInActivePromotion = promotions.Any(p =>
+                            p.EndDate >= DateTime.Today &&
+                            p.ProductPromotions.Any(pp => pp.ProductId == product.Id));
+
+                        return new ProductDTO
+                        {
+                            Id = product.Id,
+                            Name = product.Name,
+                            Description = product.Description,
+                            Price = product.Price,
+                            Stock = product.Stock,
+                            Status = product.Status,
+                            //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                            CreatedAt = product.CreatedAt,
+                            ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                            TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                            PromotionStatus = isInActivePromotion ? "In Promotion" : "Available"
+                        };
                     }).ToList()
                 };
-                return View(promotionDto);
+                return View(promotionDTO);
             }
 
             try
@@ -226,9 +244,10 @@ namespace FurnitureProject.Controllers
         {
             GetUserInformationFromSession();
             var promotion = await _promotionService.GetByIdAsync(id);
+            var promotions = await _promotionService.GetAllAsync();
             var products = await _productService.GetAllAsync();
 
-            var productDTO = new PromotionDTO
+            var promotionDTO = new PromotionDTO
             {
                 Id = promotion.Id,
                 Title = promotion.Title,
@@ -237,24 +256,32 @@ namespace FurnitureProject.Controllers
                 EndDate = promotion.EndDate,
                 DiscountPercent = promotion.DiscountPercent,
                 Status = promotion.Status,
-                Products = products.Select(product => new ProductDTO
+                Products = products.Select(product =>
                 {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Description = product.Description,
-                    Price = product.Price,
-                    Stock = product.Stock,
-                    Status = product.Status,
-                    //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
-                    CreatedAt = product.CreatedAt,
-                    ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
-                    TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new()
+                    var isInActivePromotion = promotions.Any(p =>
+                        p.EndDate >= DateTime.Today &&
+                        p.ProductPromotions.Any(pp => pp.ProductId == product.Id));
+
+                    return new ProductDTO
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description,
+                        Price = product.Price,
+                        Stock = product.Stock,
+                        Status = product.Status,
+                        //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                        CreatedAt = product.CreatedAt,
+                        ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                        TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                        PromotionStatus = isInActivePromotion ? "In Promotion" : "Available"
+                    };
                 }).ToList(),
                 SelectedProductIds = promotion.ProductPromotions?.Select(pp => pp.ProductId).ToList() ?? new List<Guid>()
             };
             SetStatusViewBag(promotion.Status);
 
-            return View(productDTO);
+            return View(promotionDTO);
         }
 
         [HttpPost("update")]
@@ -273,7 +300,7 @@ namespace FurnitureProject.Controllers
             {
                 ModelState.AddModelError(nameof(dto.StartDate), AppConstants.LogMessages.PromotionStartDateCannotBeEmpty);
             }
-            if (dto.StartDate.Date == DateTime.Today)
+            if (dto.StartDate.Date < DateTime.Today)
             {
                 ModelState.AddModelError(nameof(dto.StartDate), AppConstants.LogMessages.PromotionStartDateCannotBeInPast);
             }
@@ -290,25 +317,43 @@ namespace FurnitureProject.Controllers
             if (!ModelState.IsValid)
             {
                 GetUserInformationFromSession();
+                var promotion = await _promotionService.GetByIdAsync(dto.Id);
+                var promotions = await _promotionService.GetAllAsync();
                 var products = await _productService.GetAllAsync();
-                var promotionDto = new PromotionDTO
+                var promotionDTO = new PromotionDTO
                 {
-                    Products = products.Select(product => new ProductDTO
+                    Id = promotion.Id,
+                    Title = promotion.Title,
+                    Description = promotion.Description,
+                    StartDate = promotion.StartDate,
+                    EndDate = promotion.EndDate,
+                    DiscountPercent = promotion.DiscountPercent,
+                    Status = promotion.Status,
+                    Products = products.Select(product =>
                     {
-                        Id = product.Id,
-                        Name = product.Name,
-                        Description = product.Description,
-                        Price = product.Price,
-                        Stock = product.Stock,
-                        Status = product.Status,
-                        //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
-                        CreatedAt = product.CreatedAt,
-                        ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
-                        TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new()
-                    }).ToList()
+                        var isInActivePromotion = promotions.Any(p =>
+                            p.EndDate >= DateTime.Today &&
+                            p.ProductPromotions.Any(pp => pp.ProductId == product.Id));
+
+                        return new ProductDTO
+                        {
+                            Id = product.Id,
+                            Name = product.Name,
+                            Description = product.Description,
+                            Price = product.Price,
+                            Stock = product.Stock,
+                            Status = product.Status,
+                            //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                            CreatedAt = product.CreatedAt,
+                            ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                            TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                            PromotionStatus = isInActivePromotion ? "In Promotion" : "Available"
+                        };
+                    }).ToList(),
+                    SelectedProductIds = promotion.ProductPromotions?.Select(pp => pp.ProductId).ToList() ?? new List<Guid>()
                 };
                 SetStatusViewBag(dto.Status);
-                return View(promotionDto);
+                return View(promotionDTO);
             }
 
             try
@@ -330,7 +375,7 @@ namespace FurnitureProject.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpPost("delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try

@@ -65,6 +65,14 @@
             public const string UpdateVoucherError = "Update voucher failed!";
             public const string DeleteVoucherSuccess = "Voucher deleted successfully!";
             public const string DeleteVoucherError = "Delete voucher failed!";
+            public const string VoucherCodeCannotBeEmpty = "Voucher code cannot be empty";
+            //public const string VoucherDiscountPerCannotBeEmpty = "Promotion description cannot be empty";
+            //public const string PromotionDiscountPercentCannotBeEmpty = "Promotion discount percent cannot be empty";
+            public const string VoucherExpiryDateCannotBeEmpty = "Voucher expiry date cannot be empty";
+            public const string VoucherExpiryDateCannotBeInPast = "Voucher expiry date cannot be earlier than today.";
+            public const string VoucherUsageLimitCannotBeEmpty = "Voucher usage limit cannot be empty";
+            public const string VoucherTimeUsedCannotBeEmpty = "Voucher time used cannot be empty";
+            //public const string PromotionEndDateCannotBeBeforeStart = "Promotion end date cannot be earlier than the start date.";
 
             public const string UsernameExists = "Username already exists.";
             public const string EmailExists = "Email already exists.";

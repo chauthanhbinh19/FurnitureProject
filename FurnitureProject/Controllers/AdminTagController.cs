@@ -184,7 +184,7 @@ namespace FurnitureProject.Controllers
 
             var tag = new Tag
             {
-                Id = Guid.NewGuid(),
+                Id = dto.Id,
                 Name = dto.Name,
                 Status = dto.Status,
                 CreatedAt = DateTime.UtcNow
@@ -206,7 +206,7 @@ namespace FurnitureProject.Controllers
                 return RedirectToAction("Update", "AdminTag");
             }
         }
-        [HttpDelete("{id}")]
+        [HttpPost("delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try

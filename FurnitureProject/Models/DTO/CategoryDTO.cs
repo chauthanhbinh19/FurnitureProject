@@ -15,6 +15,6 @@ namespace FurnitureProject.Models.DTO
         [Display(Name = AppConstants.Display.CategoryStatus)]
         public string Status { get; set; }
         public DateTime? CreatedAt { get; set; }
-        public ICollection<Product> Products { get; set; }
+        public ICollection<Product>? Products { get; set; }
     }
 }

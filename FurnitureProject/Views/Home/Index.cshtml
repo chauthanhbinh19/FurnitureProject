@@ -3,7 +3,7 @@
     ViewData["Title"] = "Trang chủ";
 }
 
-<div class="container mt-4">
+<div class="container">
     <div id="mainCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="3000">
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -43,13 +43,112 @@
         </button>
     </div>
 
-    <h2 class="mb-4 text-center">Sản phẩm nổi bật</h2>
-    @* <div class="row row-cols-1 row-cols-md-4 g-4">
-        @foreach (var product in Model)
-        {
-            <div class="col">
-                @Html.Partial("Component/Product/_ProductBox", product)
+    <section class="mb-5 mt-5">
+        <h3 class="text-center mb-4">Danh mục nội thất</h3>
+        <div class="d-flex flex-nowrap justify-content-between gap-3 overflow-auto py-3">
+            <div class="p-3 border rounded shadow-sm flex-shrink-0 flex-grow-1 text-center" style="min-width: 160px;">
+                <i class="bi bi-door-closed fs-1 text-primary"></i>
+                <h6 class="mt-2">Phòng khách</h6>
             </div>
-        }
-    </div> *@
+            <div class="p-3 border rounded shadow-sm flex-shrink-0 flex-grow-1 text-center" style="min-width: 160px;">
+                <i class="bi bi-tv fs-1 text-success"></i>
+                <h6 class="mt-2">Phòng ngủ</h6>
+            </div>
+            <div class="p-3 border rounded shadow-sm flex-shrink-0 flex-grow-1 text-center" style="min-width: 160px;">
+                <i class="bi bi-table fs-1 text-warning"></i>
+                <h6 class="mt-2">Phòng ăn</h6>
+            </div>
+            <div class="p-3 border rounded shadow-sm flex-shrink-0 flex-grow-1 text-center" style="min-width: 160px;">
+                <i class="bi bi-laptop fs-1 text-info"></i>
+                <h6 class="mt-2">Văn phòng</h6>
+            </div>
+        </div>
+
+    </section>
+
+    <section>
+        <h3 class="mb-4 text-center">Sản phẩm nổi bật</h3>
+        @* <div class="row row-cols-1 row-cols-md-4 g-4">
+            @foreach (var product in Model)
+            {
+                <div class="col">
+                    @Html.Partial("Component/Product/_ProductBox", product)
+                </div>
+            }
+        </div> *@
+    </section>
+    
+    <section class="mb-5 mt-5">
+        <h3 class="text-center mb-4">Khám phá theo phong cách</h3>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="~/images/style-modern.jpg" class="card-img-top" alt="Hiện đại">
+                    <div class="card-body">
+                        <h5 class="card-title">Phong cách hiện đại</h5>
+                        <p class="card-text">Thiết kế tối giản, tinh tế phù hợp với không gian sống hiện đại.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="~/images/style-classic.jpg" class="card-img-top" alt="Cổ điển">
+                    <div class="card-body">
+                        <h5 class="card-title">Cổ điển sang trọng</h5>
+                        <p class="card-text">Đường nét tinh xảo và chất liệu cao cấp thể hiện đẳng cấp sống.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="~/images/style-boho.jpg" class="card-img-top" alt="Bohemian">
+                    <div class="card-body">
+                        <h5 class="card-title">Bohemian phóng khoáng</h5>
+                        <p class="card-text">Sắc màu rực rỡ và cá tính cho những ai yêu nghệ thuật tự do.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5 mt-5 bg-light p-4 rounded">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <i class="bi bi-box-seam fs-2 text-primary"></i>
+                <h6 class="mt-2">Miễn phí giao hàng</h6>
+            </div>
+            <div class="col-md-3">
+                <i class="bi bi-arrow-repeat fs-2 text-success"></i>
+                <h6 class="mt-2">Đổi trả trong 7 ngày</h6>
+            </div>
+            <div class="col-md-3">
+                <i class="bi bi-shield-check fs-2 text-info"></i>
+                <h6 class="mt-2">Bảo hành 1-3 năm</h6>
+            </div>
+            <div class="col-md-3">
+                <i class="bi bi-star fs-2 text-warning"></i>
+                <h6 class="mt-2">Chất lượng cao cấp</h6>
+            </div>
+        </div>
+    </section>
+    <section class="mb-5 mt-5">
+        <h3 class="text-center mb-4">Khách hàng nói gì về chúng tôi</h3>
+        <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner text-center">
+                <div class="carousel-item active">
+                    <blockquote class="blockquote">
+                        <p class="mb-3">"Chất lượng sản phẩm rất tuyệt vời, giao hàng nhanh và đóng gói kỹ."</p>
+                        <footer class="blockquote-footer">Nguyễn Văn A</footer>
+                    </blockquote>
+                </div>
+                <div class="carousel-item">
+                    <blockquote class="blockquote">
+                        <p class="mb-3">"Mẫu mã hiện đại, giá cả hợp lý, rất hài lòng khi mua ở đây."</p>
+                        <footer class="blockquote-footer">Trần Thị B</footer>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </section>
+
 </div>

@@ -22,5 +22,11 @@ namespace FurnitureProject.Controllers
         {
             return View("ServerError");
         }
+
+        [Route("forbidden")]
+        public IActionResult Forbidden()
+        {
+            return View("Forbidden");
+        }
     }
 }

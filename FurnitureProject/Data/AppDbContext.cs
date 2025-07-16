@@ -15,7 +15,7 @@ namespace FurnitureProject.Data
         public DbSet<ProductTag> ProductTag { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<ProductPromotion> ProductPromotions { get; set; }
-        public DbSet<Voucher> DiscountCodes { get; set; }
+        public DbSet<Voucher> Vouchers { get; set; }
         public DbSet<ProductVoucher> ProductVouchers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
@@ -75,13 +75,41 @@ namespace FurnitureProject.Data
 
             modelBuilder.Entity<ProductVoucher>()
                 .HasOne(pt => pt.Product)
-                .WithMany(p => p.ProductDiscountCodes)
+                .WithMany(p => p.ProductVouchers)
                 .HasForeignKey(pt => pt.ProductId);
 
             modelBuilder.Entity<ProductVoucher>()
                 .HasOne(pt => pt.Voucher)
-                .WithMany(t => t.ProductDiscountCodes)
+                .WithMany(t => t.ProductVouchers)
                 .HasForeignKey(pt => pt.VoucherId);
+
+            // Order - User
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // OrderItem - Order
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // OrderItem - Product
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Product - Category
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Category)
+                .WithMany()
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Soft-delete global filter (tùy chọn)
             modelBuilder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);

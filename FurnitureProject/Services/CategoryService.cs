@@ -49,16 +49,12 @@ namespace FurnitureProject.Services
         {
             try
             {
-                var category = await _categoryRepo.GetByIdAsync(id);
-                if (category != null)
-                {
-                    await _categoryRepo.DeleteAsync(category);
-                }
+                await _categoryRepo.DeleteAsync(id);
                 return (true, null);
             }
             catch (Exception ex)
             {
-                return (false, null);
+                return (false, ex.Message);
             }
         }
     }

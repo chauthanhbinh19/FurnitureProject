@@ -19,6 +19,6 @@ namespace FurnitureProject.Models
         public string Status { get; set; } = "active";
         [NotMapped]
         public bool IsValid => DateTime.UtcNow < ExpiryDate && TimeUsed < UsageLimit;
-        public ICollection<ProductVoucher> ProductDiscountCodes { get; set;}
+        public ICollection<ProductVoucher> ProductVouchers { get; set;}
     }
 }

@@ -53,22 +53,38 @@ namespace FurnitureProject.Middleware
             var userId = context.Session.GetString("UserID");
             var userRole = context.Session.GetString("UserRole");
 
-            if (string.IsNullOrEmpty(userId))
+            // Truy cập trang admin mà chưa đăng nhập => redirect về sign-in
+            if (path.StartsWith("/admin"))
             {
-                // Not sign in
-                context.Response.Redirect("/user/sign-in");
+                if (string.IsNullOrEmpty(userId))
+                {
+                    context.Response.Redirect("/user/sign-in");
+                    return;
+                }
+
+                // Đã đăng nhập nhưng không phải admin/employee => 403
+                if (userRole != "admin" && userRole != "employee")
+                {
+                    context.Response.StatusCode = 403;
+                    context.Response.Redirect("/error/forbidden");
+                    return;
+                }
+
+                // Cho phép tiếp tục, nhưng kiểm tra nếu controller không tồn tại
+                await _next(context);
+                if (context.Response.StatusCode == 404)
+                {
+                    context.Response.Redirect("/error/not-found");
+                }
                 return;
             }
 
-            // Only admin, employee can enter admin page
-            if (path.StartsWith("/admin") && (!userRole.Equals("admin") && !userRole.Equals("employee")))
-            {
-                context.Response.StatusCode = 403;
-                await context.Response.WriteAsync("Bạn không có quyền truy cập.");
-                return;
-            }
-
+            // Các route còn lại ngoài admin mà không nằm trong bypass => chuyển về /error/not-found
             await _next(context);
+            if (context.Response.StatusCode == 404)
+            {
+                context.Response.Redirect("/error/not-found");
+            }
         }
     }
 }

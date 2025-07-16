@@ -27,6 +27,8 @@ namespace FurnitureProject.Services
             try
             {
                 user.CreatedAt = DateTime.UtcNow;
+                var hasher = new PasswordHasher<User>();
+                user.Password = hasher.HashPassword(user, user.Password);
                 await _userRepo.AddAsync(user);
                 return (true, null);
             }
@@ -39,7 +41,19 @@ namespace FurnitureProject.Services
         {
             try
             {
+                var existingUser = await _userRepo.GetByIdAsync(user.Id);
+                if (existingUser == null)
+                    return (false, "User not found");
+
                 user.UpdatedAt = DateTime.UtcNow;
+
+                // Chỉ hash lại nếu mật khẩu đã thay đổi (tức là người dùng vừa nhập mật khẩu mới)
+                if (user.Password != existingUser.Password)
+                {
+                    var hasher = new PasswordHasher<User>();
+                    user.Password = hasher.HashPassword(user, user.Password);
+                }
+
                 await _userRepo.UpdateAsync(user);
                 return (true, null);
             }

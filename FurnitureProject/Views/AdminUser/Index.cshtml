@@ -114,16 +114,13 @@
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                 </form>
-                                @* <form asp-controller="User" asp-action="Delete" method="post" style="display:inline;"
-                              onsubmit="return confirm('Bạn có chắc muốn xoá user này?');">
-                            <input type="hidden" name="id" value="@user.Id" />
-                            <button type="submit" class="btn btn-sm btn-danger" title="Xoá">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form> *@
-                                <button type="submit" class="btn btn-sm btn-danger delete-user" data-id="@user.Id" title="Xoá">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                                <form asp-controller="AdminUser" asp-action="Delete" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
+                                    <input type="hidden" name="id" value="@user.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger delete-tag" data-id="@user.Id" title="Xoá">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     }
@@ -163,33 +160,6 @@
 </div>
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            $('.delete-user').click(function () {
-            const btn = $(this);
-            const id = btn.data('id');
-
-            if (confirm("Bạn có chắc muốn xóa?")) {
-                $.ajax({
-                    url: '/admin/user/Delete',
-                    type: 'POST',
-                    data: {
-                        id: id,
-                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function (res) {
-                        if (res.success) {
-                            btn.closest('tr').remove();
-                            showToast('success', res.message); // tuỳ hàm hiển thị toast hoặc alert
-                        } else {
-                            showToast('error', res.message);
-                        }
-                    },
-                    error: function () {
-                        showToast('error', 'Có lỗi xảy ra.');
-                    }
-                });
-            }
-        });
         // Hàm toast đơn giản
                     function showToast(type, message) {
             let toastId = 'toast-' + type;

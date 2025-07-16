@@ -54,7 +54,7 @@ namespace FurnitureProject.Controllers
                 {
                     HttpContext.Session.SetString("UserID", existingUsername.Id.ToString());
                     HttpContext.Session.SetString("UserRole", existingUsername.Role);
-                    HttpContext.Session.SetString("UserFullName", existingUsername.FullName);
+                    HttpContext.Session.SetString("UserFullName", existingUsername.FullName ?? "");
                     HttpContext.Session.SetString("UserEmail", existingUsername.Email);
 
                     switch (existingUsername.Role)

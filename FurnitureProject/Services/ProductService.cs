@@ -87,7 +87,7 @@ namespace FurnitureProject.Services
                 return (true, null);
             }
             catch (Exception ex) {
-                return (false, null);
+                return (false, ex.Message);
             }
         }
 
@@ -171,7 +171,7 @@ namespace FurnitureProject.Services
                 return (true, null);
             }
             catch (Exception ex) {
-                return (false, null);
+                return (false, ex.Message);
             }
         }
 
@@ -189,7 +189,7 @@ namespace FurnitureProject.Services
             }
             catch (Exception ex)
             {
-                return (false, null);
+                return (false, ex.Message);
             }
         }
     }
