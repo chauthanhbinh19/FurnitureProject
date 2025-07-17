@@ -2,29 +2,29 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FurnitureProject.Data
+namespace FurnitureProject.Configuration
 {
-    public class PromotionConfiguration : IEntityTypeConfiguration<Promotion>
+    public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
-        public void Configure(EntityTypeBuilder<Promotion> builder)
+        public void Configure(EntityTypeBuilder<Product> builder)
         {
-            builder.ToTable("promotions"); // Tên bảng
+            builder.ToTable("products"); // Tên bảng
 
             builder.HasKey(u => u.Id); // Khóa chính
 
-            builder.Property(u => u.Title)
+            builder.Property(u => u.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(u => u.Description);
+
+            builder.Property(u => u.Price)
                 .IsRequired();
 
-            builder.Property(u => u.Description)
+            builder.Property(u => u.Stock)
                 .IsRequired();
 
-            builder.Property(u => u.DiscountPercent)
-                .IsRequired();
-
-            builder.Property(u => u.StartDate)
-                .IsRequired();
-
-            builder.Property(u => u.EndDate)
+            builder.Property(u => u.CategoryId)
                 .IsRequired();
 
             builder.Property(u => u.Status)

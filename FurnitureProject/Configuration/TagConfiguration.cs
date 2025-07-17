@@ -2,21 +2,19 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FurnitureProject.Data
+namespace FurnitureProject.Configuration
 {
-    public class CategoryConfiguration : IEntityTypeConfiguration<Category>
+    public class TagConfiguration : IEntityTypeConfiguration<Tag>
     {
-        public void Configure(EntityTypeBuilder<Category> builder)
+        public void Configure(EntityTypeBuilder<Tag> builder)
         {
-            builder.ToTable("categories"); // Tên bảng
+            builder.ToTable("tags"); // Tên bảng
 
             builder.HasKey(u => u.Id); // Khóa chính
 
             builder.Property(u => u.Name)
                 .IsRequired()
                 .HasMaxLength(100);
-
-            builder.Property(u => u.Description);
 
             builder.Property(u => u.Status)
                 .IsRequired()

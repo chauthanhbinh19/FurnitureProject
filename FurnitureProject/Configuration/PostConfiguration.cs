@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FurnitureProject.Data
+namespace FurnitureProject.Configuration
 {
     public class PostConfiguration : IEntityTypeConfiguration<Post>
     {

@@ -2,27 +2,27 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FurnitureProject.Data
+namespace FurnitureProject.Configuration
 {
-    public class OrderConfiguration : IEntityTypeConfiguration<Order>
+    public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
     {
-        public void Configure(EntityTypeBuilder<Order> builder)
+        public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
-            builder.ToTable("orders"); // Tên bảng
+            builder.ToTable("order_item"); // Tên bảng
 
             builder.HasKey(u => u.Id); // Khóa chính
 
-            builder.Property(u => u.UserId)
+            builder.Property(u => u.OrderId)
                 .IsRequired();
 
-            builder.Property(u => u.OrderDate)
+            builder.Property(u => u.ProductId)
                 .IsRequired();
 
-            builder.Property(u => u.Status)
+            builder.Property(u => u.Quantity)
                 .IsRequired()
-                .HasDefaultValue("active");
+                .HasDefaultValue(0);
 
-            builder.Property(u => u.TotalAmount)
+            builder.Property(u => u.UnitPrice)
                 .IsRequired()
                 .HasDefaultValue(0);
 

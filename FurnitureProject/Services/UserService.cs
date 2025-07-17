@@ -2,6 +2,7 @@
 using FurnitureProject.Models;
 using FurnitureProject.Repositories;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace FurnitureProject.Services
 {
@@ -87,8 +88,6 @@ namespace FurnitureProject.Services
                 var result = hasher.VerifyHashedPassword(user, userFromDB.Password, user.Password);
                 if(result == PasswordVerificationResult.Success)
                 {
-                    //HttpContext.Session.SetString("UserID");
-                    //HttpContext.Session.SetString("UserRole");
                     return (true, null);
                 }
             }

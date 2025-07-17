@@ -1,5 +1,97 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model FurnitureProject.Models.ViewModels.CartViewModel
+
 @{
+    ViewData["Title"] = "Giỏ hàng của bạn";
+    var cartItems = Model.ProductsInCart.ToList();
+    decimal total = Model.ProductsInCart.Sum(item => item.Price * item.Quantity);
+}
+
+<div class="container py-5">
+    <h2 class="text-center mb-4">🛒 Giỏ hàng của bạn</h2>
+
+    @if (!cartItems.Any())
+    {
+        <div class="alert alert-info text-center">
+            Giỏ hàng trống. <a href="/products">Tiếp tục mua sắm</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow rounded-4 overflow-hidden">
+            <table class="table table-hover align-middle mb-0 bg-white">
+                <thead class="bg-light">
+                    <tr>
+                        <th scope="col">Sản phẩm</th>
+                        <th scope="col" class="text-center">Số lượng</th>
+                        <th scope="col" class="text-end">Đơn giá</th>
+                        <th scope="col" class="text-end">Thành tiền</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ProductsInCart)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="@(item.ImageUrls != null && item.ImageUrls.Any() ? item.ImageUrls[0] : "/images/No_Image_Available.jpg")"
+                                         alt="Ảnh"
+                                         class="rounded-4 me-3"
+                                         style="width: 70px; height: 70px; object-fit: cover;">
+                                    <div>
+                                        <p class="fw-bold mb-1">@item.Name</p>
+                                        @* <p class="text-muted mb-0">@item.Color / @item.Size</p> *@
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <form asp-action="UpdateQuantity" method="post" class="d-flex justify-content-center align-items-center">
+                                    <div class="quantity-input d-flex align-items-center border rounded overflow-hidden" style="width: 140px;">
+                                        <button type="button" class="btn btn-primary border-0 rounded-0 flex-fill" onclick="changeQuantity(-1)">−</button>
+                                        <input type="number" id="quantity" name="quantity"
+                                               class="form-control text-center border-0"
+                                               value="@item.Quantity" min="1" style="max-width: 60px;">
+                                        <button type="button" class="btn btn-primary border-0 rounded-0 flex-fill" onclick="changeQuantity(1)">+</button>
+                                    </div>
+                                </form>
+                            </td>
+                            <td class="text-end">@item.Price.ToString("N0") ₫</td>
+                            <td class="text-end fw-bold">@((item.Price * item.Quantity).ToString("N0")) ₫</td>
+                            <td class="text-end">
+                                <form asp-controller="Cart" asp-action="Delete" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger delete-tag" data-id="@item.Id" title="Xoá">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot class="bg-light">
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
+                        <td class="text-end fw-bold text-danger fs-5">@total.ToString("N0") ₫</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="text-end mt-4">
+            <a href="/product/all" class="btn btn-outline-secondary me-2">← Tiếp tục mua sắm</a>
+            <a href="/checkout" class="btn btn-success px-4">Thanh toán</a>
+        </div>
+    }
+</div>
+@section Scripts {
+    <script>
+        function changeQuantity(delta) {
+            const input = document.getElementById('quantity');
+            let value = parseInt(input.value) || 1;
+            value = Math.max(1, value + delta);
+            input.value = value;
+        }
+    </script>
 }

@@ -2,23 +2,29 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FurnitureProject.Data
+namespace FurnitureProject.Configuration
 {
-    public class TagConfiguration : IEntityTypeConfiguration<Tag>
+    public class OrderConfiguration : IEntityTypeConfiguration<Order>
     {
-        public void Configure(EntityTypeBuilder<Tag> builder)
+        public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.ToTable("tags"); // Tên bảng
+            builder.ToTable("orders"); // Tên bảng
 
             builder.HasKey(u => u.Id); // Khóa chính
 
-            builder.Property(u => u.Name)
-                .IsRequired()
-                .HasMaxLength(100);
+            builder.Property(u => u.UserId)
+                .IsRequired();
+
+            builder.Property(u => u.OrderDate)
+                .IsRequired();
 
             builder.Property(u => u.Status)
                 .IsRequired()
                 .HasDefaultValue("active");
+
+            builder.Property(u => u.TotalAmount)
+                .IsRequired()
+                .HasDefaultValue(0);
 
             builder.Property(u => u.CreatedAt);
 

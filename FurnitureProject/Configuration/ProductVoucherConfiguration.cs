@@ -2,20 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FurnitureProject.Data
+namespace FurnitureProject.Configuration
 {
-    public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage>
+    public class ProductVoucherConfiguration : IEntityTypeConfiguration<ProductVoucher>
     {
-        public void Configure(EntityTypeBuilder<ProductImage> builder)
+        public void Configure(EntityTypeBuilder<ProductVoucher> builder)
         {
-            builder.ToTable("product_image"); // Tên bảng
+            builder.ToTable("product_voucher"); // Tên bảng
 
-            builder.HasKey(u => u.ImageId); // Khóa chính
-
-            builder.Property(u => u.ProductId)
+            builder.Property(u => u.VoucherId)
                 .IsRequired();
 
-            builder.Property(u => u.ImageUrl)
+            builder.Property(u => u.ProductId)
                 .IsRequired();
 
             builder.Property(u => u.CreatedAt);
