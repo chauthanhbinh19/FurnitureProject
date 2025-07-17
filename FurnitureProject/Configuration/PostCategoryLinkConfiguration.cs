@@ -10,7 +10,7 @@ namespace FurnitureProject.Configuration
         {
             builder.ToTable("post_category_links");
 
-            builder.HasKey(l => new { l.PostId, l.PostCategoryId }); // Composite Key
+            builder.HasKey(l => new { l.PostId, l.PostCategoryId });
 
             builder.HasOne(l => l.Post)
                 .WithMany(p => p.PostCategoryLinks)

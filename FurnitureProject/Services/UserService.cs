@@ -48,7 +48,7 @@ namespace FurnitureProject.Services
 
                 user.UpdatedAt = DateTime.UtcNow;
 
-                // Chỉ hash lại nếu mật khẩu đã thay đổi (tức là người dùng vừa nhập mật khẩu mới)
+                
                 if (user.Password != existingUser.Password)
                 {
                     var hasher = new PasswordHasher<User>();

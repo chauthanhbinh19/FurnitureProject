@@ -48,7 +48,6 @@ namespace FurnitureProject.Data
             modelBuilder.ApplyConfiguration(new CartConfiguration());
             modelBuilder.ApplyConfiguration(new CartItemConfiguration());
 
-            // Cấu hình khóa chính kết hợp cho bảng nối nhiều-nhiều
             modelBuilder.Entity<ProductPromotion>()
                 .HasKey(pp => new { pp.ProductId, pp.PromotionId });
 
@@ -134,7 +133,7 @@ namespace FurnitureProject.Data
                 .HasForeignKey(ci => ci.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Soft-delete global filter (tùy chọn)
+            // Soft-delete global filter
             modelBuilder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<Category>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<Product>().HasQueryFilter(e => !e.IsDeleted);

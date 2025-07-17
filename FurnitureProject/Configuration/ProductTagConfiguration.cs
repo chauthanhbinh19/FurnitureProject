@@ -8,7 +8,7 @@ namespace FurnitureProject.Configuration
     {
         public void Configure(EntityTypeBuilder<ProductTag> builder)
         {
-            builder.ToTable("product_tag"); // Tên bảng
+            builder.ToTable("product_tag");
 
             //builder.HasKey(u => u.ProductId);
 

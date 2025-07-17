@@ -11,7 +11,6 @@ namespace FurnitureProject.Middleware
             _next = next;
         }
 
-
         public async Task Invoke(HttpContext context)
         {
             var path = context.Request.Path.ToString().ToLower();
@@ -47,7 +46,6 @@ namespace FurnitureProject.Middleware
                 "/product/all",
             };
 
-            // Kiểm tra xem đường dẫn có khớp chính xác hoặc bắt đầu bằng một trong các tiền tố bỏ qua không
             if (bypassPaths.Contains(path, StringComparer.OrdinalIgnoreCase))
             {
                 await _next(context);
@@ -66,7 +64,7 @@ namespace FurnitureProject.Middleware
                 }
             }
 
-            // Truy cập trang admin mà chưa đăng nhập => redirect về sign-in
+            // Try to enter admin page but not sign in => redirect to sign-in
             if (path.StartsWith("/admin"))
             {
                 if (string.IsNullOrEmpty(userId))
@@ -75,7 +73,7 @@ namespace FurnitureProject.Middleware
                     return;
                 }
 
-                // Đã đăng nhập nhưng không phải admin/employee => 403
+                // Already sign in but role is not admin => 403
                 if (userRole != "admin" && userRole != "employee")
                 {
                     context.Response.StatusCode = 403;
@@ -83,7 +81,7 @@ namespace FurnitureProject.Middleware
                     return;
                 }
 
-                // Cho phép tiếp tục, nhưng kiểm tra nếu controller không tồn tại
+
                 await _next(context);
                 if (context.Response.StatusCode == 404)
                 {
@@ -92,7 +90,7 @@ namespace FurnitureProject.Middleware
                 return;
             }
 
-            // Các route còn lại ngoài admin mà không nằm trong bypass => chuyển về /error/not-found
+
             await _next(context);
             if (context.Response.StatusCode == 404)
             {

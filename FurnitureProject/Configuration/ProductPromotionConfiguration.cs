@@ -8,7 +8,7 @@ namespace FurnitureProject.Configuration
     {
         public void Configure(EntityTypeBuilder<ProductPromotion> builder)
         {
-            builder.ToTable("product_promotion"); // Tên bảng
+            builder.ToTable("product_promotion");
 
             builder.Property(u => u.PromotionId)
                 .IsRequired();

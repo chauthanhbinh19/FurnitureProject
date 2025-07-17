@@ -8,9 +8,9 @@ namespace FurnitureProject.Configuration
     {
         public void Configure(EntityTypeBuilder<Promotion> builder)
         {
-            builder.ToTable("promotions"); // Tên bảng
+            builder.ToTable("promotions");
 
-            builder.HasKey(u => u.Id); // Khóa chính
+            builder.HasKey(u => u.Id);
 
             builder.Property(u => u.Title)
                 .IsRequired();

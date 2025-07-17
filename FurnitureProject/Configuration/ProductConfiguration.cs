@@ -8,9 +8,9 @@ namespace FurnitureProject.Configuration
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
-            builder.ToTable("products"); // Tên bảng
+            builder.ToTable("products");
 
-            builder.HasKey(u => u.Id); // Khóa chính
+            builder.HasKey(u => u.Id);
 
             builder.Property(u => u.Name)
                 .IsRequired()

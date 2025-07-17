@@ -8,7 +8,7 @@ namespace FurnitureProject.Configuration
     {
         public void Configure(EntityTypeBuilder<ProductVoucher> builder)
         {
-            builder.ToTable("product_voucher"); // Tên bảng
+            builder.ToTable("product_voucher");
 
             builder.Property(u => u.VoucherId)
                 .IsRequired();
