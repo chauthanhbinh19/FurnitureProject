@@ -79,6 +79,13 @@
             public const string PhoneNumberExists = "Phone number already exists.";
 
             public const string InvalidCode = "Code is invalid";
+            public const string MustSignIn = "You must sign in first";
+            
+            public const string CartItemAdded = "Product added to cart successfully!";
+            public const string CartItemRemoved = "Product removed from cart successfully!";
+            public const string CartItemUpdated = "Product quantity updated successfully!";
+            public const string CartItemNotFound = "Product not found in cart.";
+            public const string CartItemNotEnoughStock = "Not enough stock for this product.";
 
             public const string Admin = "Admin";
             public const string User = "User";

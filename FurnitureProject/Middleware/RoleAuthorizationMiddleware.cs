@@ -42,11 +42,12 @@ namespace FurnitureProject.Middleware
                 "/error/not-found",
                 "/error/server-error",
                 "/error/maintenance",
-                "product/category",
-                "product/detail",
-                "product/all",
+                "/product/category",
+                "/product/detail",
+                "/product/all",
             };
 
+            // Kiểm tra xem đường dẫn có khớp chính xác hoặc bắt đầu bằng một trong các tiền tố bỏ qua không
             if (bypassPaths.Contains(path, StringComparer.OrdinalIgnoreCase))
             {
                 await _next(context);
@@ -55,6 +56,15 @@ namespace FurnitureProject.Middleware
 
             var userId = context.Session.GetString("UserID");
             var userRole = context.Session.GetString("UserRole");
+
+            if (path.StartsWith("/cart"))
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    context.Response.Redirect("/user/sign-in");
+                    return;
+                }
+            }
 
             // Truy cập trang admin mà chưa đăng nhập => redirect về sign-in
             if (path.StartsWith("/admin"))

@@ -27,6 +27,7 @@ namespace FurnitureProject.Models.DTO
         public DateTime? CreatedAt { get; set; }
         public string? PromotionStatus { get; set; } // Trạng thái khuyến mãi (Active, Inactive, Expired)
         public string? VoucherStatus { get; set; }
+        public int Quantity { get; set; }
         public List<IFormFile>? Files { get; set; }  // ảnh upload
         public List<string>? ImageUrls { get; set; } = new();
         [Display(Name = AppConstants.Display.ProductTag)]

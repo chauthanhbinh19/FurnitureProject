@@ -33,12 +33,12 @@ namespace FurnitureProject.Controllers
             ViewBag.UseLayout = true;
             ViewBag.LayoutType = "user";
         }
-        [HttpPost("category/{id}")]
+        [HttpGet("category/{id}")]
         public async Task<IActionResult> ProductByCategory(Guid id, int page = 1)
         {
+            GetUserInformationFromSession();
             SetViewBagForLayout();
             int pageSize = 10;
-            GetUserInformationFromSession();
             var products = await _productService.GetAllAsync();
             var categories = await _categoryService.GetAllAsync();
 
@@ -80,7 +80,7 @@ namespace FurnitureProject.Controllers
             return View(productViewModel);
         }
         [HttpGet("all")]
-        public async Task<IActionResult> AllProducts(int page = 1)
+        public async Task<IActionResult> AllProducts(string search = "", int page = 1)
         {
             GetUserInformationFromSession();
             SetViewBagForLayout();
@@ -105,6 +105,16 @@ namespace FurnitureProject.Controllers
                     TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new()
                 }).ToList();
 
+            // Search by key word
+            if (!string.IsNullOrEmpty(search))
+            {
+                productDtos = productDtos
+                    .Where(u =>
+                        (!string.IsNullOrEmpty(u.Name) && u.Name.Contains(search, StringComparison.OrdinalIgnoreCase)) ||
+                        (!string.IsNullOrEmpty(u.Description) && u.Description.Contains(search, StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
+            }
+
             int totalProducts = productDtos.Count();
             var pagedProducts = productDtos
                 .Skip((page - 1) * pageSize)
@@ -120,7 +130,7 @@ namespace FurnitureProject.Controllers
             //ViewBag.Status = "active";
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;
-            //ViewBag.Search = filter.SearchKeyWord;
+            ViewBag.Search = search;
             ViewBag.TotalProducts = totalProducts;
             return View(productViewModel);
         }

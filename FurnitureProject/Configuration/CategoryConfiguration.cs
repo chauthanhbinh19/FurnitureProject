@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FurnitureProject.Data
+namespace FurnitureProject.Configuration
 {
-    public class ProductConfiguration : IEntityTypeConfiguration<Product>
+    public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {
-        public void Configure(EntityTypeBuilder<Product> builder)
+        public void Configure(EntityTypeBuilder<Category> builder)
         {
-            builder.ToTable("products"); // Tên bảng
+            builder.ToTable("categories"); // Tên bảng
 
             builder.HasKey(u => u.Id); // Khóa chính
 
@@ -17,15 +17,6 @@ namespace FurnitureProject.Data
                 .HasMaxLength(100);
 
             builder.Property(u => u.Description);
-
-            builder.Property(u => u.Price)
-                .IsRequired();
-
-            builder.Property(u => u.Stock)
-                .IsRequired();
-
-            builder.Property(u => u.CategoryId)
-                .IsRequired();
 
             builder.Property(u => u.Status)
                 .IsRequired()

@@ -14,11 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-//Kết nối database posgresql
+//Connect database posgresql
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//Kết nối Cloudinary
+//Connect Cloudinary
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddSingleton<Cloudinary>(sp =>
 {
@@ -49,23 +49,19 @@ builder.Services.AddScoped<IPostCategoryRepository, PostCategoryRepository>();
 builder.Services.AddScoped<IPostCategoryService, PostCategoryService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
-
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(option =>
  {
-     option.IdleTimeout = TimeSpan.FromMinutes(30);
+     option.IdleTimeout = TimeSpan.FromHours(24);
      option.Cookie.HttpOnly = true;
      option.Cookie.IsEssential = true;
  });
-
-//var cultureInfo = new System.Globalization.CultureInfo("vi-VN");
-//cultureInfo.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
-
-//CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-//CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 var app = builder.Build();
 

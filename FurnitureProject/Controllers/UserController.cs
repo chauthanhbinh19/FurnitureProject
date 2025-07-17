@@ -14,11 +14,13 @@ namespace FurnitureProject.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly ICartService _cartService;
         private readonly IEmailSender _emailSender;
 
-        public UserController(IUserService userService, IEmailSender emailSender)
+        public UserController(IUserService userService, ICartService cartService, IEmailSender emailSender)
         {
             _userService = userService;
+            _cartService = cartService;
             _emailSender = emailSender;
         }
         private void SetViewBagForLayout()
