@@ -58,10 +58,14 @@ namespace FurnitureProject.Controllers
             {
                 Id = order.Id,
                 User = order.User,
+                ReceiverName = order.ReceiverName,
+                ReceiverEmail = order.ReceiverEmail,
+                ReceiverPhone = order.ReceiverPhone,
+                ShippingAddress = order.ShippingAddress,
                 OrderDate = order.OrderDate,
                 Status = order.Status,
                 TotalAmount = order.TotalAmount,
-                TotalItems = 0,
+                TotalItems = order.OrderItems.Count(),
                 CreatedAt = order.CreatedAt,
             }).ToList();
 

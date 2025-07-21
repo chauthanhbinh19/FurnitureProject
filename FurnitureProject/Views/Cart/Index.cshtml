@@ -65,8 +65,8 @@
                                                 <form asp-controller="Cart" asp-action="Delete" method="post" style="display:inline;"
                                                       onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
                                                     <input type="hidden" name="id" value="@item.Id" />
-                                                    <button type="submit" class="btn btn-sm btn-danger delete-tag" data-id="@item.Id" title="Xoá">
-                                                        <i class="bi bi-trash"></i>
+                                                    <button type="submit" class="bg-transparent border-0 p-0" data-id="@item.Id" title="Xoá">
+                                                        <i class="bi bi-trash text-danger fw-bold fs-5"></i>
                                                     </button>
                                                 </form>
                                             </td>

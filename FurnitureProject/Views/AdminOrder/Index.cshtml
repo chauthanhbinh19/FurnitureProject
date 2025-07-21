@@ -63,6 +63,7 @@
                         <th scope="col">ID</th>
                         <th scope="col">Khách hàng</th>
                         <th scope="col">Email</th>
+                        <th scope="col">Số điện thoại</th>
                         <th scope="col">Ngày tạo</th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col">Tổng tiền</th>
@@ -75,8 +76,9 @@
                     {
                         <tr>
                             <td>@order.Id.ToString().Substring(0, 16)</td>
-                            <td>@order.User.FullName</td>
-                            <td>@order.User.Email</td>
+                            <td>@order.ReceiverName</td>
+                            <td>@order.ReceiverEmail</td>
+                            <td>@order.ReceiverPhone</td>
                             <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
                             <td>
                                 @if (order.Status == "active")
