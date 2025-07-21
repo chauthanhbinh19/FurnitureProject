@@ -1,73 +1,71 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FurnitureProject.Helper;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FurnitureProject.Controllers
 {
     [Route("user")]
     public class AccountController : Controller
     {
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = true;
-            ViewBag.LayoutType = "user";
-        }
         [HttpGet("profile")]
         public IActionResult Profile()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             return View();
         }
 
         [HttpPost("profile")]
         public IActionResult UpdateProfile()
         {
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             return View();
         }
 
         [HttpGet("orders")]
         public IActionResult Orders()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             return View();
         }
 
         [HttpGet("orders/{id}")]
         public IActionResult OrderDetail(int id)
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             return View();
         }
 
         [HttpGet("wishlist")]
         public IActionResult Wishlist()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             return View();
         }
 
         [HttpGet("vouchers")]
         public IActionResult Vouchers()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             return View();
         }
 
         [HttpGet("addresses")]
         public IActionResult Addresses()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             return View();
         }
 
         [HttpPost("addresses")]
         public IActionResult UpdateAddresses()
         {
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             return View();
         }
 
         [HttpGet("notifications")]
         public IActionResult Notifications()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             return View();
         }
     }

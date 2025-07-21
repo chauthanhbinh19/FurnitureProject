@@ -9,7 +9,6 @@ namespace FurnitureProject.Services
 {
     public class CartService : ICartService
     {
-        private const string SessionCartKey = "Cart";
         private readonly ICartRepository _cartRepository;
         private readonly ICartItemRepository _cartItemRepository;
         private readonly IProductRepository _productRepository;
@@ -39,7 +38,7 @@ namespace FurnitureProject.Services
                     if (existingCartItem != null)
                     {
                         existingCartItem.Quantity += quantity;
-                        await _cartItemRepository.UpdateAsync(existingCartItem); // cập nhật số lượng
+                        await _cartItemRepository.UpdateAsync(existingCartItem); // update quantity
                     }
                     else
                     {
@@ -50,7 +49,7 @@ namespace FurnitureProject.Services
                             Quantity = quantity,
                             UnitPrice = product.Price
                         };
-                        await _cartItemRepository.CreateAsync(newCartItem); // thêm sản phẩm mới
+                        await _cartItemRepository.CreateAsync(newCartItem); // create new cart item
                     }
                 }
                 else
@@ -81,15 +80,61 @@ namespace FurnitureProject.Services
             }
         }
 
+        public async Task<(bool Success, string? Message)> UpdateItemQuantityAsync(Guid userId, Guid productId, int quantity)
+        {
+            try
+            {
+                var existingCart = await _cartRepository.GetCartByUserIdAsync(userId);
+
+                if (existingCart != null)
+                {
+                    var existingCartItem = existingCart.CartItems
+                        .FirstOrDefault(ci => ci.ProductId == productId);
+
+                    if (existingCartItem != null)
+                    {
+                        existingCartItem.Quantity = quantity;
+                        await _cartItemRepository.UpdateAsync(existingCartItem); // update quantity
+                        return (true, null);
+                    }
+                }
+
+                return (false, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
 
         public async Task<Cart?> GetCartByUserIdAsync(Guid userId)
         {
             return await _cartRepository.GetCartByUserIdAsync(userId);
         }
 
-        public async Task<bool> RemoveItemAsync(Guid cartItemId)
+        public async Task<(bool Success, string? Message)> RemoveItemAsync(Guid userId, Guid productId)
         {
-            return await _cartRepository.RemoveItemAsync(cartItemId);
+            try
+            {
+                var existingCart = await _cartRepository.GetCartByUserIdAsync(userId);
+
+                if (existingCart != null)
+                {
+                    var existingCartItem = existingCart.CartItems
+                        .FirstOrDefault(ci => ci.ProductId == productId);
+
+                    if (existingCartItem != null)
+                    {
+                        await _cartItemRepository.DeleteAsync(existingCartItem);
+                        return (true, null);
+                    }
+                }
+                return (false, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
         }
     }
 }

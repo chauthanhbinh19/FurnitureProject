@@ -35,8 +35,8 @@
                         <p class="card-text fw-bold text-danger">@product.Price.ToString("N0") ₫</p>
                     </div>
                     <div class="card-footer bg-white border-top-0 text-center">
-                        <form asp-controller="Product" asp-action="ProductDetail" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@product.Id" />
+                        <form asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id" method="get" style="display:inline;">
+                            @* <input type="hidden" name="id" value="@product.Id" /> *@
                             <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill" title="Chỉnh sửa">
                                 Xem chi tiết
                             </button>

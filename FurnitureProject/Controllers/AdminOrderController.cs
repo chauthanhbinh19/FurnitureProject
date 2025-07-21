@@ -13,24 +13,15 @@ namespace FurnitureProject.Controllers
         private readonly IOrderService _orderService;
         private readonly IUserService _userService;
         private readonly IProductService _productService;
+        private readonly ICartService _cartService;
 
-        public AdminOrderController(IOrderService orderService, IUserService userService, IProductService productService)
+        public AdminOrderController(IOrderService orderService, IUserService userService, 
+            IProductService productService, ICartService cartService)
         {
             _orderService = orderService;
             _userService = userService;
             _productService = productService;
-        }
-        private void GetUserInformationFromSession()
-        {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
-            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
-        }
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = true;
-            ViewBag.LayoutType = "admin";
+            _cartService = cartService;
         }
         private void SetStatusViewBag(string? status = null)
         {
@@ -57,8 +48,8 @@ namespace FurnitureProject.Controllers
         [Route("")]
         public async Task<IActionResult> Index(OrderFilterDTO filter, int page = 1)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
 
             int pageSize = 10;
             var orders = await _orderService.GetAllAsync();
@@ -125,8 +116,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
 
             var users = await _userService.GetAllAsync();
             var products = await _productService.GetAllAsync();

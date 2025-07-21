@@ -22,23 +22,11 @@ namespace FurnitureProject.Controllers
             _categoryService = categoryService;
             _cartService = cartService;
         }
-        private void GetUserInformationFromSession()
-        {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
-            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
-        }
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = true;
-            ViewBag.LayoutType = "user";
-        }
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
 
             var cartViewModel = new CartViewModel();
 
@@ -51,6 +39,8 @@ namespace FurnitureProject.Controllers
             if (userId != null)
             {
                 var cart = await _cartService.GetCartByUserIdAsync(Guid.Parse(userId));
+
+                cartViewModel.Cart = cart;
 
                 cartViewModel.ProductsInCart = cart.CartItems.Select(ci => new ProductDTO
                 {
@@ -66,12 +56,12 @@ namespace FurnitureProject.Controllers
             return View(cartViewModel);
         }
         [HttpPost("add-to-cart")]
-        public async Task<IActionResult> AddToCart(Guid productId, int quantity)
+        public async Task<IActionResult> AddToCart(Guid productId, int quantity, string returnUrl)
         {
             var userId = HttpContext.Session.GetString("UserID");
             if (userId == null) {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.MustSignIn;
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("SignIn", "User");
             }
             
             try
@@ -84,11 +74,67 @@ namespace FurnitureProject.Controllers
                 }
 
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CartItemAdded;
+                return Redirect(returnUrl ?? "/");
+            }
+            catch (Exception ex)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CartItemNotFound;
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        [HttpPost("update-quantity")]
+        public async Task<IActionResult> UpdateQuantity(Guid id, int quantity)
+        {
+            var userId = HttpContext.Session.GetString("UserID");
+            if (userId == null)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.MustSignIn;
+                return RedirectToAction("SignIn", "User");
+            }
+
+            try
+            {
+                var (success, message) = await _cartService.UpdateItemQuantityAsync(Guid.Parse(userId), id, quantity);
+                if (!success)
+                {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CartItemNotFound;
+                    return RedirectToAction("Index", "Home");
+                }
+
+                //TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CartItemUpdated;
                 return RedirectToAction("Index", "Cart");
             }
             catch (Exception ex)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CartItemNotFound;
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        [HttpPost("delete")]
+        public async Task<IActionResult> Delete(Guid id, int quantity)
+        {
+            var userId = HttpContext.Session.GetString("UserID");
+            if (userId == null)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.MustSignIn;
+                return RedirectToAction("SignIn", "User");
+            }
+
+            try
+            {
+                var (success, message) = await _cartService.RemoveItemAsync(Guid.Parse(userId), id);
+                if (!success)
+                {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CartItemRemoveFailed;
+                    return RedirectToAction("Index", "Home");
+                }
+
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CartItemRemoved;
+                return RedirectToAction("Index", "Cart");
+            }
+            catch (Exception ex)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CartItemRemoveFailed;
                 return RedirectToAction("Index", "Home");
             }
         }

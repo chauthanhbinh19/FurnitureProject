@@ -48,7 +48,7 @@ namespace FurnitureProject.Repositories
         public async Task DeleteAsync(CartItem item)
         {
             //image.IsDeleted = true;
-            _context.CartItems.Update(item);
+            _context.CartItems.Remove(item);
             await _context.SaveChangesAsync();
         }
     }

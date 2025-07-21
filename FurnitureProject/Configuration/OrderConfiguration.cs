@@ -15,6 +15,21 @@ namespace FurnitureProject.Configuration
             builder.Property(u => u.UserId)
                 .IsRequired();
 
+            builder.Property(u => u.ReceiverName)
+                .IsRequired();
+
+            builder.Property(u => u.ReceiverEmail)
+                .IsRequired();
+
+            builder.Property(u => u.ReceiverPhone)
+                .IsRequired();
+
+            builder.Property(u => u.ShippingAddress)
+                .IsRequired();
+
+            builder.Property(u => u.PaymentMethod)
+                .IsRequired();
+
             builder.Property(u => u.OrderDate)
                 .IsRequired();
 

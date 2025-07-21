@@ -1,3 +1,4 @@
+using FurnitureProject.Helper;
 using FurnitureProject.Models;
 using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
@@ -13,31 +14,21 @@ namespace FurnitureProject.Controllers
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
         private readonly ITagService _tagService;
+        private readonly ICartService _cartService;
 
         public ProductController(IProductService productService, ICategoryService categoryService,
-            ITagService tagService)
+            ITagService tagService, ICartService cartService)
         {
             _productService = productService;
             _categoryService = categoryService;
             _tagService = tagService;
-        }
-        private void GetUserInformationFromSession()
-        {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
-            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
-        }
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = true;
-            ViewBag.LayoutType = "user";
+            _cartService = cartService;
         }
         [HttpGet("category/{id}")]
         public async Task<IActionResult> ProductByCategory(Guid id, int page = 1)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             int pageSize = 10;
             var products = await _productService.GetAllAsync();
             var categories = await _categoryService.GetAllAsync();
@@ -82,8 +73,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> AllProducts(string search = "", int page = 1)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             int pageSize = 50;
             var products = await _productService.GetAllAsync();
             var categories = await _categoryService.GetAllAsync();
@@ -134,11 +125,11 @@ namespace FurnitureProject.Controllers
             ViewBag.TotalProducts = totalProducts;
             return View(productViewModel);
         }
-        [HttpPost("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> ProductDetail(Guid id)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             var product = await _productService.GetByIdAsync(id);
             var tags = await _tagService.GetAllAsync();
             if (product == null)

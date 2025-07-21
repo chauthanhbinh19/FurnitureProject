@@ -13,23 +13,13 @@ namespace FurnitureProject.Controllers
     {
         private readonly IVoucherService _voucherService;
         private readonly IProductService _productService;
+        private readonly ICartService _cartService;
 
-        public AdminVoucherController(IVoucherService voucherService, IProductService productService)
+        public AdminVoucherController(IVoucherService voucherService, IProductService productService, ICartService cartService)
         {
             _voucherService = voucherService;
             _productService = productService;
-        }
-        private void GetUserInformationFromSession()
-        {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
-            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
-        }
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = true;
-            ViewBag.LayoutType = "admin";
+            _cartService = cartService;
         }
         private void SetStatusViewBag(string? status = null)
         {
@@ -57,8 +47,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index(VoucherFilterDTO filter, int page = 1)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
 
             int pageSize = 10;
             var vouchers = await _voucherService.GetAllAsync();
@@ -129,8 +119,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             var promotion = await _voucherService.GetByIdAsync(id);
             if (promotion == null) return NotFound();
             return View(promotion);
@@ -139,8 +129,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             SetStatusViewBag();
             var products = await _productService.GetAllAsync();
             var vouchers = await _voucherService.GetAllAsync();
@@ -185,7 +175,7 @@ namespace FurnitureProject.Controllers
 
             if (!ModelState.IsValid)
             {
-                GetUserInformationFromSession();
+                await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
                 SetStatusViewBag();
                 var products = await _productService.GetAllAsync();
                 var vouchers = await _voucherService.GetAllAsync();
@@ -238,8 +228,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("update")]
         public async Task<IActionResult> Update(Guid id)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             var voucher = await _voucherService.GetByIdAsync(id);
             var vouchers = await _voucherService.GetAllAsync();
             var products = await _productService.GetAllAsync();
@@ -298,7 +288,7 @@ namespace FurnitureProject.Controllers
 
             if (!ModelState.IsValid)
             {
-                GetUserInformationFromSession();
+                await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
                 var voucher = await _voucherService.GetByIdAsync(dto.Id);
                 var vouchers = await _voucherService.GetAllAsync();
                 var products = await _productService.GetAllAsync();

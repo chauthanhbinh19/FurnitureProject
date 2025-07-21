@@ -13,22 +13,12 @@ namespace FurnitureProject.Controllers
     public class AdminUserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly ICartService _cartService;
 
-        public AdminUserController(IUserService userService)
+        public AdminUserController(IUserService userService, ICartService cartService)
         {
             _userService = userService;
-        }
-        private void GetUserInformationFromSession()
-        {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
-            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
-        }
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = true;
-            ViewBag.LayoutType = "admin";
+            _cartService = cartService;
         }
         private void SetStatusViewBag(string? status = null)
         {
@@ -67,8 +57,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index(UserFilterDTO filter, int page = 1)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
 
             int pageSize = 10;
             var users = await _userService.GetAllAsync();
@@ -135,8 +125,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             var user = await _userService.GetByIdAsync(id);
             if (user == null) return NotFound();
             return Ok(user);
@@ -145,8 +135,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             SetRoleViewBag();
             SetStatusViewBag();
             return View();
@@ -158,7 +148,7 @@ namespace FurnitureProject.Controllers
             ModelState.Remove("ConfirmPassword");
             if (!ModelState.IsValid)
             {
-                GetUserInformationFromSession();
+                await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
                 SetRoleViewBag();
                 SetStatusViewBag();
                 return View(dto);
@@ -198,8 +188,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("update")]
         public async Task<IActionResult> Update(Guid id)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             var user = await _userService.GetByIdAsync(id);
             if (user == null) return NotFound();
 
@@ -227,7 +217,7 @@ namespace FurnitureProject.Controllers
         {
             if (!ModelState.IsValid)
             {
-                GetUserInformationFromSession();
+                await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
                 var tempUser = await _userService.GetByIdAsync(dto.Id);
                 if (tempUser == null) return NotFound();
 

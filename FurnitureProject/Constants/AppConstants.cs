@@ -83,9 +83,14 @@
             
             public const string CartItemAdded = "Product added to cart successfully!";
             public const string CartItemRemoved = "Product removed from cart successfully!";
+            public const string CartItemRemoveFailed = "Failed to remove the item from your cart.";
             public const string CartItemUpdated = "Product quantity updated successfully!";
+            public const string CartItemUpdatedFailed = "Failed to update the item from your cart.";
             public const string CartItemNotFound = "Product not found in cart.";
             public const string CartItemNotEnoughStock = "Not enough stock for this product.";
+
+            public const string OrderPaymentSuccessfully = "Order payment was successful.";
+            public const string OrderPaymentFailed = "Order payment failed. Please try again.";
 
             public const string Admin = "Admin";
             public const string User = "User";
@@ -175,6 +180,11 @@
             public const string VoucherTimeUsed = "Số lần đã sử dụng";
             public const string VoucherIsValid = "Còn hiệu lực";
             public const string VoucherStatus = "Trạng thái";
+
+            public const string OrderReceiverName = "Họ tên người nhận";
+            public const string OrderReceiverEmail = "Email người nhận";
+            public const string OrderReceiverPhone = "Số điện thoại người nhận";
+            public const string OrderShippingAddress = "Địa chỉ giao hàng";
 
             public const string Status = "Trạng thái";
         }

@@ -11,7 +11,11 @@ namespace FurnitureProject.Models
         [Required]
         public Guid UserId { get; set; }
         public User User { get; set; }
-
+        public string? ReceiverName { get; set; }
+        public string? ReceiverEmail { get; set; }
+        public string? ReceiverPhone { get; set; }
+        public string? ShippingAddress { get; set; }
+        public string? PaymentMethod { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
         [Required]

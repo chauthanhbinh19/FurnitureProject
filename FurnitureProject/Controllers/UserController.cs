@@ -23,15 +23,10 @@ namespace FurnitureProject.Controllers
             _cartService = cartService;
             _emailSender = emailSender;
         }
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = false;
-            ViewBag.LayoutType = "user";
-        }
         [HttpGet("sign-in")]
         public IActionResult SignIn()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, false, "admin");
             return View();
         }
         [HttpPost("sign-in")]
@@ -87,7 +82,7 @@ namespace FurnitureProject.Controllers
 
         public IActionResult SignUp()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, false, "admin");
             return View();
         }
         [HttpPost("sign-up")]
@@ -130,7 +125,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("verify-code")]
         public IActionResult VerifyCode()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, false, "admin");
             return View(new EmailVerificationViewModel
             {
                 Email = TempData["PendingEmail"]?.ToString()
@@ -181,7 +176,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("forgot-password")]
         public async Task<IActionResult> ForgotPassword()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, false, "admin");
             return View();
         }
 
@@ -210,7 +205,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("verify-code-forgot-password")]
         public IActionResult VerifyCodeForgotPassword()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, false, "admin");
             string? email = TempData["VerificationEmail"]?.ToString();
             ViewBag.Email = email;
             TempData["VerificationEmail"] = email;
@@ -241,7 +236,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("reset-password")]
         public IActionResult ResetPassword()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, false, "admin");
             string? email = TempData["VerificationEmail"]?.ToString();
             ViewBag.Email = email;
             return View();

@@ -190,6 +190,9 @@ body {
     height: 550px;
     object-fit: cover;
 }
+.col-md-7-5 {
+    width: 64%;
+}
 .col-md-6-5{
     width:55%;
 }

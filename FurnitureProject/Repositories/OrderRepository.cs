@@ -35,6 +35,7 @@ namespace FurnitureProject.Repositories
 
         public async Task AddAsync(Order order)
         {
+            order.OrderDate = DateTime.SpecifyKind(order.OrderDate, DateTimeKind.Utc);
             await context.Orders.AddAsync(order);
             await context.SaveChangesAsync();
         }

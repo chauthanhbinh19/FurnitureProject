@@ -27,7 +27,28 @@ namespace FurnitureProject.Services
         {
             try
             {
-                //await orderRepository.AddAsync(order);
+                var order = new Order
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = dto.UserId,
+                    ReceiverName = dto.ReceiverName,
+                    ReceiverEmail = dto.ReceiverEmail,
+                    ReceiverPhone = dto.ReceiverPhone,
+                    ShippingAddress = dto.ShippingAddress,
+                    PaymentMethod = dto.PaymentMethod,
+                    OrderDate = DateTime.UtcNow,
+                    Status = dto.Status,
+                    TotalAmount = dto.TotalAmount
+                };
+
+                order.OrderItems = dto.Products.Select(p => new OrderItem
+                {
+                    ProductId = p.Id,
+                    Quantity = p.Quantity,
+                    UnitPrice = p.Price
+                }).ToList();
+
+                await orderRepository.AddAsync(order);
                 return (true, null);
             }
             catch (Exception ex)

@@ -1,4 +1,5 @@
-﻿using FurnitureProject.Services;
+﻿using FurnitureProject.Helper;
+using FurnitureProject.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FurnitureProject.Controllers
@@ -12,15 +13,10 @@ namespace FurnitureProject.Controllers
         {
             _categoryService = categoryService;
         }
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = true;
-            ViewBag.LayoutType = "user";
-        }
         [HttpGet("about")]
         public async Task<IActionResult> About()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             var categories = await _categoryService.GetAllAsync();
             ViewBag.Categories = categories.OrderBy(c => c.Name).ToList();
             return View();
@@ -29,7 +25,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("contact")]
         public async Task<IActionResult> Contact()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             var categories = await _categoryService.GetAllAsync();
             ViewBag.Categories = categories.OrderBy(c => c.Name).ToList();
             return View();
@@ -38,7 +34,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("faq")]
         public async Task<IActionResult> Faq()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             var categories = await _categoryService.GetAllAsync();
             ViewBag.Categories = categories.OrderBy(c => c.Name).ToList();
             return View();
@@ -47,7 +43,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("privacy-policy")]
         public async Task<IActionResult> PrivacyPolicy()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             var categories = await _categoryService.GetAllAsync();
             ViewBag.Categories = categories.OrderBy(c => c.Name).ToList();
             return View();
@@ -56,7 +52,7 @@ namespace FurnitureProject.Controllers
         [HttpGet("terms")]
         public async Task<IActionResult> Terms()
         {
-            SetViewBagForLayout();
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
             var categories = await _categoryService.GetAllAsync();
             ViewBag.Categories = categories.OrderBy(c => c.Name).ToList();
             return View();

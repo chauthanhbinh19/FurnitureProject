@@ -6,6 +6,7 @@ namespace FurnitureProject.Services
     {
         Task<(bool Success, string? Message)> CreateCartAsync(Guid userId, Guid productId, int quantity);
         Task<Cart?> GetCartByUserIdAsync(Guid userId);
-        Task<bool> RemoveItemAsync(Guid cartItemId);
+        Task<(bool Success, string? Message)> UpdateItemQuantityAsync(Guid userId, Guid productId, int quantity);
+        Task<(bool Success, string? Message)> RemoveItemAsync(Guid userId, Guid productId);
     }
 }

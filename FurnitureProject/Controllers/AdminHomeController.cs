@@ -1,27 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FurnitureProject.Helper;
+using FurnitureProject.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FurnitureProject.Controllers
 {
     [Route("admin/home")]
     public class AdminHomeController : Controller
     {
-        private void GetUserInformationFromSession()
+        public readonly ICartService _cartService;
+        public AdminHomeController(ICartService cartService)
         {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
-            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
-        }
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = true;
-            ViewBag.LayoutType = "admin";
+            _cartService = cartService;
         }
         [Route("")]
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             return View();
         }
     }

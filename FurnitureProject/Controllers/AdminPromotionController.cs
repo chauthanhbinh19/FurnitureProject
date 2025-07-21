@@ -13,23 +13,13 @@ namespace FurnitureProject.Controllers
     {
         private readonly IPromotionService _promotionService;
         private readonly IProductService _productService;
+        private readonly ICartService _cartService;
 
-        public AdminPromotionController(IPromotionService promotionService, IProductService productService)
+        public AdminPromotionController(IPromotionService promotionService, IProductService productService, ICartService cartService)
         {
             _promotionService = promotionService;
             _productService = productService;
-        }
-        private void GetUserInformationFromSession()
-        {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
-            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
-        }
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = true;
-            ViewBag.LayoutType = "admin";
+            _cartService = cartService;
         }
         private void SetStatusViewBag(string? status = null)
         {
@@ -57,8 +47,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index(PromotionFilterDTO filter, int page = 1)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
 
             int pageSize = 10;
             var promotions = await _promotionService.GetAllAsync();
@@ -124,8 +114,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             var promotion = await _promotionService.GetByIdAsync(id);
             if (promotion == null) return NotFound();
             return View(promotion);
@@ -134,8 +124,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             SetStatusViewBag();
             var products = await _productService.GetAllAsync();
             var promotions = await _promotionService.GetAllAsync();
@@ -198,7 +188,7 @@ namespace FurnitureProject.Controllers
 
             if (!ModelState.IsValid)
             {
-                GetUserInformationFromSession();
+                await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
                 SetStatusViewBag();
                 var products = await _productService.GetAllAsync();
                 var promotions = await _promotionService.GetAllAsync();
@@ -251,8 +241,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("update")]
         public async Task<IActionResult> Update(Guid id)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             var promotion = await _promotionService.GetByIdAsync(id);
             var promotions = await _promotionService.GetAllAsync();
             var products = await _productService.GetAllAsync();
@@ -326,7 +316,7 @@ namespace FurnitureProject.Controllers
 
             if (!ModelState.IsValid)
             {
-                GetUserInformationFromSession();
+                await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
                 var promotion = await _promotionService.GetByIdAsync(dto.Id);
                 var promotions = await _promotionService.GetAllAsync();
                 var products = await _productService.GetAllAsync();

@@ -93,7 +93,7 @@
                     <button type="submit" class="btn btn-outline-primary px-4 rounded-pill">
                         <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ hàng
                     </button>
-
+                    <input type="hidden" name="returnUrl" value="@Url.Action("ProductDetail", "Product", new { id = Model.Id })" />
                     <a href="/Order/BuyNow?productId=@Model.Id" class="btn btn-danger px-4 rounded-pill">
                         <i class="bi bi-lightning me-1"></i> Mua ngay
                     </a>

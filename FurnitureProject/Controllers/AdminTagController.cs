@@ -13,22 +13,12 @@ namespace FurnitureProject.Controllers
     public class AdminTagController : Controller
     {
         private readonly ITagService _tagService;
+        private readonly ICartService _cartService;
 
-        public AdminTagController(ITagService tagService)
+        public AdminTagController(ITagService tagService, ICartService cartService)
         {
             _tagService = tagService;
-        }
-        private void GetUserInformationFromSession()
-        {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
-            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
-        }
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = true;
-            ViewBag.LayoutType = "admin";
+            _cartService = cartService;
         }
         private void SetStatusViewBag(string? status = null)
         {
@@ -55,8 +45,8 @@ namespace FurnitureProject.Controllers
         [Route("")]
         public async Task<IActionResult> Index(TagFilterDTO filter, int page = 1)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
 
             int pageSize = 10;
             var tags = await _tagService.GetAllAsync();
@@ -120,8 +110,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             SetStatusViewBag();
             return View();
         }
@@ -131,7 +121,7 @@ namespace FurnitureProject.Controllers
         {
             if (!ModelState.IsValid)
             {
-                GetUserInformationFromSession();
+                await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
                 SetStatusViewBag(dto.Status);
                 return View(dto);
             }
@@ -165,8 +155,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("update")]
         public async Task<IActionResult> Update(Guid id)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             var tag = await _tagService.GetByIdAsync(id);
             SetStatusViewBag(tag.Status);
             var tagDTO = new TagDTO
@@ -185,7 +175,7 @@ namespace FurnitureProject.Controllers
 
             if (!ModelState.IsValid)
             {
-                GetUserInformationFromSession();
+                await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
                 SetStatusViewBag(dto.Status);
                 return View(dto);
             }

@@ -19,25 +19,15 @@ namespace FurnitureProject.Controllers
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
         private readonly ITagService _tagService;
+        private readonly ICartService _cartService;
 
         public AdminProductController(IProductService productService, ICategoryService categoryService, 
-            ITagService tagService)
+            ITagService tagService, ICartService cartService)
         {
             _productService = productService;
             _categoryService = categoryService;
             _tagService = tagService;
-        }
-        private void GetUserInformationFromSession()
-        {
-            ViewBag.UserId = HttpContext.Session.GetString("UserID");
-            ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
-            ViewBag.UserFullName = HttpContext.Session.GetString("UserFullName");
-            ViewBag.UserEmail = HttpContext.Session.GetString("UserEmail");
-        }
-        private void SetViewBagForLayout()
-        {
-            ViewBag.UseLayout = true;
-            ViewBag.LayoutType = "admin";
+            _cartService = cartService;
         }
         private async Task SetCategoryViewBag(Guid? categoryId = null)
         {
@@ -75,8 +65,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index(ProductFilterDTO filter, int page = 1)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
 
             int pageSize = 10;
             var products = await _productService.GetAllAsync();
@@ -180,8 +170,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             var product = await _productService.GetByIdAsync(id);
             if (product == null) return NotFound();
             return View(product);
@@ -190,8 +180,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("create")]
         public async Task<IActionResult> Create()
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
 
             await SetCategoryViewBag();
             await SetTagViewBag();
@@ -223,8 +213,8 @@ namespace FurnitureProject.Controllers
         [HttpGet("update")]
         public async Task<IActionResult> Update(Guid id)
         {
-            GetUserInformationFromSession();
-            SetViewBagForLayout();
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
             var product = await _productService.GetByIdAsync(id);
 
             var productDTO = new ProductDTO
