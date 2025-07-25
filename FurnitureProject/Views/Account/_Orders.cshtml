@@ -1,0 +1,120 @@
+﻿@model FurnitureProject.Models.ViewModels.OrderViewModel
+@{
+    ViewBag.Title = "Tìm kiếm đơn hàng";
+    string keyword = ViewBag.Keyword as string;
+    int totalPages = (int)Math.Ceiling((double)ViewBag.TotalOrders / ViewBag.PageSize);
+    int currentPage = ViewBag.CurrentPage;
+}
+@{
+    int maxPagesToShow = 8;
+    int startPage = Math.Max(1, currentPage - maxPagesToShow / 2);
+    int endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+    if (endPage - startPage + 1 < maxPagesToShow)
+    {
+        startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+    }
+}
+<h4 class="mb-4">🛒 Lịch sử đặt hàng</h4>
+<div class="table-responsive title-box">
+    <div class="container">
+        <form method="get" asp-controller="AdminOrder" asp-action="Index" class="link-custom">
+            <div class="row mb-3 justify-content-around">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="text" name="search" value="@keyword" class="form-control" placeholder="Nhập từ khóa...">
+                        <button type="submit" class="btn-custom bg-conflowerblue">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+                <!-- Filter by Status -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <select asp-for="Filter.FilterByStatus" name="Filter.FilterByStatus" class="form-select" asp-items="@ViewBag.StatusList">
+                        <option value="">Trạng thái</option>
+                    </select>
+                </div>
+                <!-- Optional: Nút Reset -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <a href="/admin/order/" class="btn btn-secondary w-100">Xoá lọc</a>
+                </div>
+            </div>
+        </form>
+        <div class="row mb-3">
+            <table class="table table-hover align-middle">
+                <thead class="table-background">
+                    <tr>
+                        @* <th scope="col">ID</th> *@
+                        <th scope="col">Họ tên người nhận</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Số điện thoại</th>
+                        <th scope="col">Ngày tạo</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col">Tổng tiền</th>
+                        <th scope="col">Số lượng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            @* <td>@order.Id.ToString().Substring(0, 16)</td> *@
+                            <td>@order.ReceiverName</td>
+                            <td>@order.ReceiverEmail</td>
+                            <td>@order.ReceiverPhone</td>
+                            <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (order.Status == "active")
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else if (order.Status == "inactive")
+                                {
+                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                }
+                                else if (order.Status == "banned")
+                                {
+                                    <span class="badge bg-danger">Bị khóa</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">@order.Status</span>
+                                }
+                            </td>
+                            <td>@order.TotalAmount.ToString("N0") ₫</td>
+                            <td>@order.TotalItems</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="pagination-box">
+    <nav>
+        <ul class="pagination justify-content-center">
+
+            <!-- Previous button -->
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1 })" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                </li>
+            }
+
+            <!-- Next button -->
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1 })" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+</div>

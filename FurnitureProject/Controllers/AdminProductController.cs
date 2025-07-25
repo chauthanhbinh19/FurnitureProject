@@ -20,14 +20,16 @@ namespace FurnitureProject.Controllers
         private readonly ICategoryService _categoryService;
         private readonly ITagService _tagService;
         private readonly ICartService _cartService;
+        private readonly IPromotionService _promotionService;
 
         public AdminProductController(IProductService productService, ICategoryService categoryService, 
-            ITagService tagService, ICartService cartService)
+            ITagService tagService, ICartService cartService, IPromotionService promotionService)
         {
             _productService = productService;
             _categoryService = categoryService;
             _tagService = tagService;
             _cartService = cartService;
+            _promotionService = promotionService;
         }
         private async Task SetCategoryViewBag(Guid? categoryId = null)
         {
@@ -72,20 +74,39 @@ namespace FurnitureProject.Controllers
             var products = await _productService.GetAllAsync();
             var categories = await _categoryService.GetAllAsync();
             var tags = await _tagService.GetAllAsync();
+            var promotions = await _promotionService.GetAllAsync();
+            var today = DateTime.UtcNow;
 
-            var productDtos = products.Select(product => new ProductDTO
+            var productDtos = products.Select(product =>
             {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Stock = product.Stock,
-                Status = product.Status,
-                Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
-                CreatedAt = product.CreatedAt,
-                ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
-                TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new()
+                var activePromotion = promotions.FirstOrDefault(promo =>
+                    promo.ProductPromotions.Any(pp => pp.ProductId == product.Id) &&
+                    promo.EndDate >= today
+                );
+
+                decimal discountPrice = 0;
+                if (activePromotion != null)
+                {
+                    var discount = activePromotion.DiscountPercent;
+                    discountPrice = product.Price * (1 - discount / 100m);
+                }
+
+                return new ProductDTO
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    Stock = product.Stock,
+                    Status = product.Status,
+                    Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                    CreatedAt = product.CreatedAt,
+                    ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                    TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                    DiscountPrice = discountPrice,
+                };
             }).ToList();
+
 
             // Search by key word
             if (!string.IsNullOrEmpty(filter.SearchKeyWord))
@@ -121,22 +142,39 @@ namespace FurnitureProject.Controllers
             }
 
             // Sort Order
-            switch (filter.SortOrder)
+            if (!string.IsNullOrEmpty(filter.SortColumn))
             {
-                case "newest":
-                    productDtos = productDtos.OrderByDescending(p => p.CreatedAt).ToList();
-                    break;
-                case "oldest":
-                    productDtos = productDtos.OrderBy(p => p.CreatedAt).ToList();
-                    break;
-                case "price-asc":
-                    productDtos = productDtos.OrderBy(p => p.Price).ToList();
-                    break;
-                case "price-desc":
-                    productDtos = productDtos.OrderByDescending(p => p.Price).ToList();
-                    break;
-            }
+                bool isAscending = filter.SortDirection?.ToLower() == "asc";
 
+                productDtos = filter.SortColumn switch
+                {
+                    "Name" => isAscending
+                        ? productDtos.OrderBy(p => p.Name).ToList()
+                        : productDtos.OrderByDescending(p => p.Name).ToList(),
+
+                    "Price" => isAscending
+                        ? productDtos.OrderBy(p => p.Price).ToList()
+                        : productDtos.OrderByDescending(p => p.Price).ToList(),
+
+                    "Stock" => isAscending
+                        ? productDtos.OrderBy(p => p.Stock).ToList()
+                        : productDtos.OrderByDescending(p => p.Stock).ToList(),
+
+                    "CategoryName" => isAscending
+                        ? productDtos.OrderBy(p => p.Category.Name).ToList()
+                        : productDtos.OrderByDescending(p => p.Category.Name).ToList(),
+
+                    "CreatedAt" => isAscending
+                        ? productDtos.OrderBy(p => p.CreatedAt).ToList()
+                        : productDtos.OrderByDescending(p => p.CreatedAt).ToList(),
+
+                    "Status" => isAscending
+                        ? productDtos.OrderBy(p => p.Status).ToList()
+                        : productDtos.OrderByDescending(p => p.Status).ToList(),
+
+                    _ => productDtos
+                };
+            }
 
 
             int totalProducts = productDtos.Count();
@@ -157,7 +195,6 @@ namespace FurnitureProject.Controllers
             await SetCategoryViewBag(filter.FilterCategoryId);
             await SetTagViewBag(filter.FilterTagId);
             SetStatusViewBag(filter.FilterByStatus);
-            SetSortOptions(filter.SortOrder);
 
             ViewBag.Status = "active";
             ViewBag.CurrentPage = page;

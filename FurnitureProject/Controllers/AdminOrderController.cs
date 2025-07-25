@@ -86,14 +86,42 @@ namespace FurnitureProject.Controllers
             }
 
             // Sort Order
-            switch (filter.SortOrder)
+            if (!string.IsNullOrEmpty(filter.SortColumn))
             {
-                case "newest":
-                    orderDTOs = orderDTOs.OrderByDescending(p => p.CreatedAt).ToList();
-                    break;
-                case "oldest":
-                    orderDTOs = orderDTOs.OrderBy(p => p.CreatedAt).ToList();
-                    break;
+                bool isAscending = filter.SortDirection?.ToLower() == "asc";
+
+                orderDTOs = filter.SortColumn switch
+                {
+                    "ReceiverName" => isAscending
+                        ? orderDTOs.OrderBy(p => p.ReceiverName).ToList()
+                        : orderDTOs.OrderByDescending(p => p.ReceiverName).ToList(),
+
+                    "ReceiverEmail" => isAscending
+                        ? orderDTOs.OrderBy(p => p.ReceiverEmail).ToList()
+                        : orderDTOs.OrderByDescending(p => p.ReceiverEmail).ToList(),
+
+                    "ReceiverPhone" => isAscending
+                        ? orderDTOs.OrderBy(p => p.ReceiverPhone).ToList()
+                        : orderDTOs.OrderByDescending(p => p.ReceiverPhone).ToList(),
+
+                    "OrderDate" => isAscending
+                        ? orderDTOs.OrderBy(p => p.OrderDate).ToList()
+                        : orderDTOs.OrderByDescending(p => p.OrderDate).ToList(),
+
+                    "Status" => isAscending
+                        ? orderDTOs.OrderBy(p => p.Status).ToList()
+                        : orderDTOs.OrderByDescending(p => p.Status).ToList(),
+
+                    "TotalAmount" => isAscending
+                        ? orderDTOs.OrderBy(p => p.TotalAmount).ToList()
+                        : orderDTOs.OrderByDescending(p => p.TotalAmount).ToList(),
+
+                    "TotalItems" => isAscending
+                        ? orderDTOs.OrderBy(p => p.TotalItems).ToList()
+                        : orderDTOs.OrderByDescending(p => p.TotalItems).ToList(),
+
+                    _ => orderDTOs
+                };
             }
 
             int totalOrders = orderDTOs.Count();
@@ -109,7 +137,6 @@ namespace FurnitureProject.Controllers
             };
 
             SetStatusViewBag(filter.FilterByStatus);
-            SetSortOptions(filter.SortOrder);
 
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;

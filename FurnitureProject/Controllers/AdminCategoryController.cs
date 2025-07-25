@@ -79,15 +79,32 @@ namespace FurnitureProject.Controllers
             }
 
             // Sort Order
-            switch (filter.SortOrder)
+            if (!string.IsNullOrEmpty(filter.SortColumn))
             {
-                case "newest":
-                    categoryDTOs = categoryDTOs.OrderByDescending(p => p.CreatedAt).ToList();
-                    break;
-                case "oldest":
-                    categoryDTOs = categoryDTOs.OrderBy(p => p.CreatedAt).ToList();
-                    break;
+                bool isAscending = filter.SortDirection?.ToLower() == "asc";
+
+                categoryDTOs = filter.SortColumn switch
+                {
+                    "Name" => isAscending
+                        ? categoryDTOs.OrderBy(p => p.Name).ToList()
+                        : categoryDTOs.OrderByDescending(p => p.Name).ToList(),
+
+                    "Description" => isAscending
+                        ? categoryDTOs.OrderBy(p => p.Description).ToList()
+                        : categoryDTOs.OrderByDescending(p => p.Description).ToList(),
+
+                    "CreatedAt" => isAscending
+                        ? categoryDTOs.OrderBy(p => p.CreatedAt).ToList()
+                        : categoryDTOs.OrderByDescending(p => p.CreatedAt).ToList(),
+
+                    "Status" => isAscending
+                        ? categoryDTOs.OrderBy(p => p.Status).ToList()
+                        : categoryDTOs.OrderByDescending(p => p.Status).ToList(),
+
+                    _ => categoryDTOs
+                };
             }
+
 
             int totalCategories = categoryDTOs.Count();
             var pagedCategories = categoryDTOs
@@ -102,7 +119,7 @@ namespace FurnitureProject.Controllers
             };
 
             SetStatusViewBag(filter.FilterByStatus);
-            SetSortOptions(filter.SortOrder);
+            //SetSortOptions(filter.SortOrder);
 
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;

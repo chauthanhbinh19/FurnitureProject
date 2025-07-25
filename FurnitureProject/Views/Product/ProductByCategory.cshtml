@@ -32,7 +32,19 @@
                          class="card-img-top rounded-top" style="height: 200px; object-fit: cover;" alt="@product.Name">
                     <div class="card-body text-center">
                         <h6 class="card-title text-truncate" title="@product.Name">@product.Name</h6>
-                        <p class="card-text fw-bold text-danger">@product.Price.ToString("N0") ₫</p>
+                        <p class="card-text fw-bold text-danger">
+                            @if (product.DiscountPrice != null && product.DiscountPrice > 0)
+                                {
+                                    <span class="text-danger fw-bold">@product.DiscountPrice.ToString("N0") ₫</span>
+
+                                    <br />
+                                    <span class="text-muted text-decoration-line-through">@product.Price.ToString("N0") ₫</span>
+                                }
+                                else
+                                {
+                                    <span>@product.Price.ToString("N0") ₫</span>
+                                }
+                        </p>
                     </div>
                     <div class="card-footer bg-white border-top-0 text-center">
                         <form asp-controller="Product" asp-action="ProductDetail" asp-route-id="@product.Id" method="get" style="display:inline;">

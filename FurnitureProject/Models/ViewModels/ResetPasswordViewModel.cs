@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FurnitureProject.Helper;
+using System.ComponentModel.DataAnnotations;
 
 namespace FurnitureProject.Models.ViewModels
 {
@@ -9,10 +10,12 @@ namespace FurnitureProject.Models.ViewModels
 
         [Required]
         [DataType(DataType.Password)]
+        [Display(Name = AppConstants.Display.UserPassword)]
         public string NewPassword { get; set; }
 
         [Compare("NewPassword", ErrorMessage = "Mật khẩu xác nhận không khớp")]
         [DataType(DataType.Password)]
+        [Display(Name = AppConstants.Display.UserConfirmPassword)]
         public string ConfirmPassword { get; set; }
     }
 

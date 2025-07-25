@@ -1,0 +1,97 @@
+﻿<nav class="sidebar sidebar-custom col-10 col-md-3 col-lg-2 d-md-block p-0 position-fixed" style="width: 250px; height: 100vh; left: 0; top: 0; z-index: 1030; background: #fff;">
+    <div class="position-sticky pt-3">
+        <div class="text-center mb-2">
+            <img src="~/images/logo.png" alt="Logo" class="img-fluid rounded-circle" style="max-width: 80px;" />
+        </div>
+        <ul class="nav flex-column">
+            <!-- Trang chủ -->
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminHome" ? "active" : "")"
+                   asp-area="" asp-controller="AdminHome" asp-action="Index">
+                    <i class="bi bi-house-door me-2"></i>Trang chủ
+                </a>
+            </li>
+
+            <!-- Sản phẩm -->
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminProduct" ? "active" : "")"
+                   asp-area="" asp-controller="AdminProduct" asp-action="Index">
+                    <i class="bi bi-box-seam me-2"></i>Sản phẩm
+                </a>
+            </li>
+
+            <!-- Danh mục -->
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminCategory" ? "active" : "")"
+                   asp-area="" asp-controller="AdminCategory" asp-action="Index">
+                    <i class="bi bi-bookmark me-2"></i>Danh mục
+                </a>
+            </li>
+
+            <!-- Nhãn -->
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminTag" ? "active" : "")"
+                   asp-area="" asp-controller="AdminTag" asp-action="Index">
+                    <i class="bi bi-tag me-2"></i>Nhãn
+                </a>
+            </li>
+
+            <!-- Người dùng -->
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminUser" ? "active" : "")"
+                   asp-area="" asp-controller="AdminUser" asp-action="Index">
+                    <i class="bi bi-people me-2"></i>Người dùng
+                </a>
+            </li>
+
+            <!-- Đơn hàng -->
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminOrder" ? "active" : "")"
+                   asp-area="" asp-controller="AdminOrder" asp-action="Index">
+                    <i class="bi bi-cart-check me-2"></i>Đơn hàng
+                </a>
+            </li>
+
+            <!-- Khuyến mãi -->
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminPromotion" ? "active" : "")"
+                   asp-area="" asp-controller="AdminPromotion" asp-action="Index">
+                    <i class="bi bi-megaphone me-2"></i>Khuyến mãi
+                </a>
+            </li>
+
+            <!-- Mã giảm giá -->
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminVoucher" ? "active" : "")"
+                   asp-area="" asp-controller="AdminVoucher" asp-action="Index">
+                    <i class="bi bi-ticket-perforated me-2"></i>Mã giảm giá
+                </a>
+            </li>
+
+            <!-- Bài viết -->
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminPost" ? "active" : "")"
+                   asp-area="" asp-controller="AdminPost" asp-action="Index">
+                    <i class="bi bi-file-earmark-text me-2"></i>Bài viết
+                </a>
+            </li>
+
+            <!-- Phân loại bài viết -->
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "PostCategory" ? "active" : "")"
+                   asp-area="" asp-controller="PostCategory" asp-action="Index">
+                    <i class="bi bi-journal-text me-2"></i>Chuyên mục bài viết
+                </a>
+            </li>
+
+            <!-- Quản trị hệ thống -->
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "System" ? "active" : "")"
+                   asp-area="" asp-controller="System" asp-action="Settings">
+                    <i class="bi bi-gear me-2"></i>Cài đặt hệ thống
+                </a>
+            </li>
+        </ul>
+
+    </div>
+</nav>

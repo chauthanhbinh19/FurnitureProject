@@ -91,27 +91,8 @@
             const rule = document.getElementById("rule-" + key);
             rule.classList.remove("text-success", "text-secondary");
             rule.classList.add(isValid ? "text-success" : "text-secondary");
-            rule.setAttribute("data-valid", isValid); // Gắn trạng thái hợp lệ
+            rule.setAttribute("data-valid", isValid);
         }
-
-            // Khi submit form
-            form.addEventListener("submit", function (event) {
-                const rules = ["length", "uppercase", "lowercase", "number", "special"];
-                let allValid = true;
-
-                for (const key of rules) {
-                    const rule = document.getElementById("rule-" + key);
-                    if (rule.getAttribute("data-valid") !== "true") {
-                        allValid = false;
-                        break;
-                    }
-                }
-
-                if (!allValid) {
-                    event.preventDefault(); // Ngăn submit
-                    alert("Mật khẩu chưa thỏa mãn đủ điều kiện bảo mật.");
-                }
-            });
     });
 </script>
     <script>

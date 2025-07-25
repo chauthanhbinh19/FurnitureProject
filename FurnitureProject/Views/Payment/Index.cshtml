@@ -13,22 +13,22 @@
                 <form method="post" asp-action="ProcessPayment">
                     <div class="mb-3">
                         <label asp-for="@Model.Order.ReceiverName" class="form-label fw-medium"></label>
-                        <input asp-for="@Model.Order.ReceiverName" type="text" class="form-control" required>
+                        <input asp-for="@Model.Order.ReceiverName" type="text" class="form-control">
                         <span asp-validation-for="@Model.Order.ReceiverName" class="text-danger small"></span>
                     </div>
                     <div class="mb-3">
                         <label asp-for="@Model.Order.ReceiverEmail" class="form-label fw-medium"></label>
-                        <input asp-for="@Model.Order.ReceiverEmail" type="email" class="form-control" required>
+                        <input asp-for="@Model.Order.ReceiverEmail" type="email" class="form-control">
                         <span asp-validation-for="@Model.Order.ReceiverEmail" class="text-danger small"></span>
                     </div>
                     <div class="mb-3">
                         <label asp-for="@Model.Order.ReceiverPhone" class="form-label fw-medium"></label>
-                        <input asp-for="@Model.Order.ReceiverPhone" type="text" class="form-control" required>
+                        <input asp-for="@Model.Order.ReceiverPhone" type="text" class="form-control">
                         <span asp-validation-for="@Model.Order.ReceiverPhone" class="text-danger small"></span>
                     </div>
                     <div class="mb-3">
                         <label asp-for="@Model.Order.ShippingAddress" class="form-label fw-medium"></label>
-                        <textarea asp-for="@Model.Order.ShippingAddress" class="form-control" rows="5" required></textarea>
+                        <textarea asp-for="@Model.Order.ShippingAddress" class="form-control" rows="5"></textarea>
                         <span asp-validation-for="@Model.Order.ShippingAddress" class="text-danger small"></span>
                     </div>
                     <hr />
@@ -67,7 +67,17 @@
                             <small>Số lượng: @item.Quantity</small>
                         </div>
                         <div class="text-end">
-                            <span>@item.Price.ToString("N0") ₫</span>
+                            @if (item.DiscountPrice != null && item.DiscountPrice > 0)
+                            {
+                                <span class="text-danger fw-bold">@item.DiscountPrice.ToString("N0") ₫</span>
+                        
+                                <br />
+                                <span class="text-muted text-decoration-line-through">@item.Price.ToString("N0") ₫</span>
+                            }
+                            else
+                            {
+                                <span>@item.Price.ToString("N0") ₫</span>
+                            }
                         </div>
                     </div>
                 }

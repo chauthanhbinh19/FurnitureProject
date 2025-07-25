@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "Giỏ hàng của bạn";
     var cartItems = Model.ProductsInCart.ToList();
-    decimal total = Model.ProductsInCart.Sum(item => item.Price * item.Quantity);
+    decimal total = Model.ProductsInCart.Sum(item =>
+    (item.DiscountPrice > 0 ? item.DiscountPrice : item.Price) * item.Quantity
+    );
 }
 
 <div class="container py-5">
@@ -59,8 +61,29 @@
                                                     </form>
                                                 </div>
                                             </td>
-                                            <td class="text-end">@item.Price.ToString("N0") ₫</td>
-                                            <td class="text-end fw-bold">@((item.Price * item.Quantity).ToString("N0")) ₫</td>
+                                            <td class="text-end">
+                                                @if (item.DiscountPrice != null && item.DiscountPrice > 0)
+                                                {
+                                                    <span class="text-danger fw-bold">@item.DiscountPrice.ToString("N0") ₫</span>
+
+                                                    <br />
+                                                    <span class="text-muted text-decoration-line-through">@item.Price.ToString("N0") ₫</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@item.Price.ToString("N0") ₫</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.DiscountPrice != null && item.DiscountPrice > 0)
+                                                {
+                                                    <td class="text-end fw-bold">@((item.DiscountPrice * item.Quantity).ToString("N0")) ₫</td>
+                                                }
+                                                else
+                                                {
+                                                    <td class="text-end fw-bold">@((item.Price * item.Quantity).ToString("N0")) ₫</td>
+                                                }
+                                            </td>
                                             <td class="text-end">
                                                 <form asp-controller="Cart" asp-action="Delete" method="post" style="display:inline;"
                                                       onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">

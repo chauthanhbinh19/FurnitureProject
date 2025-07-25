@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FurnitureProject.Helper;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FurnitureProject.Models
@@ -12,6 +13,7 @@ namespace FurnitureProject.Models
         public string Username { get; set; }
 
         [Required]
+        [EmailAddress(ErrorMessage = AppConstants.Display.InvalidEmailFormat)]
         public string Email { get; set; }
 
         [Required]

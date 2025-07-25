@@ -18,6 +18,11 @@ namespace FurnitureProject.Services
             return await orderRepository.GetAllAsync();
         }
 
+        public async Task<List<Order>> GetAllByUserIdAsync(Guid userId)
+        {
+            return await orderRepository.GetAllByUserIdAsync(userId);
+        }
+
         public async Task<Order> GetByIdAsync(Guid id)
         {
             return await orderRepository.GetByIdAsync(id);

@@ -5,6 +5,7 @@ namespace FurnitureProject.Repositories
     public interface IOrderRepository
     {
         Task<List<Order>> GetAllAsync();
+        Task<List<Order>> GetAllByUserIdAsync(Guid userId);
         Task<Order> GetByIdAsync(Guid id);
         Task AddAsync(Order order);
         Task UpdateAsync(Order order);

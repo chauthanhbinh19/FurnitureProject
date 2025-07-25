@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true" />
     <script src="~/ckeditor/ckeditor.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@x.x.x/font/bootstrap-icons.css" rel="stylesheet">
@@ -34,152 +36,10 @@
         {
                 @if (ViewBag.LayoutType.Equals("admin"))
                 {
-                     <nav class="sidebar sidebar-custom col-10 col-md-3 col-lg-2 d-md-block p-0 position-fixed" style="width: 250px; height: 100vh; left: 0; top: 0; z-index: 1030; background: #fff;"> 
-                        <div class="position-sticky pt-3">
-                            <div class="text-center mb-2">
-                                <img src="~/images/logo.png" alt="Logo" class="img-fluid rounded-circle" style="max-width: 80px;" />
-                            </div>
-                            <ul class="nav flex-column">
-                                <!-- Trang chủ -->
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminHome" ? "active" : "")"
-                                       asp-area="" asp-controller="AdminHome" asp-action="Index">
-                                        <i class="bi bi-house-door me-2"></i>Trang chủ
-                                    </a>
-                                </li>
-
-                                <!-- Sản phẩm -->
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminProduct" ? "active" : "")"
-                                       asp-area="" asp-controller="AdminProduct" asp-action="Index">
-                                        <i class="bi bi-box-seam me-2"></i>Sản phẩm
-                                    </a>
-                                </li>
-
-                                <!-- Danh mục -->
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminCategory" ? "active" : "")"
-                                       asp-area="" asp-controller="AdminCategory" asp-action="Index">
-                                        <i class="bi bi-bookmark me-2"></i>Danh mục
-                                    </a>
-                                </li>
-
-                                <!-- Nhãn -->
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminTag" ? "active" : "")"
-                                       asp-area="" asp-controller="AdminTag" asp-action="Index">
-                                        <i class="bi bi-tag me-2"></i>Nhãn
-                                    </a>
-                                </li>
-
-                                <!-- Người dùng -->
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminUser" ? "active" : "")"
-                                       asp-area="" asp-controller="AdminUser" asp-action="Index">
-                                        <i class="bi bi-people me-2"></i>Người dùng
-                                    </a>
-                                </li>
-
-                                <!-- Đơn hàng -->
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminOrder" ? "active" : "")"
-                                       asp-area="" asp-controller="AdminOrder" asp-action="Index">
-                                        <i class="bi bi-cart-check me-2"></i>Đơn hàng
-                                    </a>
-                                </li>
-
-                                <!-- Khuyến mãi -->
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminPromotion" ? "active" : "")"
-                                       asp-area="" asp-controller="AdminPromotion" asp-action="Index">
-                                        <i class="bi bi-megaphone me-2"></i>Khuyến mãi
-                                    </a>
-                                </li>
-
-                                <!-- Mã giảm giá -->
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminVoucher" ? "active" : "")"
-                                       asp-area="" asp-controller="AdminVoucher" asp-action="Index">
-                                        <i class="bi bi-ticket-perforated me-2"></i>Mã giảm giá
-                                    </a>
-                                </li>
-
-                                <!-- Bài viết -->
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminPost" ? "active" : "")"
-                                       asp-area="" asp-controller="AdminPost" asp-action="Index">
-                                        <i class="bi bi-file-earmark-text me-2"></i>Bài viết
-                                    </a>
-                                </li>
-
-                                <!-- Phân loại bài viết -->
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "PostCategory" ? "active" : "")"
-                                       asp-area="" asp-controller="PostCategory" asp-action="Index">
-                                        <i class="bi bi-journal-text me-2"></i>Chuyên mục bài viết
-                                    </a>
-                                </li>
-
-                                <!-- Quản trị hệ thống -->
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "System" ? "active" : "")"
-                                       asp-area="" asp-controller="System" asp-action="Settings">
-                                        <i class="bi bi-gear me-2"></i>Cài đặt hệ thống
-                                    </a>
-                                </li>
-                            </ul>
-
-                        </div>
-                    </nav>
+                     @Html.Partial("_Dashboard")
 
                         <main class="" style="margin-left: 250px; background-color:#f5f6fa; max-width: calc(100vw - 250px - 30px);">
-                            <header class="shadow-sm" style="background-color:#ffffff">
-                                <nav class="navbar navbar-expand-lg navbar-light">
-                                    <div class="container-fluid">
-                                        <!-- Logo -->
-                                        <a class="navbar-brand fw-bold text-dark ms-5" asp-area="" asp-controller="Home" asp-action="Index">SweetUIFurniture</a>
-
-                                        <!-- Toggle for mobile -->
-                                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                                            <span class="navbar-toggler-icon"></span>
-                                        </button>
-
-                                        <!-- Main navbar content -->
-                                        <div class="collapse navbar-collapse" id="navbarContent">
-                                            <span class="navbar-text ms-auto me-3 fw-semibold">Dashboard</span>
-
-                                            <!-- Dark mode toggle -->
-                                            <div class="form-check form-switch me-3">
-                                                <input class="form-check-input" type="checkbox" id="darkModeToggle" />
-                                                <label class="form-check-label" for="darkModeToggle">Dark Mode</label>
-                                            </div>
-
-                                            <!-- User dropdown -->
-                                            @if (!string.IsNullOrEmpty(userId))
-                                            {
-                                                <div class="dropdown">
-                                                    <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <img src="/images/avatar.png" alt="avatar" width="32" height="32" class="rounded-circle me-2" />
-                                                        <strong>@ViewBag.Name</strong>
-                                                    </a>
-                                                    <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="userDropdown">
-                                                        <li><a class="dropdown-item" asp-controller="User" asp-action="Profile">Hồ sơ</a></li>
-                                                        <li><hr class="dropdown-divider"></li>
-                                                        <li><form method="post" asp-controller="User" asp-action="Logout">
-                                                            <button class="dropdown-item" type="submit">Đăng xuất</button>
-                                                        </form>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <a class="btn btn-outline-primary ms-3" asp-controller="User" asp-action="SignIn">Đăng nhập</a>
-                                            }
-                                        </div>
-                                    </div>
-                                </nav>
-                            </header>
+                            @Html.Partial("_DashboardHeader")
                             <div class="main-content" style="">
                                 @RenderBody()
                             </div>
@@ -187,151 +47,12 @@
                 }
                 else
                 {
-                    <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm">
-                        <div class="container-fluid px-4">
-                            <a class="navbar-brand d-flex align-items-center" href="/">
-                                <img src="~/images/logo.png" alt="Logo" class="img-fluid rounded-circle me-2" style="max-width: 40px;" />
-                                <span class="fw-bold">SweetUIFurniture</span>
-                            </a>
-
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-
-                            <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-                                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 d-flex align-items-center">
-                                    <li class="nav-item mx-2">
-                                        <a class="nav-link active" aria-current="page" href="/">Trang chủ</a>
-                                    </li>
-                                    <li class="nav-item mx-2">
-                                        <a class="nav-link" asp-controller="Support" asp-action="About">Giới thiệu</a>
-                                    </li>
-                                    <li class="nav-item mx-2">
-                                        <a class="nav-link" asp-controller="Product" asp-action="AllProducts">Sản phẩm</a>
-                                    </li>
-                                    <li class="nav-item dropdown mx-2">
-                                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Danh mục
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            @foreach (var category in (List<Category>)ViewBag.Categories)
-                                            {
-                                                <li>
-                                                    <a class="dropdown-item" asp-controller="Product" asp-action="ProductByCategory" asp-route-id="@category.Id">
-                                                        @category.Name
-                                                    </a>
-                                                </li>
-                                            }
-                                        </ul>
-                                    </li>
-                                    <li class="nav-item mx-2">
-                                        <a class="nav-link" asp-controller="Support" asp-action="Contact">Liên hệ</a>
-                                    </li>
-                                </ul>
-
-                                <form class="d-flex me-3" asp-controller="Product" asp-action="AllProducts" method="get">
-                                    <input class="form-control me-2" type="search" name="search" placeholder="Tìm sản phẩm..." aria-label="Search" value="@ViewBag.Search">
-                                    <button class="btn btn-outline-primary" type="submit">
-                                        <i class="bi bi-search"></i>
-                                    </button>
-                                </form>
-
-                                <ul class="navbar-nav">
-                                    @if (userId == null)
-                                    {
-                                        <li class="nav-item ms-2">
-                                            <a class="nav-link text-nowrap" asp-controller="User" asp-action="SignIn">Đăng nhập</a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <!-- Cart Icon -->
-                                        <li class="nav-item ms-2">
-                                            <a class="nav-link position-relative d-flex align-items-center" asp-controller="Cart" asp-action="Index">
-                                                <i class="bi bi-cart3 fs-5"></i>
-                                                @if (ViewBag.CartCount > 0)
-                                                {
-                                                    <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-danger">
-                                                        @ViewBag.CartCount
-                                                    </span>
-                                                }
-                                            </a>
-                                        </li>
-
-                                        <!-- User Avatar Dropdown -->
-                                        <li class="nav-item dropdown ms-2">
-                                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <img src="~/images/avatar.png" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;" alt="Avatar" />
-                                                <span class="d-none d-sm-inline text-truncate" style="max-width: 100px; display: inline-block;">
-                                                    @(ViewBag.UserEmail.Length > 12 ? ViewBag.UserEmail.Substring(0, 12) + "..." : ViewBag.UserEmail)
-                                                </span>
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                                <li>
-                                                    <form method="post" asp-controller="User" asp-action="Logout">
-                                                        <button class="dropdown-item" type="submit">Đăng xuất</button>
-                                                    </form>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                        </div>
-                    </nav>
-
-
+                    @Html.Partial("_Header")
                     <!-- Nếu chưa đăng nhập, chỉ hiển thị nội dung trang (RenderBody) -->
                     <main class="main-content pb-5" style="background-color:#f5f6fa">
                         @RenderBody()
                     </main>
-                    <footer class="footer bg-dark text-light pt-4 border-top">
-                        <div class="container">
-                            <div class="row text-center text-md-start">
-                                <!-- Logo và mô tả -->
-                                <div class="col-md-4 mb-4">
-                                    <div class="d-flex align-items-center justify-content-center justify-content-md-start mb-2">
-                                        <img src="~/images/logo.png" alt="Logo" style="height:40px;" class="me-2" />
-                                        <span class="fw-bold fs-5">SweetUIFurniture</span>
-                                    </div>
-                                    <p class="small text-muted">
-                                        Mang đến nội thất chất lượng, phong cách hiện đại cho mọi không gian sống.
-                                    </p>
-                                </div>
-
-                                <!-- Liên kết nhanh -->
-                                <div class="col-md-4 mb-4">
-                                    <h6 class="text-uppercase fw-bold mb-3">Liên kết</h6>
-                                    <ul class="list-unstyled">
-                                        <li><a href="/" class="text-light text-decoration-none small">Trang chủ</a></li>
-                                        <li><a href="/Categories" class="text-light text-decoration-none small">Danh mục</a></li>
-                                        <li><a href="/Order" class="text-light text-decoration-none small">Đơn hàng</a></li>
-                                        <li><a href="/Promotion" class="text-light text-decoration-none small">Khuyến mãi</a></li>
-                                    </ul>
-                                </div>
-
-                                <!-- Liên hệ -->
-                                <div class="col-md-4 mb-4">
-                                    <h6 class="text-uppercase fw-bold mb-3">Liên hệ</h6>
-                                    <p class="small mb-1"><i class="bi bi-telephone me-2"></i> 0123 456 789</p>
-                                    <p class="small mb-1"><i class="bi bi-envelope me-2"></i> support@sweetui.vn</p>
-                                    <p class="small mb-1"><i class="bi bi-geo-alt me-2"></i> 123 Đường Nội Thất, TP. Hồ Chí Minh</p>
-                                    <div class="mt-2">
-                                        <a href="#" class="text-light me-2"><i class="bi bi-facebook"></i></a>
-                                        <a href="#" class="text-light me-2"><i class="bi bi-instagram"></i></a>
-                                        <a href="#" class="text-light"><i class="bi bi-youtube"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Copyright -->
-                            <div class="text-center border-top pt-3 pb-2 small text-muted">
-                                &copy; @DateTime.Now.Year SweetUIFurniture. All rights reserved.
-                            </div>
-                        </div>
-                    </footer>
-
+                    @Html.Partial("_Footer")
                 }
             }
             else

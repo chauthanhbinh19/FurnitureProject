@@ -15,10 +15,6 @@ namespace FurnitureProject.Configuration
             builder.Property(ci => ci.Quantity)
                    .IsRequired();
 
-            builder.Property(ci => ci.UnitPrice)
-                   .HasColumnType("decimal(18,2)")
-                   .IsRequired();
-
             builder.HasOne(ci => ci.Cart)
                    .WithMany(c => c.CartItems)
                    .HasForeignKey(ci => ci.CartId)

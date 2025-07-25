@@ -38,12 +38,6 @@
                         </button>
                     </div>
                 </div>
-                <!-- Sort by Create Time -->
-                <div class="col-md-1-5 d-flex align-items-center">
-                    <select asp-for="Filter.SortOrder" name="Filter.SortOrder" class="form-select" asp-items="@ViewBag.SortOptions">
-                        <option value="">Sắp xếp</option>
-                    </select>
-                </div>
                 <!-- Filter by Status -->
                 <div class="col-md-1-5 d-flex align-items-center">
                     <select asp-for="Filter.FilterByStatus" name="Filter.FilterByStatus" class="form-select" asp-items="@ViewBag.StatusList">
@@ -52,7 +46,7 @@
                 </div>
                 <!-- Optional: Nút Reset -->
                 <div class="col-md-1-5 d-flex align-items-center">
-                    <a href="/admin/voucher/" class="btn btn-secondary w-100">Reset bộ lọc</a>
+                    <a href="/admin/voucher/" class="btn btn-secondary w-100">Xoá lọc</a>
                 </div>
             </div>
         </form>
@@ -60,12 +54,127 @@
             <table class="table table-hover align-middle">
                 <thead class="table-background">
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Tên</th>
-                        <th scope="col">Phần trăm giảm</th>
-                        <th scope="col">Số tiền giảm</th>
-                        <th scope="col">Ngày tạo</th>
-                        <th scope="col">Trạng thái</th>
+                        @* <th scope="col">ID</th> *@
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Mã code
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Code"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "Code" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Code"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "Code" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Phần trăm giảm
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="DiscountPercent"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "DiscountPercent" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="DiscountPercent"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "DiscountPercent" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Số tiền giảm
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="DiscountAmount"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "DiscountAmount" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="DiscountAmount"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "DiscountAmount" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Ngày tạo
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="CreatedAt"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "CreatedAt" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="CreatedAt"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "CreatedAt" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Ngày hết hạn
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="ExpiryDate"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "ExpiryDate" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="ExpiryDate"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "ExpiryDate" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Trạng thái
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Status"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "Status" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Status"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "Status" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
                         <th scope="col">Hành động</th>
                     </tr>
                 </thead>
@@ -73,27 +182,36 @@
                     @foreach (var voucher in Model.Vouchers)
                     {
                         <tr>
-                            <td>@voucher.Id.ToString().Substring(0, 16)</td>
+                            @* <td>@voucher.Id.ToString().Substring(0, 16)</td> *@
                             <td>@voucher.Code</td>
                             <td>@voucher.DiscountPercent</td>
                             <td>@voucher.DiscountAmount</td>
-                            <td>@voucher.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                            <td>@voucher.CreatedAt</td>
+                            <td>@voucher.ExpiryDate.ToString("dd/MM/yyyy")</td>
                             <td>
                                 @if (voucher.Status == "active")
                                 {
-                                    <span class="badge bg-success">Hoạt động</span>
+                                    <span class="badge active-badge">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Hoạt động
+                                    </span>
                                 }
                                 else if (voucher.Status == "inactive")
                                 {
-                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                    <span class="badge inactive-badge" ">
+                                        <i class="bi bi-pause-circle-fill me-1"></i> Không hoạt động
+                                    </span>
                                 }
                                 else if (voucher.Status == "banned")
                                 {
-                                    <span class="badge bg-danger">Bị khóa</span>
+                                    <span class="badge">
+                                        <i class="bi bi-slash-circle-fill me-1"></i> Bị khóa
+                                    </span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-warning text-dark">@voucher.Status</span>
+                                    <span class="badge">
+                                        <i class="bi bi-question-circle-fill me-1"></i> @voucher.Status
+                                    </span>
                                 }
                             </td>
                             <td>

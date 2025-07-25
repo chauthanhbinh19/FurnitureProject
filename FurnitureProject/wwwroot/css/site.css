@@ -193,6 +193,9 @@ body {
 .col-md-7-5 {
     width: 64%;
 }
+.col-md-8-5 {
+    width: 70%;
+}
 .col-md-6-5{
     width:55%;
 }
@@ -234,5 +237,55 @@ body {
 .quantity-input input[type="number"] {
     -moz-appearance: textfield;
 }
+.card-icon {
+    font-size: 2rem;
+    margin-right: 10px;
+}
 
+.card-overview {
+    display: flex;
+    align-items: center;
+}
+
+.sort-arrows {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 10px;
+    line-height: 1;
+    margin-left: 15px;
+}
+
+    .sort-arrows a {
+        color: white;
+        text-decoration: none;
+        font-size: 9px;
+        height: 8px;
+        padding: 2px;
+        line-height: 1;
+        padding: 0;
+        margin: 0;
+        display: inline-block;
+    }
+
+        .sort-arrows a:hover {
+            color: blue;
+        }
+
+.active-arrow {
+    color: blue;
+    font-weight: bold;
+}
+.active-badge {
+    background: #D4FFE1;
+    color: #15D147;
+}
+.inactive-badge {
+    background: #FCE8E6;
+    color: #D93025;
+}
+.pending-badge {
+    background: #FAF9D4;
+    color: #CED115;
+}
 

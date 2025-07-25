@@ -167,10 +167,17 @@
             public const string UserUsername = "Tên đăng nhập";
             public const string UserEmail = "Email";
             public const string UserPassword = "Mật khẩu";
+            public const string UserConfirmPassword = "Nhập lại mật khẩu";
             public const string UserFullname = "Họ tên đầy đủ";
             public const string UserPhoneNumber = "Số điện thoại";
             public const string UserRole = "Vai trò";
             public const string UserStatus = "Trạng thái người dùng";
+            public const string PasswordTooShort = "Mật khẩu phải có ít nhất 8 ký tự.";
+            public const string PasswordMissingUpper = "Mật khẩu phải chứa ít nhất 1 chữ hoa.";
+            public const string PasswordMissingLower = "Mật khẩu phải chứa ít nhất 1 chữ thường.";
+            public const string PasswordMissingNumber = "Mật khẩu phải chứa ít nhất 1 chữ số.";
+            public const string PasswordMissingSpecial = "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (@, $, !, %, *, ?, &).";
+            public const string InvalidEmailFormat = "Email không đúng định dạng";
 
             public const string VoucherCode = "Mã voucher";
             public const string VoucherDiscountPercent = "Phần trăm giảm";

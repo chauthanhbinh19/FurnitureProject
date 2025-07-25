@@ -16,11 +16,13 @@ namespace FurnitureProject.Controllers
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
         private readonly ICartService _cartService;
-        public CartController(IProductService productService,ICategoryService categoryService, ICartService cartService)
+        private readonly IPromotionService _promotionService;
+        public CartController(IProductService productService,ICategoryService categoryService, ICartService cartService, IPromotionService promotionService)
         {
             _productService = productService;
             _categoryService = categoryService;
             _cartService = cartService;
+            _promotionService = promotionService;
         }
         [HttpGet("")]
         public async Task<IActionResult> Index()
@@ -34,23 +36,44 @@ namespace FurnitureProject.Controllers
             ViewBag.Categories = categories.OrderBy(c => c.Name).ToList();
 
             var userId = HttpContext.Session.GetString("UserID");
+            var promotions = await _promotionService.GetAllAsync();
+            var today = DateTime.UtcNow;
 
-            // Lấy giỏ hàng
             if (userId != null)
             {
                 var cart = await _cartService.GetCartByUserIdAsync(Guid.Parse(userId));
 
                 cartViewModel.Cart = cart;
 
-                cartViewModel.ProductsInCart = cart.CartItems.Select(ci => new ProductDTO
+                var products = await _productService.GetAllAsync();
+
+                cartViewModel.ProductsInCart = cart.CartItems.Select(ci =>
                 {
-                    Id = ci.ProductId,
-                    Name = ci.Product?.Name,
-                    Price = ci.UnitPrice,
-                    Quantity = ci.Quantity,
-                    ImageUrls = ci.Product?.ProductImages
-                                    ?.Select(img => img.ImageUrl)
-                                    .ToList() ?? new List<string>()
+                    var product = products.FirstOrDefault(p => p.Id == ci.ProductId);
+
+                    var activePromotion = promotions.FirstOrDefault(promo =>
+                        promo.ProductPromotions.Any(pp => pp.ProductId == product.Id) &&
+                        promo.EndDate >= today
+                    );
+
+                    decimal discountPrice = 0;
+                    if (activePromotion != null)
+                    {
+                        var discount = activePromotion.DiscountPercent;
+                        discountPrice = product.Price * (1 - discount / 100m);
+                    }
+
+                    return new ProductDTO
+                    {
+                        Id = ci.ProductId,
+                        Name = product?.Name,
+                        Price = product?.Price ?? 0,
+                        Quantity = ci.Quantity,
+                        ImageUrls = product?.ProductImages?
+                                            .Select(img => img.ImageUrl)
+                                            .ToList() ?? new List<string>(),
+                        DiscountPrice = discountPrice,
+                    };
                 }).ToList();
             }
             return View(cartViewModel);

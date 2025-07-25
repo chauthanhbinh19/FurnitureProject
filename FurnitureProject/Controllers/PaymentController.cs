@@ -13,11 +13,16 @@ namespace FurnitureProject.Controllers
         private readonly ICategoryService _categoryService;
         private readonly ICartService _cartService;
         private readonly IOrderService _orderService;
-        public PaymentController(ICategoryService categoryService, ICartService cartService, IOrderService orderService)
+        private readonly IProductService _productService;
+        private readonly IPromotionService _promotionService;
+        public PaymentController(ICategoryService categoryService, ICartService cartService, 
+            IOrderService orderService, IProductService productService, IPromotionService promotionService)
         {
             _categoryService = categoryService;
             _cartService = cartService;
             _orderService = orderService;
+            _productService = productService;
+            _promotionService = promotionService;
         }
         [HttpGet("")]
         public async Task<IActionResult> Index()
@@ -34,16 +39,37 @@ namespace FurnitureProject.Controllers
             var cart = await _cartService.GetCartByUserIdAsync(Guid.Parse(userId));
 
             //cartViewModel.Cart = cart;
+            var products = await _productService.GetAllAsync();
+            var promotions = await _promotionService.GetAllAsync();
+            var today = DateTime.UtcNow;
 
-            paymentViewModel.ProductsInCart = cart.CartItems.Select(ci => new ProductDTO
-            {
-                Id = ci.ProductId,
-                Name = ci.Product?.Name,
-                Price = ci.UnitPrice,
-                Quantity = ci.Quantity,
-                ImageUrls = ci.Product?.ProductImages
-                                ?.Select(img => img.ImageUrl)
-                                .ToList() ?? new List<string>()
+            paymentViewModel.ProductsInCart = cart.CartItems.Select(ci => 
+            { 
+                var product = products.FirstOrDefault(p => p.Id == ci.ProductId);
+
+                var activePromotion = promotions.FirstOrDefault(promo =>
+                    promo.ProductPromotions.Any(pp => pp.ProductId == product.Id) &&
+                    promo.EndDate >= today
+                );
+
+                decimal discountPrice = 0;
+                if (activePromotion != null)
+                {
+                    var discount = activePromotion.DiscountPercent;
+                    discountPrice = product.Price * (1 - discount / 100m);
+                }
+
+                return new ProductDTO
+                {
+                    Id = ci.ProductId,
+                    Name = product?.Name,
+                    Price = product?.Price ?? 0,
+                    Quantity = ci.Quantity,
+                    ImageUrls = product?.ProductImages?
+                                        .Select(img => img.ImageUrl)
+                                        .ToList() ?? new List<string>(),
+                    DiscountPrice = discountPrice,
+                };
             }).ToList();
 
             return View(paymentViewModel);
@@ -58,9 +84,17 @@ namespace FurnitureProject.Controllers
                 return RedirectToAction("SignIn", "User");
             }
 
+            //if (!ModelState.IsValid)
+            //{
+            //    return RedirectToAction("Index", "Payment");
+            //}
+
             try
             {
                 var cart = await _cartService.GetCartByUserIdAsync(Guid.Parse(userId));
+                var products = await _productService.GetAllAsync();
+                var promotions = await _promotionService.GetAllAsync();
+                var today = DateTime.UtcNow;
 
                 var orderDto = new OrderDTO
                 {
@@ -71,23 +105,47 @@ namespace FurnitureProject.Controllers
                     ShippingAddress = paymentViewModel.Order.ShippingAddress,
                     PaymentMethod = paymentViewModel.Order.PaymentMethod,
                     OrderDate = DateTime.UtcNow,
-                    Status = "Pending",
-                    TotalAmount = cart.CartItems.Sum(p => p.UnitPrice * p.Quantity),
+                    Status = "pending",
                     TotalItems = cart.CartItems.Sum(p => p.Quantity),
-                    Products = cart.CartItems.Select(ci => new ProductDTO
+                    Products = cart.CartItems.Select(ci =>
                     {
-                        Id = ci.ProductId,
-                        Name = ci.Product?.Name,
-                        Price = ci.UnitPrice,
-                        Quantity = ci.Quantity
-                    }).ToList()
+                        var product = products.FirstOrDefault(p => p.Id == ci.ProductId);
+
+                        var activePromotion = promotions.FirstOrDefault(promo =>
+                            promo.ProductPromotions.Any(pp => pp.ProductId == product.Id) &&
+                            promo.EndDate >= today
+                        );
+
+                        decimal discountPrice = 0;
+                        if (activePromotion != null)
+                        {
+                            var discount = activePromotion.DiscountPercent;
+                            discountPrice = product.Price * (1 - discount / 100m);
+                        }
+
+                        return new ProductDTO
+                        {
+                            Id = ci.ProductId,
+                            Name = product?.Name,
+                            Price = product?.Price ?? 0,
+                            Quantity = ci.Quantity,
+                            ImageUrls = product?.ProductImages?
+                                                .Select(img => img.ImageUrl)
+                                                .ToList() ?? new List<string>(),
+                            DiscountPrice = discountPrice,
+                        };
+                    }).ToList(),
                 };
+
+                orderDto.TotalAmount = orderDto.Products.Sum(p => 
+                    (p.DiscountPrice > 0 ? p.DiscountPrice : p.Price) * p.Quantity
+                );
 
                 var (success, message) = await _orderService.CreateAsync(orderDto);
                 if (!success)
                 {
                     TempData[AppConstants.Status.Error] = AppConstants.LogMessages.OrderPaymentFailed;
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Payment");
                 }
 
                 foreach(var product in orderDto.Products)
@@ -96,12 +154,12 @@ namespace FurnitureProject.Controllers
                 }
 
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.OrderPaymentSuccessfully;
-                return RedirectToAction("Index", "Cart");
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.OrderPaymentFailed;
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Payment");
             }
         }
     }

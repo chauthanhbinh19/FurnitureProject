@@ -63,10 +63,23 @@ namespace FurnitureProject.Controllers
             int pageSize = 10;
             var users = await _userService.GetAllAsync();
 
+            var userDtos = users.Select(u => new UserDTO
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Username = u.Username,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                Password = u.Password,
+                Role = u.Role,
+                Status = u.Status,
+                CreatedAt = u.CreatedAt
+            }).ToList();
+
             // Search by key word
             if (!string.IsNullOrEmpty(filter.SearchKeyWord))
             {
-                users = users
+                userDtos = userDtos
                     .Where(u => u.FullName.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase) ||
                             u.Email.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase))
                     .ToList();
@@ -75,7 +88,7 @@ namespace FurnitureProject.Controllers
             // Filter by status
             if (filter.FilterByStatus != null && filter.FilterByStatus.Any())
             {
-                users = users
+                userDtos = userDtos
                    .Where(p => !string.IsNullOrEmpty(p.Status) && filter.FilterByStatus.Equals(p.Status))
                    .ToList();
             }
@@ -83,24 +96,48 @@ namespace FurnitureProject.Controllers
             // Filter by role
             if (filter.FilterByRole != null && filter.FilterByRole.Any())
             {
-                users = users
+                userDtos = userDtos
                    .Where(p => !string.IsNullOrEmpty(p.Role) && filter.FilterByRole.Equals(p.Role))
                    .ToList();
             }
 
             // Sort Order
-            switch (filter.SortOrder)
+            if (!string.IsNullOrEmpty(filter.SortColumn))
             {
-                case "newest":
-                    users = users.OrderByDescending(p => p.CreatedAt).ToList();
-                    break;
-                case "oldest":
-                    users = users.OrderBy(p => p.CreatedAt).ToList();
-                    break;
+                bool isAscending = filter.SortDirection?.ToLower() == "asc";
+
+                userDtos = filter.SortColumn switch
+                {
+                    "FullName" => isAscending
+                        ? userDtos.OrderBy(p => p.FullName).ToList()
+                        : userDtos.OrderByDescending(p => p.FullName).ToList(),
+
+                    "Email" => isAscending
+                        ? userDtos.OrderBy(p => p.Email).ToList()
+                        : userDtos.OrderByDescending(p => p.Email).ToList(),
+
+                    "Username" => isAscending
+                        ? userDtos.OrderBy(p => p.Username).ToList()
+                        : userDtos.OrderByDescending(p => p.Username).ToList(),
+
+                    "Role" => isAscending
+                        ? userDtos.OrderBy(p => p.Role).ToList()
+                        : userDtos.OrderByDescending(p => p.Role).ToList(),
+
+                    "CreatedAt" => isAscending
+                        ? userDtos.OrderBy(p => p.CreatedAt).ToList()
+                        : userDtos.OrderByDescending(p => p.CreatedAt).ToList(),
+
+                    "Status" => isAscending
+                        ? userDtos.OrderBy(p => p.Status).ToList()
+                        : userDtos.OrderByDescending(p => p.Status).ToList(),
+
+                    _ => userDtos
+                };
             }
 
-            int totalUsers = users.Count();
-            var pagedUsers = users
+            int totalUsers = userDtos.Count();
+            var pagedUsers = userDtos
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
@@ -112,7 +149,6 @@ namespace FurnitureProject.Controllers
             };
 
             SetStatusViewBag(filter.FilterByStatus);
-            SetSortOptions(filter.SortOrder);
             SetRoleViewBag(filter.FilterByRole);
 
             ViewBag.CurrentPage = page;

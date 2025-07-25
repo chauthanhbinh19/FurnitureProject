@@ -73,6 +73,15 @@ namespace FurnitureProject.Middleware
                 }
             }
 
+            if (path.StartsWith("/account"))
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    context.Response.Redirect("/user/sign-in");
+                    return;
+                }
+            }
+
             // Try to enter admin page but not sign in => redirect to sign-in
             if (path.StartsWith("/admin"))
             {

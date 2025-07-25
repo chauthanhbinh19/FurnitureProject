@@ -47,7 +47,6 @@ namespace FurnitureProject.Services
                             CartId = existingCart.Id,
                             ProductId = productId,
                             Quantity = quantity,
-                            UnitPrice = product.Price
                         };
                         await _cartItemRepository.CreateAsync(newCartItem); // create new cart item
                     }
@@ -64,7 +63,6 @@ namespace FurnitureProject.Services
                     {
                         ProductId = productId,
                         Quantity = quantity,
-                        UnitPrice = product.Price
                     }
                 }
                     };

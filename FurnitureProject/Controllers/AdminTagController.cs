@@ -76,14 +76,26 @@ namespace FurnitureProject.Controllers
             }
 
             // Sort Order
-            switch (filter.SortOrder)
+            if (!string.IsNullOrEmpty(filter.SortColumn))
             {
-                case "newest":
-                    tagDTOs = tagDTOs.OrderByDescending(p => p.CreatedAt).ToList();
-                    break;
-                case "oldest":
-                    tagDTOs = tagDTOs.OrderBy(p => p.CreatedAt).ToList();
-                    break;
+                bool isAscending = filter.SortDirection?.ToLower() == "asc";
+
+                tagDTOs = filter.SortColumn switch
+                {
+                    "Name" => isAscending
+                        ? tagDTOs.OrderBy(p => p.Name).ToList()
+                        : tagDTOs.OrderByDescending(p => p.Name).ToList(),
+
+                    "CreatedAt" => isAscending
+                        ? tagDTOs.OrderBy(p => p.CreatedAt).ToList()
+                        : tagDTOs.OrderByDescending(p => p.CreatedAt).ToList(),
+
+                    "Status" => isAscending
+                        ? tagDTOs.OrderBy(p => p.Status).ToList()
+                        : tagDTOs.OrderByDescending(p => p.Status).ToList(),
+
+                    _ => tagDTOs
+                };
             }
 
             int totalTags = tagDTOs.Count();
@@ -99,7 +111,6 @@ namespace FurnitureProject.Controllers
             };
 
             SetStatusViewBag(filter.FilterByStatus);
-            SetSortOptions(filter.SortOrder);
 
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;

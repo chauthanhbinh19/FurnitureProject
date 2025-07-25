@@ -38,12 +38,6 @@
                         </button>
                     </div>
                 </div>
-                <!-- Sort by Create Time -->
-                <div class="col-md-1-5 d-flex align-items-center">
-                    <select asp-for="Filter.SortOrder" name="Filter.SortOrder" class="form-select" asp-items="@ViewBag.SortOptions">
-                        <option value="">Sắp xếp</option>
-                    </select>
-                </div>
                 <!-- Filter by Status -->
                 <div class="col-md-1-5 d-flex align-items-center">
                     <select asp-for="Filter.FilterByStatus" name="Filter.FilterByStatus" class="form-select" asp-items="@ViewBag.StatusList">
@@ -52,7 +46,7 @@
                 </div>
                 <!-- Optional: Nút Reset -->
                 <div class="col-md-1-5 d-flex align-items-center">
-                    <a href="/admin/product/" class="btn btn-secondary w-100">Reset bộ lọc</a>
+                    <a href="/admin/product/" class="btn btn-secondary w-100">Xoá lọc</a>
                 </div>
             </div>
         </form>
@@ -60,10 +54,67 @@
             <table class="table table-hover align-middle">
                 <thead class="table-background">
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Tên</th>
-                        <th scope="col">Ngày tạo</th>
-                        <th scope="col">Trạng thái</th>
+                        @* <th scope="col">ID</th> *@
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Tên
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Name"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "Name" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Name"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "Name" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Ngày tạo
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="CreatedAt"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "CreatedAt" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="CreatedAt"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "CreatedAt" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Trạng thái
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Status"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "Status" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Status"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "Status" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
                         <th scope="col">Hành động</th>
                     </tr>
                 </thead>
@@ -71,25 +122,33 @@
                     @foreach (var tag in Model.Tags)
                     {
                         <tr>
-                            <td>@tag.Id.ToString().Substring(0, 16)</td>
+                            @* <td>@tag.Id.ToString().Substring(0, 16)</td> *@
                             <td>@tag.Name</td>
                             <td>@tag.CreatedAt?.ToString("dd/MM/yyyy")</td>
                             <td>
                                 @if (tag.Status == "active")
                                 {
-                                    <span class="badge bg-success">Hoạt động</span>
+                                    <span class="badge active-badge">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Hoạt động
+                                    </span>
                                 }
                                 else if (tag.Status == "inactive")
                                 {
-                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                    <span class="badge inactive-badge" ">
+                                        <i class="bi bi-pause-circle-fill me-1"></i> Không hoạt động
+                                    </span>
                                 }
                                 else if (tag.Status == "banned")
                                 {
-                                    <span class="badge bg-danger">Bị khóa</span>
+                                    <span class="badge">
+                                        <i class="bi bi-slash-circle-fill me-1"></i> Bị khóa
+                                    </span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-warning text-dark">@tag.Status</span>
+                                    <span class="badge">
+                                        <i class="bi bi-question-circle-fill me-1"></i> @tag.Status
+                                    </span>
                                 }
                             </td>
                             <td>
@@ -99,9 +158,9 @@
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                 </form>
-                                @* <form asp-controller="Category" asp-action="Delete" method="post" style="display:inline;"
+                                @* <form asp-controller="tag" asp-action="Delete" method="post" style="display:inline;"
                               onsubmit="return confirm('Bạn có chắc muốn xoá user này?');">
-                            <input type="hidden" name="id" value="@category.Id" />
+                            <input type="hidden" name="id" value="@tag.Id" />
                             <button type="submit" class="btn btn-sm btn-danger" title="Xoá">
                                 <i class="bi bi-trash"></i>
                             </button>

@@ -1,0 +1,102 @@
+﻿@{
+    string userId = ViewBag.UserId;
+    string userRole = ViewBag.UserRole;
+}
+<nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <img src="~/images/logo.png" alt="Logo" class="img-fluid rounded-circle me-2" style="max-width: 40px;" />
+            <span class="fw-bold">SweetUIFurniture</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 d-flex align-items-center">
+                <li class="nav-item mx-2">
+                    <a class="nav-link active" aria-current="page" href="/">Trang chủ</a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link" asp-controller="Support" asp-action="About">Giới thiệu</a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link" asp-controller="Product" asp-action="AllProducts">Sản phẩm</a>
+                </li>
+                <li class="nav-item dropdown mx-2">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Danh mục
+                    </a>
+                    <ul class="dropdown-menu">
+                        @foreach (var category in (List<Category>)ViewBag.Categories)
+                        {
+                            <li>
+                                <a class="dropdown-item" asp-controller="Product" asp-action="ProductByCategory" asp-route-id="@category.Id">
+                                    @category.Name
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link" asp-controller="Support" asp-action="Contact">Liên hệ</a>
+                </li>
+            </ul>
+
+            <form class="d-flex me-3" asp-controller="Product" asp-action="AllProducts" method="get">
+                <input class="form-control me-2" type="search" name="search" placeholder="Tìm sản phẩm..." aria-label="Search" value="@ViewBag.Search">
+                <button class="btn btn-outline-primary" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+
+            <ul class="navbar-nav">
+                @if (userId == null)
+                {
+                    <li class="nav-item ms-2">
+                        <a class="nav-link text-nowrap" asp-controller="User" asp-action="SignIn">Đăng nhập</a>
+                    </li>
+                }
+                else
+                {
+                    <!-- Cart Icon -->
+                    <li class="nav-item ms-2">
+                        <a class="nav-link position-relative d-flex align-items-center" asp-controller="Cart" asp-action="Index">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            @if (ViewBag.CartCount > 0)
+                            {
+                                <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-danger">
+                                    @ViewBag.CartCount
+                                </span>
+                            }
+                        </a>
+                    </li>
+
+                    <!-- User Avatar Dropdown -->
+                    <li class="nav-item dropdown ms-2">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="~/images/avatar.png" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;" alt="Avatar" />
+                            <span class="d-none d-sm-inline text-truncate" style="max-width: 100px; display: inline-block;">
+                                @(ViewBag.UserEmail.Length > 12 ? ViewBag.UserEmail.Substring(0, 12) + "..." : ViewBag.UserEmail)
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <form method="get" asp-controller="Account" asp-action="Index">
+                                    <button class="dropdown-item" type="submit">Thông tin</button>
+                                </form>
+                            </li>
+                            <li>
+                                <form method="post" asp-controller="User" asp-action="Logout">
+                                    <button class="dropdown-item" type="submit">Đăng xuất</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>

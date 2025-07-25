@@ -1,0 +1,32 @@
+﻿@model FurnitureProject.Models.DTO.UserDTO
+<h4 class="mb-4">
+    <i class="bi bi-person-circle me-2"></i> Thông tin cá nhân
+</h4>
+
+<div class="card shadow-sm rounded-4">
+    <div class="card-body px-4 py-3">
+        <div class="row mb-2">
+            <div class="col-sm-4 fw-semibold text-muted">Họ và tên</div>
+            <div class="col-sm-8">@Model.FullName</div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-4 fw-semibold text-muted">Email</div>
+            <div class="col-sm-8">@Model.Email</div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-4 fw-semibold text-muted">Số điện thoại</div>
+            <div class="col-sm-8">@Model.PhoneNumber</div>
+        </div>
+        @* Có thể mở lại khi cần
+        <div class="row mb-2">
+            <div class="col-sm-4 fw-semibold text-muted">Ngày sinh</div>
+            <div class="col-sm-8">01/01/1995</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 fw-semibold text-muted">Giới tính</div>
+            <div class="col-sm-8">Nam</div>
+        </div>
+        *@
+    </div>
+</div>
+

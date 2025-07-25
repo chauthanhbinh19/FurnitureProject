@@ -79,14 +79,30 @@ namespace FurnitureProject.Controllers
             }
 
             // Sort Order
-            switch (filter.SortOrder)
+            if (!string.IsNullOrEmpty(filter.SortColumn))
             {
-                case "newest":
-                    promotionDTOs = promotionDTOs.OrderByDescending(p => p.CreatedAt).ToList();
-                    break;
-                case "oldest":
-                    promotionDTOs = promotionDTOs.OrderBy(p => p.CreatedAt).ToList();
-                    break;
+                bool isAscending = filter.SortDirection?.ToLower() == "asc";
+
+                promotionDTOs = filter.SortColumn switch
+                {
+                    "Title" => isAscending
+                        ? promotionDTOs.OrderBy(p => p.Title).ToList()
+                        : promotionDTOs.OrderByDescending(p => p.Title).ToList(),
+
+                    "Description" => isAscending
+                        ? promotionDTOs.OrderBy(p => p.Description).ToList()
+                        : promotionDTOs.OrderByDescending(p => p.Description).ToList(),
+
+                    "CreatedAt" => isAscending
+                        ? promotionDTOs.OrderBy(p => p.CreatedAt).ToList()
+                        : promotionDTOs.OrderByDescending(p => p.CreatedAt).ToList(),
+
+                    "Status" => isAscending
+                        ? promotionDTOs.OrderBy(p => p.Status).ToList()
+                        : promotionDTOs.OrderByDescending(p => p.Status).ToList(),
+
+                    _ => promotionDTOs
+                };
             }
 
             int totalPromotions = promotionDTOs.Count();
@@ -102,7 +118,6 @@ namespace FurnitureProject.Controllers
             };
 
             SetStatusViewBag(filter.FilterByStatus);
-            SetSortOptions(filter.SortOrder);
 
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;
@@ -189,7 +204,7 @@ namespace FurnitureProject.Controllers
             if (!ModelState.IsValid)
             {
                 await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
-                SetStatusViewBag();
+                LayoutHelper.SetViewBagForLayout(this, true, "admin");
                 var products = await _productService.GetAllAsync();
                 var promotions = await _promotionService.GetAllAsync();
                 var promotionDTO = new PromotionDTO
@@ -317,6 +332,7 @@ namespace FurnitureProject.Controllers
             if (!ModelState.IsValid)
             {
                 await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+                LayoutHelper.SetViewBagForLayout(this, true, "admin");
                 var promotion = await _promotionService.GetByIdAsync(dto.Id);
                 var promotions = await _promotionService.GetAllAsync();
                 var products = await _productService.GetAllAsync();

@@ -1,0 +1,32 @@
+﻿@model FurnitureProject.Models.ViewModels.AccountViewModel
+
+@{
+    ViewData["Title"] = "Thông tin người dùng";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3 d-flex flex-wrap gap-4">
+        <div class="col-md-3">
+            @Html.Partial("_Sidebar", Model.CurrentSection)
+        </div>
+
+        <div class="col-md-8-5">
+            <div id="account-content">
+                @switch (Model.CurrentSection)
+                {
+                    case "Profile":
+                        @Html.Partial("_Profile", Model.Profile)
+                        break;
+
+                    case "Orders":
+                        @Html.Partial("_Orders", Model.OrderViewModel)
+                        break;
+
+                    case "Vouchers":
+                        @Html.Partial("_Vouchers", Model.Vouchers)
+                        break;
+                }
+            </div>
+        </div>
+    </div>
+</div>

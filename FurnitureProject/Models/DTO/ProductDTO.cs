@@ -24,6 +24,7 @@ namespace FurnitureProject.Models.DTO
         public Category? Category { get; set; }
         [Display(Name = AppConstants.Display.ProductStatus)]
         public string Status { get; set; }
+        public decimal DiscountPrice { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string? PromotionStatus { get; set; } // Trạng thái khuyến mãi (Active, Inactive, Expired)
         public string? VoucherStatus { get; set; }

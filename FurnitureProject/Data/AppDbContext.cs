@@ -134,20 +134,20 @@ namespace FurnitureProject.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Soft-delete global filter
-            modelBuilder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<Category>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<Product>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<ProductImage>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<Promotion>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<Order>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<OrderItem>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<Tag>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<ProductTag>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<Voucher>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<ProductVoucher>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<Post>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<PostCategory>().HasQueryFilter(e => !e.IsDeleted);
-            modelBuilder.Entity<PostCategoryLink>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<Category>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<Product>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<ProductImage>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<Promotion>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<Order>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<OrderItem>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<Tag>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<ProductTag>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<Voucher>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<ProductVoucher>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<Post>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<PostCategory>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<PostCategoryLink>().HasQueryFilter(e => !e.IsDeleted);
         }
     }
 }

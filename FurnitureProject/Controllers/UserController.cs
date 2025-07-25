@@ -4,9 +4,11 @@ using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Services;
 using FurnitureProject.Services.Email;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace FurnitureProject.Controllers
 {
@@ -97,6 +99,21 @@ namespace FurnitureProject.Controllers
 
             var existingUsername = await _userService.GetByUsernameAsync(user.Username);
             var existingEmail = await _userService.GetByEmailAsync(user.Email);
+
+            if (user.Password.Length < 8)
+                ModelState.AddModelError(nameof(user.Password), AppConstants.Display.PasswordTooShort);
+
+            if (!user.Password.Any(char.IsUpper))
+                ModelState.AddModelError(nameof(user.Password), AppConstants.Display.PasswordMissingUpper);
+
+            if (!user.Password.Any(char.IsLower))
+                ModelState.AddModelError(nameof(user.Password), AppConstants.Display.PasswordMissingLower);
+
+            if (!user.Password.Any(char.IsDigit))
+                ModelState.AddModelError(nameof(user.Password), AppConstants.Display.PasswordMissingNumber);
+
+            if (!Regex.IsMatch(user.Password, @"[@$!%*?&]"))
+                ModelState.AddModelError(nameof(user.Password), AppConstants.Display.PasswordMissingSpecial);
 
             if (existingUsername != null)
                 ModelState.AddModelError(nameof(user.Username), AppConstants.LogMessages.UsernameAlreadyExists);

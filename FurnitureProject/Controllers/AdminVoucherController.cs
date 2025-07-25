@@ -84,14 +84,38 @@ namespace FurnitureProject.Controllers
             }
 
             // Sort Order
-            switch (filter.SortOrder)
+            if (!string.IsNullOrEmpty(filter.SortColumn))
             {
-                case "newest":
-                    voucherDTOs = voucherDTOs.OrderByDescending(p => p.CreatedAt).ToList();
-                    break;
-                case "oldest":
-                    voucherDTOs = voucherDTOs.OrderBy(p => p.CreatedAt).ToList();
-                    break;
+                bool isAscending = filter.SortDirection?.ToLower() == "asc";
+
+                voucherDTOs = filter.SortColumn switch
+                {
+                    "Code" => isAscending
+                        ? voucherDTOs.OrderBy(p => p.Code).ToList()
+                        : voucherDTOs.OrderByDescending(p => p.Code).ToList(),
+
+                    "DiscountPercent" => isAscending
+                        ? voucherDTOs.OrderBy(p => p.DiscountPercent).ToList()
+                        : voucherDTOs.OrderByDescending(p => p.DiscountPercent).ToList(),
+
+                    "DiscountAmount" => isAscending
+                        ? voucherDTOs.OrderBy(p => p.DiscountAmount).ToList()
+                        : voucherDTOs.OrderByDescending(p => p.DiscountAmount).ToList(),
+
+                    "CreatedAt" => isAscending
+                        ? voucherDTOs.OrderBy(p => p.CreatedAt).ToList()
+                        : voucherDTOs.OrderByDescending(p => p.CreatedAt).ToList(),
+
+                    "ExpiryDate" => isAscending
+                        ? voucherDTOs.OrderBy(p => p.ExpiryDate).ToList()
+                        : voucherDTOs.OrderByDescending(p => p.ExpiryDate).ToList(),
+
+                    "Status" => isAscending
+                        ? voucherDTOs.OrderBy(p => p.Status).ToList()
+                        : voucherDTOs.OrderByDescending(p => p.Status).ToList(),
+
+                    _ => voucherDTOs
+                };
             }
 
             int totalvouchers = voucherDTOs.Count();
@@ -107,7 +131,6 @@ namespace FurnitureProject.Controllers
             };
 
             SetStatusViewBag(filter.FilterByStatus);
-            SetSortOptions(filter.SortOrder);
 
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;
@@ -176,7 +199,7 @@ namespace FurnitureProject.Controllers
             if (!ModelState.IsValid)
             {
                 await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
-                SetStatusViewBag();
+                LayoutHelper.SetViewBagForLayout(this, true, "admin");
                 var products = await _productService.GetAllAsync();
                 var vouchers = await _voucherService.GetAllAsync();
                 var voucherDTO = new VoucherDTO
@@ -289,6 +312,7 @@ namespace FurnitureProject.Controllers
             if (!ModelState.IsValid)
             {
                 await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+                LayoutHelper.SetViewBagForLayout(this, true, "admin");
                 var voucher = await _voucherService.GetByIdAsync(dto.Id);
                 var vouchers = await _voucherService.GetAllAsync();
                 var products = await _productService.GetAllAsync();

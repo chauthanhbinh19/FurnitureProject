@@ -23,6 +23,16 @@ namespace FurnitureProject.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Order>> GetAllByUserIdAsync(Guid userId)
+        {
+            return await context.Orders
+                .Where(o => !o.IsDeleted && o.UserId == userId)
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .ToListAsync();
+        }
+
         public async Task<Order?> GetByIdAsync(Guid id)
         {
             return await context.Orders

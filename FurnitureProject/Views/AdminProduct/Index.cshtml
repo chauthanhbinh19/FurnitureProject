@@ -44,12 +44,6 @@
                         <option value="">Chọn danh mục</option>
                     </select>
                 </div>
-                <!-- Sort by Create Time -->
-                <div class="col-md-1-5 d-flex align-items-center">
-                    <select asp-for="Filter.SortOrder" name="Filter.SortOrder" class="form-select" asp-items="@ViewBag.SortOptions">
-                        <option value="">Sắp xếp</option>
-                    </select>
-                </div>
                 <!-- Filter by Status -->
                 <div class="col-md-1-5 d-flex align-items-center">
                     <select asp-for="Filter.FilterByStatus" name="Filter.FilterByStatus" class="form-select" asp-items="@ViewBag.StatusList">
@@ -64,7 +58,7 @@
                 </div>
                 <!-- Optional: Nút Reset -->
                 <div class="col-md-1-5 d-flex align-items-center">
-                    <a href="/admin/product/" class="btn btn-secondary w-100">Reset bộ lọc</a>
+                    <a href="/admin/product/" class="btn btn-secondary w-100">Xoá lọc</a>
                 </div>
             </div>
         </form>
@@ -72,14 +66,110 @@
             <table class="table table-hover align-middle">
                 <thead class="table-background">
                     <tr>
-                        <th scope="col">ID</th>
+                        @* <th scope="col">ID</th> *@
                         <th scope="col">Hình ảnh</th>
-                        <th scope="col">Tên</th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Tên
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Name"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "Name" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Name"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "Name" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
                         <th scope="col">Nhãn</th>
-                        <th scope="col">Giá</th>
-                        <th scope="col">Tồn kho</th>
-                        <th scope="col">Danh mục</th>
-                        <th scope="col">Ngày tạo</th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Giá
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Price"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "Price" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Price"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "Price" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Tồn kho
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Stock"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "Stock" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Stock"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "Stock" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Danh mục
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="CategoryName"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "CategoryName" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="CategoryName"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "CategoryName" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th scope="col">
+                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                                Ngày tạo
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="CreatedAt"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "CreatedAt" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="CreatedAt"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "CreatedAt" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
                         <th scope="col">Hành động</th>
                     </tr>
                 </thead>
@@ -87,7 +177,7 @@
                     @foreach (var product in Model.Products)
                     {
                         <tr>
-                            <td>@product.Id.ToString().Substring(0, 16)</td>
+                            @* <td>@product.Id.ToString().Substring(0, 16)</td> *@
                             <td>
                                 <img src="@(product.ImageUrls != null && product.ImageUrls.Count > 0
                                                                                   ? product.ImageUrls[0]
@@ -104,7 +194,17 @@
                                     </span>
                                 }
                         </td>
-                        <td>@product.Price.ToString("N0") ₫</td>
+                        <td>
+                            @if (product.DiscountPrice != null && product.DiscountPrice > 0)
+                            {
+                                <span class="text-danger fw-bold">@product.DiscountPrice.ToString("N0") ₫</span><br />
+                                <span class="text-muted text-decoration-line-through">@product.Price.ToString("N0") ₫</span>
+                            }
+                            else
+                            {
+                                <span>@product.Price.ToString("N0") ₫</span>
+                            }
+                        </td>
                         <td>@product.Stock</td>
                         <td>@product.Category.Name</td>
                         <td>@product.CreatedAt?.ToString("dd/MM/yyyy")</td>
@@ -136,7 +236,14 @@
 
             <!-- Previous button -->
             <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1 })" aria-label="Previous">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@(currentPage - 1)"
+                   asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                   asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                   asp-route-sortColumn="@Model.Filter.SortColumn"
+                   asp-route-sortDirection="@Model.Filter.SortDirection"
+                   aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
@@ -145,13 +252,28 @@
             @for (int i = startPage; i <= endPage; i++)
             {
                 <li class="page-item @(i == currentPage ? "active" : "")">
-                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@i"
+                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                       asp-route-sortColumn="@Model.Filter.SortColumn"
+                       asp-route-sortDirection="@Model.Filter.SortDirection">
+                        @i
+                    </a>
                 </li>
             }
 
             <!-- Next button -->
             <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1 })" aria-label="Next">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@(currentPage + 1)"
+                   asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                   asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                   asp-route-sortColumn="@Model.Filter.SortColumn"
+                   asp-route-sortDirection="@Model.Filter.SortDirection"
+                   aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

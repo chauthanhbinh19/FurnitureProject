@@ -8,7 +8,8 @@
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }
         public string? FilterByStatus { get; set; }
-        public string? SortOrder { get; set; }
+        public string? SortColumn { get; set; }
+        public string? SortDirection { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
     }
