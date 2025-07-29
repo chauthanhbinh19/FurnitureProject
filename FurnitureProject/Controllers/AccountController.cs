@@ -88,7 +88,7 @@ namespace FurnitureProject.Controllers
                         ReceiverName = order.ReceiverName,
                         ReceiverEmail = order.ReceiverEmail,
                         ReceiverPhone = order.ReceiverPhone,
-                        ShippingAddress = order.ShippingAddress,
+                        //ShippingAddress = order.ShippingAddress,
                         OrderDate = order.OrderDate,
                         Status = order.Status,
                         TotalAmount = order.TotalAmount,

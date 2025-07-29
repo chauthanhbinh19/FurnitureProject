@@ -48,6 +48,28 @@ namespace FurnitureProject.Models
                 await context.SaveChangesAsync();
             }
 
+            if (!context.Addresses.Any())
+            {
+                var user = context.Users.First(); // hoặc chọn user nào đó cụ thể
+
+                var address = new Address
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    Street = "123 Đường ABC",
+                    Ward = "Phường 1",
+                    District = "Quận 1",
+                    City = "TP. HCM",
+                    Country = "Việt Nam",
+                    PostalCode = "700000",
+                    IsDefault = true,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                context.Addresses.Add(address);
+                await context.SaveChangesAsync();
+            }
+
             if (!context.Categories.Any())
             {
                 context.Categories.AddRange(
@@ -180,13 +202,19 @@ namespace FurnitureProject.Models
             {
                 var user = context.Users.First();
                 var product = context.Products.First();
+                var address = context.Addresses.First(a => a.UserId == user.Id);
+
                 context.Orders.Add(new Order
                 {
                     UserId = user.Id,
+                    AddressId = address.Id, // <- Đây là phần quan trọng!
                     OrderDate = DateTime.UtcNow,
                     Status = "Pending",
                     TotalAmount = product.Price,
                     CreatedAt = DateTime.UtcNow,
+                    ShippingMethodId = context.ShippingMethods.FirstOrDefault()?.Id ?? Guid.NewGuid(), // nếu đã có shipping method
+                    ShippingFee = 0,
+                    PaymentMethod = "COD",
                     OrderItems = new[]
                     {
                         new OrderItem
@@ -198,7 +226,10 @@ namespace FurnitureProject.Models
                         }
                     }
                 });
+
+                await context.SaveChangesAsync();
             }
+
 
             await context.SaveChangesAsync();
         }

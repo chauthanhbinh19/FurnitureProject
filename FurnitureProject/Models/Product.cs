@@ -26,5 +26,6 @@ namespace FurnitureProject.Models
         public ICollection<ProductPromotion> ProductPromotions { get; set; }
         public ICollection<ProductVoucher> ProductVouchers { get; set; }
         public ICollection<ProductTag> ProductTags { get; set; }
+        public ICollection<Favourite> Favourites { get; set; }
     }
 }

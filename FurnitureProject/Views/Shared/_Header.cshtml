@@ -53,7 +53,7 @@
             </form>
 
             <ul class="navbar-nav">
-                @if (userId == null)
+                @if (string.IsNullOrEmpty(userId))
                 {
                     <li class="nav-item ms-2">
                         <a class="nav-link text-nowrap" asp-controller="User" asp-action="SignIn">Đăng nhập</a>
@@ -61,6 +61,20 @@
                 }
                 else
                 {
+                    <!-- Favorites Icon -->
+                    <li class="nav-item ms-2">
+                        <a class="nav-link position-relative d-flex align-items-center" asp-controller="Favourite" asp-action="Index">
+                            <i class="bi bi-heart fs-5"></i>
+                            @* Nếu có số lượng sản phẩm yêu thích *@
+                            @if (ViewBag.FavoriteCount == 0)
+                            {
+                                <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-danger">
+                                    @ViewBag.FavoriteCount
+                                </span>
+                            }
+                        </a>
+                    </li>
+
                     <!-- Cart Icon -->
                     <li class="nav-item ms-2">
                         <a class="nav-link position-relative d-flex align-items-center" asp-controller="Cart" asp-action="Index">

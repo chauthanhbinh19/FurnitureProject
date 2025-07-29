@@ -8,31 +8,40 @@
         <span class="title ms-2">Chỉnh sửa danh mục sản phẩm</span>
     </div>
 </div>
-<div class="title-box">
-        <div class="card-body">
-        <form asp-controller="AdminCategory" asp-action="Update" method="post">
-                <input type="hidden" asp-for="Id" value="@Model.Id" />
-            <div class="d-flex flex-wrap gap-4">
-                <div style="flex: 0 0 30%;">
-                    <label asp-for="Name" class="form-label fw-medium"></label>
-                    <input asp-for="Name" class="form-control custom-gray-input" value="@Model.Name" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+<div class="container mt-4 pb-5">
+    <form asp-controller="AdminCategory" asp-action="Update" method="post">
+        <input type="hidden" asp-for="Id" value="@Model.Id" />
+        <div class="row gx-4 gy-3 justify-content-between">
+            <div class="card shadow mb-3">
+                <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                    <i class="fas fa-circle-info text-conflowerblue"></i>
+                    <span>Thông tin danh mục</span>
                 </div>
-
-                <div style="flex: 0 0 30%;">
-                    <label asp-for="Description" class="form-label fw-medium"></label>
-                    <input asp-for="Description" class="form-control custom-gray-input" value="@Model.Description" />
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-                <div style="flex: 0 0 30%;">
-                    <label asp-for="Status" class="form-label fw-medium"></label>
-                    <select asp-for="Status" class="form-control custom-gray-input" asp-items="ViewBag.StatusList"></select>
-                    <span asp-validation-for="Status" class="text-danger"></span>
+                <div class="card-body">
+                    <div class="row d-flex gap-4 mb-3">
+                        <div class="col-md-3-5 mb-3">
+                            <label asp-for="Name" class="form-label fw-medium"></label>
+                            <input asp-for="Name" class="form-control custom-gray-input" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3-5 mb-3">
+                            <label asp-for="Status" class="form-label fw-medium"></label>
+                            <select asp-for="Status" class="form-control custom-gray-input" asp-items="ViewBag.StatusList"></select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row justify-content-between mb-3">
+                        <div class="col-md-12 mb-3">
+                            <label asp-for="Description" class="form-label fw-medium"></label>
+                            <textarea asp-for="Description" class="form-control custom-gray-input" rows="5"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-end mt-4">
-                <button type="submit" class="btn-custom bg-conflowerblue px-4">Lưu danh mục</button>
-            </div>
-            </form>
         </div>
+        <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn-custom bg-conflowerblue px-4">Lưu danh mục</button>
+        </div>
+    </form>
 </div>

@@ -44,6 +44,7 @@ namespace FurnitureProject.Middleware
                 "/product/category",
                 "/product/detail",
                 "/product/all",
+
             };
 
             if (bypassPaths.Contains(path, StringComparer.OrdinalIgnoreCase))
@@ -74,6 +75,15 @@ namespace FurnitureProject.Middleware
             }
 
             if (path.StartsWith("/account"))
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    context.Response.Redirect("/user/sign-in");
+                    return;
+                }
+            }
+
+            if (path.StartsWith("/favourite"))
             {
                 if (string.IsNullOrEmpty(userId))
                 {

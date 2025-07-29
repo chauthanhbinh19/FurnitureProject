@@ -4,89 +4,174 @@
 }
 
 <div class="container py-5">
-    <h2 class="mb-4">Thanh toán</h2>
-    <div class="row mb-3 d-flex flex-wrap gap-4">
-        <!-- Cột trái: Thông tin thanh toán -->
-        <div class="col-md-7-5">
-            <div class="card shadow-sm p-4">
-                <h5 class="mb-3">Thông tin người nhận</h5>
-                <form method="post" asp-action="ProcessPayment">
-                    <div class="mb-3">
-                        <label asp-for="@Model.Order.ReceiverName" class="form-label fw-medium"></label>
-                        <input asp-for="@Model.Order.ReceiverName" type="text" class="form-control">
-                        <span asp-validation-for="@Model.Order.ReceiverName" class="text-danger small"></span>
+    <form method="post" asp-action="ProcessPayment">
+        <h2 class="mb-4">Thanh toán</h2>
+        <div class="row mb-3 d-flex flex-wrap gap-4">
+            <!-- Cột trái: Thông tin thanh toán -->
+            <div class="col-md-7-5">
+                <div class="row gx-4 gy-3 justify-content-between">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-circle-info text-conflowerblue"></i>
+                            <span>Thông tin người dùng</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label asp-for="@Model.Order.ReceiverName" class="form-label fw-medium"></label>
+                                <input asp-for="@Model.Order.ReceiverName" type="text" class="form-control">
+                                <span asp-validation-for="@Model.Order.ReceiverName" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="@Model.Order.ReceiverEmail" class="form-label fw-medium"></label>
+                                <input asp-for="@Model.Order.ReceiverEmail" type="email" class="form-control">
+                                <span asp-validation-for="@Model.Order.ReceiverEmail" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="@Model.Order.ReceiverPhone" class="form-label fw-medium"></label>
+                                <input asp-for="@Model.Order.ReceiverPhone" type="text" class="form-control">
+                                <span asp-validation-for="@Model.Order.ReceiverPhone" class="text-danger small"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="@Model.Order.ReceiverEmail" class="form-label fw-medium"></label>
-                        <input asp-for="@Model.Order.ReceiverEmail" type="email" class="form-control">
-                        <span asp-validation-for="@Model.Order.ReceiverEmail" class="text-danger small"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="@Model.Order.ReceiverPhone" class="form-label fw-medium"></label>
-                        <input asp-for="@Model.Order.ReceiverPhone" type="text" class="form-control">
-                        <span asp-validation-for="@Model.Order.ReceiverPhone" class="text-danger small"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="@Model.Order.ShippingAddress" class="form-label fw-medium"></label>
-                        <textarea asp-for="@Model.Order.ShippingAddress" class="form-control" rows="5"></textarea>
-                        <span asp-validation-for="@Model.Order.ShippingAddress" class="text-danger small"></span>
-                    </div>
-                    <hr />
-                    <h5 class="mb-3">Phương thức thanh toán</h5>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="Order.PaymentMethod" value="cod"
-                               @(Model.Order?.PaymentMethod == "cod" ? "checked" : "") />
-                        <label class="form-check-label">Thanh toán khi nhận hàng (COD)</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="Order.PaymentMethod" value="bank"
-                               @(Model.Order?.PaymentMethod == "bank" ? "checked" : "") />
-                        <label class="form-check-label">Chuyển khoản ngân hàng</label>
-                    </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="Order.PaymentMethod" value="credit"
-                               @(Model.Order?.PaymentMethod == "credit" ? "checked" : "") />
-                        <label class="form-check-label">Thẻ tín dụng/Ghi nợ</label>
-                    </div>
+                </div>
+                <div class="row gx-4 gy-3 justify-content-between">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-conflowerblue"></i>
+                            <span>Địa chỉ nhận hàng</span>
+                        </div>
+                        <div class="card-body">
+                            <label class="form-label fw-medium">Chọn địa chỉ giao hàng</label>
+                            <select asp-for="Order.AddressId" id="addressSelect" class="form-select">
+                                <option value="">-- Chọn địa chỉ --</option>
+                                @for (int i = 0; i < Model.Order.Addresses.Count; i++)
+                                {
+                                    var address = Model.Order.Addresses[i];
+                                    <option value="@Model.Order.Addresses[i].Id">
+                                        @(address.Street), @(address.Ward), @(address.District), @(address.City)
+                                    </option>
+                                }
+                            </select>
+                        </div>
 
-                    <button type="submit" class="btn btn-success w-100">Xác nhận thanh toán</button>
-                </form>
+                        <div class="card-body" id="addressDetails" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Order.Address.Street" class="form-label fw-medium"></label>
+                                    <input type="text" id="street" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Order.Address.Ward" class="form-label fw-medium"></label>
+                                    <input type="text" id="ward" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Order.Address.District" class="form-label fw-medium"></label>
+                                    <input type="text" id="district" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Order.Address.City" class="form-label fw-medium"></label>
+                                    <input type="text" id="city" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Order.Address.Country" class="form-label fw-medium"></label>
+                                    <input type="text" id="country" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Order.Address.PostalCode" class="form-label fw-medium"></label>
+                                    <input type="text" id="postalCode" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="row gx-4 gy-3 justify-content-between">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-credit-card text-conflowerblue"></i>
+                            <span>Phương thức thanh toán</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="mb-3">Phương thức thanh toán</h5>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="Order.PaymentMethod" value="cod"
+                                       @(Model.Order?.PaymentMethod == "cod" ? "checked" : "") />
+                                <label class="form-check-label">Thanh toán khi nhận hàng (COD)</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="Order.PaymentMethod" value="bank"
+                                       @(Model.Order?.PaymentMethod == "bank" ? "checked" : "") />
+                                <label class="form-check-label">Chuyển khoản ngân hàng</label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="Order.PaymentMethod" value="credit"
+                                       @(Model.Order?.PaymentMethod == "credit" ? "checked" : "") />
+                                <label class="form-check-label">Thẻ tín dụng/Ghi nợ</label>
+                            </div>
+
+                            <button type="submit" class="btn btn-success w-100">Xác nhận thanh toán</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Cột phải: Tóm tắt đơn hàng -->
-        <div class="col-md-4">
-            <div class="card shadow-sm p-4">
-                <h5 class="mb-3">Đơn hàng của bạn</h5>
-                @* Duyệt danh sách sản phẩm *@
-                @foreach (var item in Model.ProductsInCart)
-                {
-                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                        <div>
-                            <strong>@item.Name</strong><br />
-                            <small>Số lượng: @item.Quantity</small>
-                        </div>
-                        <div class="text-end">
-                            @if (item.DiscountPrice != null && item.DiscountPrice > 0)
-                            {
-                                <span class="text-danger fw-bold">@item.DiscountPrice.ToString("N0") ₫</span>
+            <!-- Cột phải: Tóm tắt đơn hàng -->
+            <div class="col-md-4">
+                <div class="card shadow-sm p-4">
+                    <h5 class="mb-3">Đơn hàng của bạn</h5>
+                    @* Duyệt danh sách sản phẩm *@
+                    @foreach (var item in Model.ProductsInCart)
+                    {
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div>
+                                <strong>@item.Name</strong><br />
+                                <small>Số lượng: @item.Quantity</small>
+                            </div>
+                            <div class="text-end">
+                                @if (item.DiscountPrice != null && item.DiscountPrice > 0)
+                                {
+                                    <span class="text-danger fw-bold">@item.DiscountPrice.ToString("N0") ₫</span>
                         
-                                <br />
-                                <span class="text-muted text-decoration-line-through">@item.Price.ToString("N0") ₫</span>
-                            }
-                            else
-                            {
-                                <span>@item.Price.ToString("N0") ₫</span>
-                            }
+                                    <br />
+                                    <span class="text-muted text-decoration-line-through">@item.Price.ToString("N0") ₫</span>
+                                }
+                                else
+                                {
+                                    <span>@item.Price.ToString("N0") ₫</span>
+                                }
+                            </div>
                         </div>
+                    }
+                    <hr />
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Tổng cộng:</span>
+                        <span>@Model.TotalAmount.ToString("N0") ₫</span>
                     </div>
-                }
-                <hr />
-                <div class="d-flex justify-content-between fw-bold">
-                    <span>Tổng cộng:</span>
-                    <span>@Model.TotalAmount.ToString("N0") ₫</span>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
+@section Scripts {
+    <script>
+        const addresses = @Html.Raw(Json.Serialize(Model.Order.Addresses));
+
+        document.getElementById("addressSelect").addEventListener("change", function () {
+            const selectedIndex = this.value;
+            const addressDetails = document.getElementById("addressDetails");
+            const shippingTextarea = document.getElementById("shippingAddress");
+
+            if (selectedIndex === "") {
+                addressDetails.style.display = "none";
+                shippingTextarea.value = "";
+                return;
+            }
+
+            const selectedAddress = addresses[selectedIndex];
+            const fullAddress = `${selectedAddress.street}, ${selectedAddress.ward}, ${selectedAddress.district}, ${selectedAddress.city}, ${selectedAddress.country}, ${selectedAddress.postalCode}`;
+            shippingTextarea.value = fullAddress;
+            addressDetails.style.display = "block";
+        });
+    </script>
+}

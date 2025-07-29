@@ -16,7 +16,10 @@ namespace FurnitureProject.Models.DTO
         [Display(Name = AppConstants.Display.OrderReceiverPhone)]
         public string? ReceiverPhone { get; set; }
         [Display(Name = AppConstants.Display.OrderShippingAddress)]
-        public string? ShippingAddress { get; set; }
+        public Guid AddressId { get; set; }
+        public Address? Address { get; set; }
+        public List<Address> Addresses { get; set; } = new List<Address>();
+        public Guid? ShippingMethodId { get; set; }
         public string? PaymentMethod { get; set; }
         public DateTime OrderDate { get; set; }
         [Required]

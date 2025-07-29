@@ -24,10 +24,22 @@ namespace FurnitureProject.Models.DTO
         public string? FullName { get; set; }
         [Display(Name = AppConstants.Display.UserPhoneNumber)]
         public string? PhoneNumber { get; set; }
+        [Display(Name = AppConstants.Display.UserDateOfBirth)]
+        public DateTime? DateOfBirth { get; set; }
+        [Display(Name = AppConstants.Display.UserGender)]
+        public string? Gender { get; set; } = "other";
+        [Display(Name = AppConstants.Display.UserEmailConfirmed)]
+        public string? EmailConfirmed { get; set; } = "false";
+        [Display(Name = AppConstants.Display.UserPhoneNumberConfirmed)]
+        public string? PhoneNumberConfirmed { get; set; } = "false";
+        [Display(Name = AppConstants.Display.UserAvatarUrl)]
+        public string? AvatarUrl { get; set; }
         [Display(Name = AppConstants.Display.UserRole)]
         public string Role { get; set; } = "user";
         [Display(Name = AppConstants.Display.UserStatus)]
         public string Status { get; set; } = "active";
         public DateTime? CreatedAt { get; set; }
+        public AddressDTO Address { get; set; } = new AddressDTO();
+        public List<AddressDTO> Addresses { get; set; } = new List<AddressDTO>();
     }
 }

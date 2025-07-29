@@ -90,6 +90,14 @@
                 </div>
 
                 <div class="d-flex gap-3">
+                    <!-- Nút yêu thích -->
+                    <form asp-controller="Favourite" asp-action="Toggle" method="post">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-danger px-4 rounded-pill">
+                            <i class="bi bi-heart me-1"></i> Yêu thích
+                        </button>
+                    </form>
+                    <!-- Nút giỏ hàng -->
                     <button type="submit" class="btn btn-outline-primary px-4 rounded-pill">
                         <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ hàng
                     </button>

@@ -52,6 +52,10 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<IFavouriteRepository, FavouriteRepository>();
+builder.Services.AddScoped<IFavouriteService, FavouriteService>();
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 

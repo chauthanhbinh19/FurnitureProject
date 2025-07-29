@@ -1,0 +1,121 @@
+﻿@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+}
+
+<div class="container mt-4 pb-5">
+    <div class="row d-flex gap-4">
+        <!-- Sidebar trái -->
+        <div class="col-md-4">
+            <div class="card shadow mb-3">
+                <div class="card-body">
+                    <h5 class="fw-bold">Settings</h5>
+                    <p class="text-muted small">You can find all settings here.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span class="fw-semibold text-primary">My Profile</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-lock me-2"></i>
+                            Security Options
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-comments me-2"></i>
+                            Chat
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-sliders-h me-2"></i>
+                            Preferences
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-bell me-2"></i>
+                            Notifications
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nội dung phải -->
+        <div class="col-md-7">
+            <div class="card shadow mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h5 class="fw-bold mb-0">Profile Information</h5>
+                        </div>
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn-custom bg-conflowerblue px-4">Chỉnh sửa</button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-4">
+                        <img src="https://via.placeholder.com/64" class="rounded-circle me-3" alt="Avatar">
+                        <div>
+                            <h6 class="mb-0 fw-semibold">Leslie Alexander</h6>
+                            <small class="text-muted">Customer Service Manager</small>
+                        </div>
+                    </div>
+
+                    <!-- Personal Details -->
+                    <h6 class="fw-bold mt-4">Personal Details</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control" value="Leslie" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-control" value="Alexander" readonly>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Email address</label>
+                            <input type="email" class="form-control" value="leslie@gmail.com" readonly>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" value="+317-439-5139" readonly>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Bio</label>
+                            <input type="text" class="form-control" value="Customer Service Manager" readonly>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Gender</label>
+                            <input type="text" class="form-control" value="Female" readonly>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="text" class="form-control" value="10 June, 1994" readonly>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">National ID</label>
+                            <input type="text" class="form-control" value="629 555-0129 333-0127" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <h6 class="fw-bold mt-4">Address</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Country</label>
+                            <input type="text" class="form-control" value="United States" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">City/State</label>
+                            <input type="text" class="form-control" value="Los Angeles" readonly>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">Postal Code</label>
+                            <input type="text" class="form-control" value="90001" readonly>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label">TAX ID</label>
+                            <input type="text" class="form-control" value="BH28F55219" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- row -->
+</div>

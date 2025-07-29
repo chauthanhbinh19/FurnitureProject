@@ -29,6 +29,22 @@ namespace FurnitureProject.Configuration
             builder.Property(u => u.PhoneNumber)
                 .HasMaxLength(20);
 
+            builder.Property(u => u.DateOfBirth)
+                .HasMaxLength(200);
+
+            builder.Property(u => u.Gender)
+                .HasMaxLength(20);
+
+            builder.Property(u => u.EmailConfirmed)
+                .HasDefaultValue(0);
+
+            builder.Property(u => u.PhoneNumberConfirmed)
+                .HasDefaultValue(0);
+
+            builder.Property(u => u.AvatarUrl);
+
+            builder.Property(u => u.LastLoginAt);
+
             builder.Property(u => u.Role)
                 .IsRequired()
                 .HasDefaultValue("user");

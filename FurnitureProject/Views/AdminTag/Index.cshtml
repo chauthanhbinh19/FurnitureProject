@@ -29,11 +29,11 @@
 <div class="table-responsive title-box">
     <div class="container">
         <form method="get" asp-controller="AdminTag" asp-action="Index" class="link-custom">
-            <div class="row mb-3 justify-content-around">
+            <div class="row mb-3 d-flex flex-wrap gap-4">
                 <div class="col-md-3">
                     <div class="input-group">
-                        <input type="text" name="search" value="@keyword" class="form-control" placeholder="Nhập từ khóa...">
-                        <button type="submit" class="btn-custom bg-conflowerblue">
+                        <input type="text" name="search" value="@keyword" class="form-control form-control-sm" placeholder="Nhập từ khóa...">
+                        <button type="submit" class="btn btn-sm btn-custom bg-conflowerblue">
                             <i class="bi bi-search"></i> Tìm kiếm
                         </button>
                     </div>
@@ -55,8 +55,8 @@
                 <thead class="table-background">
                     <tr>
                         @* <th scope="col">ID</th> *@
-                        <th scope="col">
-                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
                                 Tên
                                 <div class="sort-arrows">
                                     <a asp-action="Index"
@@ -75,8 +75,8 @@
                                 </div>
                             </div>
                         </th>
-                        <th scope="col">
-                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
                                 Ngày tạo
                                 <div class="sort-arrows">
                                     <a asp-action="Index"
@@ -95,8 +95,8 @@
                                 </div>
                             </div>
                         </th>
-                        <th scope="col">
-                            <div class="d-flex align-items-center justify-content-center sort-wrapper">
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
                                 Trạng thái
                                 <div class="sort-arrows">
                                     <a asp-action="Index"
@@ -115,7 +115,7 @@
                                 </div>
                             </div>
                         </th>
-                        <th scope="col">Hành động</th>
+                        <th class="col with-separator">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>

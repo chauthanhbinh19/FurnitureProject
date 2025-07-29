@@ -122,6 +122,9 @@
             public const string Oldest = "oldest";
             public const string PriceAscending = "price-asc";
             public const string PriceDescending = "price-desc";
+            public const string Male = "male";
+            public const string Female = "female";
+            public const string Other = "other";
         }
 
         public static class Params
@@ -170,6 +173,11 @@
             public const string UserConfirmPassword = "Nhập lại mật khẩu";
             public const string UserFullname = "Họ tên đầy đủ";
             public const string UserPhoneNumber = "Số điện thoại";
+            public const string UserDateOfBirth = "Ngày sinh";
+            public const string UserGender = "Giới tính";
+            public const string UserEmailConfirmed = "Xác nhận email";
+            public const string UserPhoneNumberConfirmed = "Xác nhận số điện thoại";
+            public const string UserAvatarUrl = "Ảnh đại diện";
             public const string UserRole = "Vai trò";
             public const string UserStatus = "Trạng thái người dùng";
             public const string PasswordTooShort = "Mật khẩu phải có ít nhất 8 ký tự.";
@@ -180,20 +188,34 @@
             public const string InvalidEmailFormat = "Email không đúng định dạng";
 
             public const string VoucherCode = "Mã voucher";
-            public const string VoucherDiscountPercent = "Phần trăm giảm";
+            public const string VoucherDiscountPercent = "Phần trăm giảm (%)";
             public const string VoucherDiscountAmount = "Số tiền giảm";
             public const string VoucherExpiryDate = "Ngày hết hạn";
             public const string VoucherUsageLimit = "Số lượt sử dụng tối đa";
             public const string VoucherTimeUsed = "Số lần đã sử dụng";
             public const string VoucherIsValid = "Còn hiệu lực";
-            public const string VoucherStatus = "Trạng thái";
+            public const string VoucherStatus = "Trạng thái mã giảm giá";
 
             public const string OrderReceiverName = "Họ tên người nhận";
             public const string OrderReceiverEmail = "Email người nhận";
             public const string OrderReceiverPhone = "Số điện thoại người nhận";
             public const string OrderShippingAddress = "Địa chỉ giao hàng";
 
+            public const string AddressStreet = "Địa chỉ";
+            public const string AddressWard = "Phường/Xã";
+            public const string AddressDistrict = "Quận/Huyện";
+            public const string AddressCity = "Thành phố/Tỉnh";
+            public const string AddressCountry = "Quốc gia";
+            public const string AddressPostalCode = "Mã bưu điện";
+
             public const string Status = "Trạng thái";
+            public const string Male = "Nam";
+            public const string Female = "Nữ";
+            public const string Other = "Khác";
+            public const string Admin = "Quản lý";
+            public const string User = "Người dùng";
+            public const string Active = "Hoạt động";
+            public const string Inactive = "Không hoạt động";
         }
     }
 }

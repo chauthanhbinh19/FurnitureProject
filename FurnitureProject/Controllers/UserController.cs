@@ -1,5 +1,6 @@
 ﻿using FurnitureProject.Helper;
 using FurnitureProject.Models;
+using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Services;
 using FurnitureProject.Services.Email;
@@ -285,7 +286,25 @@ namespace FurnitureProject.Controllers
                     {
                         user.Password = model.NewPassword;
                         user.Password = hasher.HashPassword(user, user.Password);
-                        await _userService.UpdateAsync(user);
+
+                        var userDTO = new UserDTO
+                        {
+                            Id = Guid.NewGuid(),
+                            FullName = user.FullName,
+                            Username = user.Username,
+                            Email = user.Email,
+                            PhoneNumber = user.PhoneNumber,
+                            Password = user.Password, // Ensure password is hashed in the service
+                            DateOfBirth = user.DateOfBirth,
+                            Gender = user.Gender,
+                            EmailConfirmed = user.EmailConfirmed,
+                            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                            AvatarUrl = user.AvatarUrl,
+                            Role = user.Role,
+                            Status = user.Status,
+                            CreatedAt = user.CreatedAt
+                        };
+                        await _userService.UpdateAsync(userDTO);
 
                         TempData[AppConstants.Status.Success] = AppConstants.LogMessages.ChangePasswordSuccessful;
                         return RedirectToAction("SignIn", "User");

@@ -14,7 +14,11 @@ namespace FurnitureProject.Models
         public string? ReceiverName { get; set; }
         public string? ReceiverEmail { get; set; }
         public string? ReceiverPhone { get; set; }
-        public string? ShippingAddress { get; set; }
+        public Guid? AddressId { get; set; }
+        public Address? Address { get; set; }
+        public Guid? ShippingMethodId { get; set; }
+        public ShippingMethod? ShippingMethod { get; set; }
+        public decimal ShippingFee { get; set; }
         public string? PaymentMethod { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 

@@ -13,14 +13,15 @@
         <span class="title ms-2">Chỉnh sửa sản phẩm</span>
     </div>
 </div>
-<div class="container mt-4">
+<div class="container mt-4 pb-5">
     <form id="productForm" asp-controller="AdminProduct" asp-action="Update" method="post" enctype="multipart/form-data">
         <div class="row gx-4 gy-3 justify-content-between">
             <!-- Card 1: Thông tin sản phẩm -->
             <div class="col-md-6-5">
                 <div class="card shadow mb-3">
-                    <div class="card-header text-black fs-5">
-                        Thông tin sản phẩm
+                    <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                        <i class="fas fa-circle-info text-conflowerblue"></i>
+                        <span>Thông tin danh mục</span>
                     </div>
                     <div class="card-body">
                         <div class="row justify-content-between">
@@ -47,8 +48,9 @@
                     </div>
                 </div>
                 <div class="card shadow">
-                    <div class="card-header text-black fs-5">
-                        Mô tả sản phẩm
+                    <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                        <i class="fas fa-align-left text-conflowerblue"></i>
+                        <span>Mô tả sản phẩm</span>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
@@ -63,8 +65,9 @@
             <!-- Card 2: Upload hình ảnh -->
             <div class="col-md-5">
                 <div class="card shadow mb-3">
-                    <div class="card-header text-black fs-5">
-                        Tải ảnh sản phẩm
+                    <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                        <i class="fas fa-upload text-conflowerblue"></i>
+                        <span>Tải ảnh sản phẩm</span>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
@@ -103,8 +106,9 @@
                     </div>
                 </div>
                 <div class="card shadow">
-                    <div class="card-header text-black fs-5">
-                        Danh mục  & nhãn
+                    <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                        <i class="fas fa-tags text-conflowerblue"></i>
+                        <span>Danh mục & nhãn</span>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">

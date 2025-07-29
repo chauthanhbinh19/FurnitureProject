@@ -4,6 +4,7 @@ using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace FurnitureProject.Controllers
@@ -16,15 +17,16 @@ namespace FurnitureProject.Controllers
         private readonly ITagService _tagService;
         private readonly ICartService _cartService;
         private readonly IPromotionService _promotionService;
-
+        private readonly IFavouriteService _favouriteService;
         public ProductController(IProductService productService, ICategoryService categoryService,
-            ITagService tagService, ICartService cartService, IPromotionService promotionService)
+            ITagService tagService, ICartService cartService, IPromotionService promotionService, IFavouriteService favouriteService)
         {
             _productService = productService;
             _categoryService = categoryService;
             _tagService = tagService;
             _cartService = cartService;
             _promotionService = promotionService;
+            _favouriteService = favouriteService;
         }
         [HttpGet("category/{id}")]
         public async Task<IActionResult> ProductByCategory(Guid id, int page = 1)
@@ -36,6 +38,13 @@ namespace FurnitureProject.Controllers
             var categories = await _categoryService.GetAllAsync();
             var promotions = await _promotionService.GetAllAsync();
             var today = DateTime.UtcNow;
+            var userId = HttpContext.Session.GetString("UserID");
+            List<Favourite> favourites = new();
+
+            if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var userIds))
+            {
+                favourites = await _favouriteService.GetFavouritesByUserAsync(Guid.Parse(userId));
+            }
 
             ViewBag.Categories = categories.OrderBy(c => c.Name).ToList();
 
@@ -47,6 +56,9 @@ namespace FurnitureProject.Controllers
                         promo.ProductPromotions.Any(pp => pp.ProductId == product.Id) &&
                         promo.EndDate >= today
                     );
+
+                    bool isFavourited = favourites
+                        .Any(f => f.userId == Guid.Parse(userId) && f.productId == product.Id);
 
                     decimal discountPrice = 0;
                     if (activePromotion != null)
@@ -67,6 +79,7 @@ namespace FurnitureProject.Controllers
                         ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
                         TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
                         DiscountPrice = discountPrice,
+                        IsFavourited = isFavourited,
                     };
                 }).ToList();
 
@@ -99,6 +112,13 @@ namespace FurnitureProject.Controllers
             var categories = await _categoryService.GetAllAsync();
             var promotions = await _promotionService.GetAllAsync();
             var today = DateTime.UtcNow;
+            var userId = HttpContext.Session.GetString("UserID");
+            List<Favourite> favourites = new();
+
+            if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var userIds))
+            {
+                favourites = await _favouriteService.GetFavouritesByUserAsync(Guid.Parse(userId));
+            }
 
             ViewBag.Categories = categories.OrderBy(c => c.Name).ToList();
 
@@ -109,6 +129,9 @@ namespace FurnitureProject.Controllers
                         promo.ProductPromotions.Any(pp => pp.ProductId == product.Id) &&
                         promo.EndDate >= today
                     );
+
+                    bool isFavourited = favourites
+                        .Any(f => f.userId == Guid.Parse(userId) && f.productId == product.Id);
 
                     decimal discountPrice = 0;
                     if (activePromotion != null)
@@ -129,6 +152,7 @@ namespace FurnitureProject.Controllers
                         ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
                         TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
                         DiscountPrice = discountPrice,
+                        IsFavourited = isFavourited,
                     };
                 }).ToList();
 
@@ -175,6 +199,14 @@ namespace FurnitureProject.Controllers
 
             var categories = await _categoryService.GetAllAsync();
             ViewBag.Categories = categories.OrderBy(c => c.Name).ToList();
+
+            var userId = HttpContext.Session.GetString("UserID");
+            List<Favourite> favourites = new();
+
+            if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var userIds))
+            {
+                favourites = await _favouriteService.GetFavouritesByUserAsync(Guid.Parse(userId));
+            }
 
             var productDto = new ProductDTO
             {

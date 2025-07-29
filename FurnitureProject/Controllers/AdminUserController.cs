@@ -20,12 +20,23 @@ namespace FurnitureProject.Controllers
             _userService = userService;
             _cartService = cartService;
         }
+        private void SetGenderViewBag(string? gender = null)
+        {
+            ViewBag.GenderList = new SelectList(
+                new[] {
+                    new { Value = AppConstants.Status.Male, Text = AppConstants.Display.Male },
+                    new { Value = AppConstants.Status.Female, Text = AppConstants.Display.Female },
+                    new { Value = AppConstants.Status.Other, Text = AppConstants.Display.Other }
+                },
+                "Value", "Text", gender
+            );
+        }
         private void SetStatusViewBag(string? status = null)
         {
             ViewBag.StatusList = new SelectList(
                 new[] {
-                    new { Value = AppConstants.Status.Active, Text = AppConstants.LogMessages.Active },
-                    new { Value = AppConstants.Status.Inactive, Text = AppConstants.LogMessages.Inactive }
+                    new { Value = AppConstants.Status.Active, Text = AppConstants.Display.Active },
+                    new { Value = AppConstants.Status.Inactive, Text = AppConstants.Display.Inactive }
                 },
                 "Value", "Text", status
             );
@@ -46,8 +57,8 @@ namespace FurnitureProject.Controllers
         {
             ViewBag.RoleList = new SelectList(
                 new[] {
-                    new { Value = AppConstants.Status.Admin.ToLower(), Text = AppConstants.LogMessages.Admin },
-                    new { Value = AppConstants.Status.User.ToLower(), Text = AppConstants.LogMessages.User }
+                    new { Value = AppConstants.Status.Admin.ToLower(), Text = AppConstants.Display.Admin },
+                    new { Value = AppConstants.Status.User.ToLower(), Text = AppConstants.Display.User }
                 },
                 "Value", "Text", status
             );
@@ -116,6 +127,10 @@ namespace FurnitureProject.Controllers
                         ? userDtos.OrderBy(p => p.Email).ToList()
                         : userDtos.OrderByDescending(p => p.Email).ToList(),
 
+                    "PhoneNumber" => isAscending
+                        ? userDtos.OrderBy(p => p.PhoneNumber).ToList()
+                        : userDtos.OrderByDescending(p => p.PhoneNumber).ToList(),
+
                     "Username" => isAscending
                         ? userDtos.OrderBy(p => p.Username).ToList()
                         : userDtos.OrderByDescending(p => p.Username).ToList(),
@@ -175,6 +190,8 @@ namespace FurnitureProject.Controllers
             LayoutHelper.SetViewBagForLayout(this, true, "admin");
             SetRoleViewBag();
             SetStatusViewBag();
+            SetGenderViewBag();
+
             return View();
         }
 
@@ -187,25 +204,13 @@ namespace FurnitureProject.Controllers
                 await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
                 SetRoleViewBag();
                 SetStatusViewBag();
+                SetGenderViewBag();
                 return View(dto);
             }
 
-            var user = new User
-            {
-                Id = Guid.NewGuid(),
-                FullName = dto.FullName,
-                Username = dto.Username,
-                Email = dto.Email,
-                PhoneNumber = dto.PhoneNumber,
-                Password = dto.Password, // Ensure password is hashed in the service
-                Role = dto.Role,
-                Status = dto.Status,
-                CreatedAt = dto.CreatedAt
-            };
-
             try
             {
-                var (success, message) = await _userService.CreateAsync(user);
+                var (success, message) = await _userService.CreateAsync(dto);
                 if (!success)
                 {
                     TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateUserError;
@@ -232,6 +237,7 @@ namespace FurnitureProject.Controllers
             TempData["UserPassword"] = user.Password;
             SetRoleViewBag(user.Role);
             SetStatusViewBag(user.Status);
+            SetGenderViewBag(user.Gender);
 
             var userDTO = new UserDTO
             {
@@ -243,14 +249,29 @@ namespace FurnitureProject.Controllers
                 Password = user.Password, // Ensure password is hashed in the service
                 Role = user.Role,
                 Status = user.Status,
-                CreatedAt = user.CreatedAt
+                CreatedAt = user.CreatedAt,
+                Addresses = user.Addresses.Select(a => new AddressDTO
+                {
+                    Id = a.Id,
+                    UserId = a.UserId,
+                    Street = a.Street,
+                    Ward = a.Ward,
+                    District = a.District,
+                    City = a.City,
+                    Country = a.Country,
+                    PostalCode = a.PostalCode,
+                    IsDefault = a.IsDefault
+                }).ToList()
             };
+
+            ViewBag.AddressesCount = userDTO.Addresses.Count;
             return View(userDTO);
         }
 
         [HttpPost("update")]
         public async Task<IActionResult> Update(UserDTO dto)
         {
+            ModelState.Remove("ConfirmPassword");
             if (!ModelState.IsValid)
             {
                 await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
@@ -260,30 +281,18 @@ namespace FurnitureProject.Controllers
                 TempData["UserPassword"] = tempUser.Password;
                 SetRoleViewBag(tempUser.Role);
                 SetStatusViewBag(tempUser.Status);
+                SetGenderViewBag(tempUser.Gender);
                 return View(dto);
             }
 
-            var user = new User
-            {
-                Id = Guid.NewGuid(),
-                FullName = dto.FullName,
-                Username = dto.Username,
-                Email = dto.Email,
-                PhoneNumber = dto.PhoneNumber,
-                Password = dto.Password, // Ensure password is hashed in the service
-                Role = dto.Role,
-                Status = dto.Status,
-                CreatedAt = dto.CreatedAt
-            };
-
             try
             {
-                if (user.Password == null)
+                if (dto.Password == null)
                 {
-                    user.Password = TempData["UserPassword"]?.ToString();
+                    dto.Password = TempData["UserPassword"]?.ToString();
                 }
 
-                var (success, message) = await _userService.UpdateAsync(user);
+                var (success, message) = await _userService.UpdateAsync(dto);
                 if (!success)
                 {
                     TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateUserError;

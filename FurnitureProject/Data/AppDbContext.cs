@@ -25,6 +25,10 @@ namespace FurnitureProject.Data
         public DbSet<PostCategoryLink> PostCategoryLinks { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Address> Addresses { get; set; }
+        public DbSet<ShippingMethod> ShippingMethods { get; set; }
+        public DbSet<Favourite> Favourites { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,6 +51,9 @@ namespace FurnitureProject.Data
             modelBuilder.ApplyConfiguration(new PostCategoryLinkConfiguration());
             modelBuilder.ApplyConfiguration(new CartConfiguration());
             modelBuilder.ApplyConfiguration(new CartItemConfiguration());
+            modelBuilder.ApplyConfiguration(new AddressConfiguration());
+            modelBuilder.ApplyConfiguration(new ShippingMethodConfiguration());
+            modelBuilder.ApplyConfiguration(new FavouriteConfiguration());
 
             modelBuilder.Entity<ProductPromotion>()
                 .HasKey(pp => new { pp.ProductId, pp.PromotionId });
@@ -132,6 +139,13 @@ namespace FurnitureProject.Data
                 .WithMany()
                 .HasForeignKey(ci => ci.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Address>()
+                .HasOne(x => x.User)
+                .WithMany(u => u.Addresses)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             // Soft-delete global filter
             //modelBuilder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);

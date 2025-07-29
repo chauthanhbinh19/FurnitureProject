@@ -15,14 +15,16 @@ namespace FurnitureProject.Controllers
         private readonly IOrderService _orderService;
         private readonly IProductService _productService;
         private readonly IPromotionService _promotionService;
+        private readonly IAddressService _addressService;
         public PaymentController(ICategoryService categoryService, ICartService cartService, 
-            IOrderService orderService, IProductService productService, IPromotionService promotionService)
+            IOrderService orderService, IProductService productService, IPromotionService promotionService, IAddressService addressService)
         {
             _categoryService = categoryService;
             _cartService = cartService;
             _orderService = orderService;
             _productService = productService;
             _promotionService = promotionService;
+            _addressService = addressService;
         }
         [HttpGet("")]
         public async Task<IActionResult> Index()
@@ -42,6 +44,7 @@ namespace FurnitureProject.Controllers
             var products = await _productService.GetAllAsync();
             var promotions = await _promotionService.GetAllAsync();
             var today = DateTime.UtcNow;
+            var addresses = await _addressService.GetUserAddressesAsync(Guid.Parse(userId));
 
             paymentViewModel.ProductsInCart = cart.CartItems.Select(ci => 
             { 
@@ -71,6 +74,11 @@ namespace FurnitureProject.Controllers
                     DiscountPrice = discountPrice,
                 };
             }).ToList();
+
+            paymentViewModel.Order = new OrderDTO
+            {
+                Addresses = addresses.ToList(),
+            };
 
             return View(paymentViewModel);
         }
@@ -102,7 +110,8 @@ namespace FurnitureProject.Controllers
                     ReceiverName = paymentViewModel.Order.ReceiverName,
                     ReceiverEmail = paymentViewModel.Order.ReceiverEmail,
                     ReceiverPhone = paymentViewModel.Order.ReceiverPhone,
-                    ShippingAddress = paymentViewModel.Order.ShippingAddress,
+                    AddressId = paymentViewModel.Order.AddressId,
+                    ShippingMethodId = paymentViewModel.Order.ShippingMethodId,
                     PaymentMethod = paymentViewModel.Order.PaymentMethod,
                     OrderDate = DateTime.UtcNow,
                     Status = "pending",
@@ -135,6 +144,10 @@ namespace FurnitureProject.Controllers
                             DiscountPrice = discountPrice,
                         };
                     }).ToList(),
+                    Address = new Address
+                    {
+                        Id = paymentViewModel.Order.AddressId,
+                    }
                 };
 
                 orderDto.TotalAmount = orderDto.Products.Sum(p => 

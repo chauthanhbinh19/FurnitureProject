@@ -8,47 +8,60 @@
         <span class="title ms-2">Tạo mã giảm giá</span>
     </div>
 </div>
-<div class="title-box">
-    <div class="card-body">
-        <form asp-controller="AdminVoucher" asp-action="Create" method="post">
-            <div class="row mb-3 d-flex flex-wrap gap-4">
-                <div class="col-md-5">
-                    <label asp-for="Code" class="form-label fw-semibold">Mã giảm giá</label>
-                    <input asp-for="Code" class="form-control custom-gray-input" placeholder="Ví dụ: SUMMER25" />
-                    <span asp-validation-for="Code" class="text-danger small"></span>
+<div class="container mt-4 pb-5">
+    <form asp-controller="AdminVoucher" asp-action="Create" method="post">
+        <div class="row gx-4 gy-3 justify-content-between">
+            <div class="card shadow mb-3">
+                <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                    <i class="fas fa-circle-info text-conflowerblue"></i>
+                    <span>Thông tin mã giảm giá</span>
                 </div>
-                <div class="col-md-3">
-                    <label asp-for="DiscountPercent" class="form-label fw-semibold">Giảm giá (%)</label>
-                    <input asp-for="DiscountPercent" type="number" min="0" max="100" class="form-control custom-gray-input" placeholder="0 - 100" />
-                    <span asp-validation-for="DiscountPercent" class="text-danger small"></span>
-                </div>
-                <div class="col-md-3">
-                    <label asp-for="DiscountAmount" class="form-label fw-semibold">Số tiền giảm</label>
-                    <input asp-for="DiscountAmount" type="number" step="1000" min="0" class="form-control custom-gray-input" placeholder="VND" />
-                    <span asp-validation-for="DiscountAmount" class="text-danger small"></span>
-                </div>
-            </div>
+                <div class="card-body">
+                    <div class="row mb-3 d-flex flex-wrap gap-4">
+                        <div class="col-md-5">
+                            <label asp-for="Code" class="form-label fw-semibold"></label>
+                            <input asp-for="Code" class="form-control custom-gray-input" placeholder="Ví dụ: SUMMER25" />
+                            <span asp-validation-for="Code" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="DiscountPercent" class="form-label fw-semibold"></label>
+                            <input asp-for="DiscountPercent" type="number" min="0" max="100" class="form-control custom-gray-input" placeholder="0 - 100" />
+                            <span asp-validation-for="DiscountPercent" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="DiscountAmount" class="form-label fw-semibold"></label>
+                            <input asp-for="DiscountAmount" type="number" step="1000" min="0" class="form-control custom-gray-input" placeholder="VND" />
+                            <span asp-validation-for="DiscountAmount" class="text-danger small"></span>
+                        </div>
+                    </div>
 
-            <div class="row mb-3 d-flex flex-wrap gap-4">
-                <div class="col-md-3">
-                    <label asp-for="ExpiryDate" class="form-label fw-semibold">Ngày hết hạn</label>
-                    <input asp-for="ExpiryDate" type="date" class="form-control custom-gray-input" />
-                    <span asp-validation-for="ExpiryDate" class="text-danger small"></span>
-                </div>
-                <div class="col-md-3">
-                    <label asp-for="UsageLimit" class="form-label fw-semibold">Số lượt sử dụng</label>
-                    <input asp-for="UsageLimit" type="number" class="form-control custom-gray-input" min="1" />
-                    <span asp-validation-for="UsageLimit" class="text-danger small"></span>
-                </div>
-                <div class="col-md-3">
-                    <label asp-for="Status" class="form-label fw-semibold">Trạng thái</label>
-                    <select asp-for="Status" class="form-select custom-gray-input" asp-items="ViewBag.StatusList">
-                    </select>
-                    <span asp-validation-for="Status" class="text-danger small"></span>
+                    <div class="row mb-3 d-flex flex-wrap gap-4">
+                        <div class="col-md-3">
+                            <label asp-for="ExpiryDate" class="form-label fw-semibold"></label>
+                            <input asp-for="ExpiryDate" type="date" class="form-control custom-gray-input" />
+                            <span asp-validation-for="ExpiryDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="UsageLimit" class="form-label fw-semibold"></label>
+                            <input asp-for="UsageLimit" type="number" class="form-control custom-gray-input" min="1" />
+                            <span asp-validation-for="UsageLimit" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="Status" class="form-label fw-semibold"></label>
+                            <select asp-for="Status" class="form-select custom-gray-input" asp-items="ViewBag.StatusList">
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="mb-4">
-                <label class="form-label fw-medium">Áp dụng cho sản phẩm</label>
+        </div>
+        <div class="row gx-4 gy-3 justify-content-between">
+            <div class="card shadow mb-3">
+                <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                    <i class="fas fa-user-circle text-conflowerblue"></i>
+                    <span>Áp dụng sản phẩm</span>
+                </div>
                 <table class="table table-bordered table-hover">
                     <thead class="table-light">
                         <tr>
@@ -107,10 +120,9 @@
                     </tbody>
                 </table>
             </div>
-
-            <div class="mt-4 d-flex justify-content-end">
+        </div>
+        <div class="mt-4 d-flex justify-content-end">
                 <button type="submit" class="btn-custom bg-conflowerblue px-4">Lưu</button>
-            </div>
+        </div>    
         </form>
-    </div>
 </div>

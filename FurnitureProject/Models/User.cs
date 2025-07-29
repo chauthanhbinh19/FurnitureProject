@@ -11,11 +11,9 @@ namespace FurnitureProject.Models
 
         [Required]
         public string Username { get; set; }
-
         [Required]
         [EmailAddress(ErrorMessage = AppConstants.Display.InvalidEmailFormat)]
         public string Email { get; set; }
-
         [Required]
         public string Password { get; set; }
         [NotMapped]
@@ -23,11 +21,18 @@ namespace FurnitureProject.Models
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
-
         public string? FullName { get; set; }
         public string? PhoneNumber { get; set; }
-
+        public DateTime? DateOfBirth { get; set; }
+        public string? Gender { get; set; } = "other";
+        public string? EmailConfirmed { get; set; } = "false";
+        public string? PhoneNumberConfirmed { get; set; } = "false";
+        public string? AvatarUrl { get; set; }
+        public DateTime? LastLoginAt { get; set; }
         public string Role { get; set; } = "user";
         public string Status { get; set; } = "active";
+        public ICollection<Address> Addresses { get; set; } = new List<Address>();
+        public ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
+
     }
 }

@@ -22,6 +22,63 @@ namespace FurnitureProject.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FurnitureProject.Models.Address", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("District")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool?>("IsDefault")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Ward")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("addresses", (string)null);
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.Cart", b =>
                 {
                     b.Property<Guid>("Id")
@@ -109,10 +166,45 @@ namespace FurnitureProject.Migrations
                     b.ToTable("categories", (string)null);
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.Favourite", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("productId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("userId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("productId");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("favourites", (string)null);
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AddressId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("CreatedAt")
@@ -142,9 +234,11 @@ namespace FurnitureProject.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ShippingAddress")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<decimal>("ShippingFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid?>("ShippingMethodId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -164,6 +258,10 @@ namespace FurnitureProject.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("ShippingMethodId");
 
                     b.HasIndex("UserId");
 
@@ -543,6 +641,43 @@ namespace FurnitureProject.Migrations
                     b.ToTable("promotions", (string)null);
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.ShippingMethod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<TimeSpan>("EstimatedTime")
+                        .HasColumnType("interval");
+
+                    b.Property<decimal>("Fee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("shipping_methods", (string)null);
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.Tag", b =>
                 {
                     b.Property<Guid>("Id")
@@ -582,7 +717,14 @@ namespace FurnitureProject.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AvatarUrl")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasMaxLength(200)
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
@@ -590,14 +732,26 @@ namespace FurnitureProject.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<string>("EmailConfirmed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("0");
+
                     b.Property<string>("FullName")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("LastLoginAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -606,6 +760,11 @@ namespace FurnitureProject.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
+
+                    b.Property<string>("PhoneNumberConfirmed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("0");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -678,6 +837,17 @@ namespace FurnitureProject.Migrations
                     b.ToTable("vouchers", (string)null);
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.Address", b =>
+                {
+                    b.HasOne("FurnitureProject.Models.User", "User")
+                        .WithMany("Addresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.Cart", b =>
                 {
                     b.HasOne("FurnitureProject.Models.User", "User")
@@ -708,13 +878,45 @@ namespace FurnitureProject.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.Favourite", b =>
+                {
+                    b.HasOne("FurnitureProject.Models.Product", "Product")
+                        .WithMany("Favourites")
+                        .HasForeignKey("productId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FurnitureProject.Models.User", "User")
+                        .WithMany("Favourites")
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.Order", b =>
                 {
+                    b.HasOne("FurnitureProject.Models.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FurnitureProject.Models.ShippingMethod", "ShippingMethod")
+                        .WithMany("Orders")
+                        .HasForeignKey("ShippingMethodId");
+
                     b.HasOne("FurnitureProject.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("ShippingMethod");
 
                     b.Navigation("User");
                 });
@@ -877,6 +1079,8 @@ namespace FurnitureProject.Migrations
 
             modelBuilder.Entity("FurnitureProject.Models.Product", b =>
                 {
+                    b.Navigation("Favourites");
+
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductPromotions");
@@ -891,9 +1095,21 @@ namespace FurnitureProject.Migrations
                     b.Navigation("ProductPromotions");
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.ShippingMethod", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.Tag", b =>
                 {
                     b.Navigation("ProductTags");
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.User", b =>
+                {
+                    b.Navigation("Addresses");
+
+                    b.Navigation("Favourites");
                 });
 
             modelBuilder.Entity("FurnitureProject.Models.Voucher", b =>

@@ -26,10 +26,11 @@ namespace FurnitureProject.Models.DTO
         public string Status { get; set; }
         public decimal DiscountPrice { get; set; }
         public DateTime? CreatedAt { get; set; }
-        public string? PromotionStatus { get; set; } // Trạng thái khuyến mãi (Active, Inactive, Expired)
+        public string? PromotionStatus { get; set; }
         public string? VoucherStatus { get; set; }
+        public bool IsFavourited { get; set; } = false;
         public int Quantity { get; set; }
-        public List<IFormFile>? Files { get; set; }  // ảnh upload
+        public List<IFormFile>? Files { get; set; }
         public List<string>? ImageUrls { get; set; } = new();
         [Display(Name = AppConstants.Display.ProductTag)]
         public List<Guid>? TagIds { get; set; } = new();

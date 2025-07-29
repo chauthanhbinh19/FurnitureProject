@@ -24,7 +24,13 @@ namespace FurnitureProject.Configuration
             builder.Property(u => u.ReceiverPhone)
                 .IsRequired();
 
-            builder.Property(u => u.ShippingAddress)
+            builder.Property(u => u.AddressId)
+                .IsRequired(false);
+
+            builder.Property(u => u.ShippingMethodId)
+                .IsRequired(false);
+
+            builder.Property(u => u.ShippingFee)
                 .IsRequired();
 
             builder.Property(u => u.PaymentMethod)
@@ -48,6 +54,11 @@ namespace FurnitureProject.Configuration
             builder.Property(u => u.IsDeleted)
                 .IsRequired()
                 .HasDefaultValue(0);
+
+            builder.HasOne(o => o.Address)
+            .WithMany()
+            .HasForeignKey(o => o.AddressId)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

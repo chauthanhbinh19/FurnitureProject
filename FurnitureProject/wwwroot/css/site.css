@@ -43,14 +43,24 @@ body {
 .table-background th {
     background-color: cornflowerblue !important;
     color: white !important;
-    padding-top: 12px;
-    padding-bottom: 12px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    white-space: nowrap;
 }
 
 .table th, .table td {
-    text-align: center;
+    /*    text-align: center;*/
     vertical-align: middle;
     border: none;
+    padding-left: 20px !important;
+}
+
+.with-separator {
+    border-right: 1px solid #ccc !important;
+}
+
+thead th:last-child {
+    border-right: none !important;
 }
 
 .product-card {
@@ -190,6 +200,9 @@ body {
     height: 550px;
     object-fit: cover;
 }
+.col-md-3-5 {
+    width: 30%;
+}
 .col-md-7-5 {
     width: 64%;
 }
@@ -202,8 +215,11 @@ body {
 .col-md-1-5 {
     width: 12.5%;
 }
+.col-md-2-5 {
+    width: 23%;
+}
 .custom-gray-input {
-    background-color: #F5F5F5;
+    background-color: #FCFCFC;
     color: #333;
     border: 1px solid #ccc;
 }
@@ -288,4 +304,17 @@ body {
     background: #FAF9D4;
     color: #CED115;
 }
+.form-control:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: cornflowerblue;
+    border: 2px solid cornflowerblue;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.text-conflowerblue{
+    color: cornflowerblue;
+}
+
 

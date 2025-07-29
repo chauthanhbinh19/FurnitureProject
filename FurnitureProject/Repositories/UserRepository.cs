@@ -22,7 +22,9 @@ namespace FurnitureProject.Repositories
 
         public async Task<User?> GetByIdAsync(Guid id)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+            return await _context.Users
+                .Include(u => u.Addresses)
+                .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
         }
 
         public async Task<User?> GetByUsernameAsync(string username)
@@ -39,6 +41,10 @@ namespace FurnitureProject.Repositories
         {
             try
             {
+                user.DateOfBirth = user.DateOfBirth.HasValue
+                    ? DateTime.SpecifyKind(user.DateOfBirth.Value, DateTimeKind.Utc)
+                    : null;
+
                 await _context.Users.AddAsync(user);
                 var affected = await _context.SaveChangesAsync();
 
@@ -56,6 +62,9 @@ namespace FurnitureProject.Repositories
 
         public async Task UpdateAsync(User user)
         {
+            user.DateOfBirth = user.DateOfBirth.HasValue
+                ? DateTime.SpecifyKind(user.DateOfBirth.Value, DateTimeKind.Utc)
+                : null;
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
