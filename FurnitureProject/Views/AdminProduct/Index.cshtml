@@ -62,7 +62,7 @@
                 </div>
             </div>
         </form>
-        <div class="row mb-3">
+        <div class="row mb-3 table-responsive">
             <table class="table table-hover align-middle">
                 <thead class="table-background">
                     <tr>
@@ -194,8 +194,8 @@
                                     </span>
                                 }
                         </td>
-                        <td>
-                            @if (product.DiscountPrice != null && product.DiscountPrice > 0)
+                        <td class="text-end">
+                            @if (product.DiscountPrice > 0)
                             {
                                 <span class="text-danger fw-bold">@product.DiscountPrice.ToString("N0") ₫</span><br />
                                 <span class="text-muted text-decoration-line-through">@product.Price.ToString("N0") ₫</span>
@@ -205,23 +205,31 @@
                                 <span>@product.Price.ToString("N0") ₫</span>
                             }
                         </td>
-                        <td>@product.Stock</td>
+                        <td class="text-end">@product.Stock</td>
                         <td>@product.Category.Name</td>
                         <td>@product.CreatedAt?.ToString("dd/MM/yyyy")</td>
-                        <td>
-                            <form asp-controller="AdminProduct" asp-action="Update" method="get" style="display:inline;">
-                                <input type="hidden" name="id" value="@product.Id" />
-                                <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-                            </form>
-                                <form asp-controller="AdminProduct" asp-action="Delete" method="post" style="display:inline;"
-                                      onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
-                                    <input type="hidden" name="id" value="@product.Id" />
-                                    <button type="submit" class="btn btn-sm btn-danger delete-tag" data-id="@product.Id" title="Xoá">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
+                            <td class="align-middle">
+                                <div class="d-flex flex-row align-items-center gap-1">
+                                    <form asp-controller="AdminProduct" asp-action="Detail" method="get" style="display:inline;">
+                                        <input type="hidden" name="id" value="@product.Id" />
+                                        <button type="submit" class="btn btn-sm text-success" title="Chi tiết">
+                                            <i class="fa-solid fa-eye fa-1-5x"></i>
+                                        </button>
+                                    </form>
+                                    <form asp-controller="AdminProduct" asp-action="Update" method="get" style="display:inline;">
+                                        <input type="hidden" name="id" value="@product.Id" />
+                                        <button type="submit" class="btn btn-sm text-primary" title="Chỉnh sửa">
+                                            <i class="fa-solid fa-pen-to-square fa-1-5x"></i>
+                                        </button>
+                                    </form>
+                                    <form asp-controller="AdminProduct" asp-action="Delete" method="post" style="display:inline;"
+                                          onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
+                                        <input type="hidden" name="id" value="@product.Id" />
+                                        <button type="submit" class="btn btn-sm text-danger delete-tag" data-id="@product.Id" title="Xoá">
+                                            <i class="fa-solid fa-trash fa-1-5x"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                                         }
@@ -300,8 +308,6 @@
             setTimeout(function () {
                 $('#' + toastId).remove();
             }, 2000); // ✅ thời gian hiển thị: 2.5 giây
-        }
-
         });
     </script>
 }

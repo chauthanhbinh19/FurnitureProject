@@ -29,6 +29,7 @@ namespace FurnitureProject.Middleware
                 "/",
                 "/user/sign-in",
                 "/user/sign-up",
+                "/user/sign-in-google",
                 "/user/verify-code",
                 "/user/forgot-password",
                 "/user/verify-code-forgot-password",
@@ -55,6 +56,12 @@ namespace FurnitureProject.Middleware
 
             var userId = context.Session.GetString("UserID");
             var userRole = context.Session.GetString("UserRole");
+
+            if (path.StartsWith("/user"))
+            {
+                await _next(context);
+                return;
+            }
 
             if (path.StartsWith("/cart"))
             {

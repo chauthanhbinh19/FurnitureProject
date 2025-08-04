@@ -74,6 +74,9 @@ thead th:last-child {
     margin: 0 auto;
 }
 
+.image-rounded{
+    border-radius: 10px;
+}
 /*.table {
     box-shadow: 0 2px 8px rgba(0,0,0,0.10), 0 1.5px 4px rgba(0,0,0,0.08);
 }*/
@@ -115,7 +118,7 @@ thead th:last-child {
         }
 
 .main-content {
-    padding: 2rem 2rem 0 2rem;
+    padding: 1rem 1rem 0 1rem;
     background: #f8f9fa;
     min-height: 100vh;
 }
@@ -218,6 +221,12 @@ thead th:last-child {
 .col-md-2-5 {
     width: 23%;
 }
+.col-md-3-5 {
+    width: 30%;
+}
+.fa-1-5x {
+    font-size: 1.5em;
+}
 .custom-gray-input {
     background-color: #FCFCFC;
     color: #333;
@@ -289,7 +298,7 @@ thead th:last-child {
         }
 
 .active-arrow {
-    color: blue;
+    color: blue !important;
     font-weight: bold;
 }
 .active-badge {
@@ -317,4 +326,8 @@ thead th:last-child {
     color: cornflowerblue;
 }
 
+.button-active {
+    border: 1px solid cornflowerblue !important;
+    color: cornflowerblue;
+}
 

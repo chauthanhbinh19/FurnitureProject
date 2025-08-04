@@ -5,10 +5,14 @@ using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Services;
 using FurnitureProject.Services.Email;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 
 namespace FurnitureProject.Controllers
@@ -330,6 +334,82 @@ namespace FurnitureProject.Controllers
             HttpContext.Session.SetString("UserFullName", "");
             HttpContext.Session.SetString("UserEmail", "");
             return RedirectToAction("SignIn", "User");
+        }
+        [HttpGet("sign-in-google")]
+        public IActionResult SignInGoogle()
+        {
+            var redirectUrl = Url.Action(nameof(GoogleResponse), "User", null, Request.Scheme);
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+            //return RedirectToAction("GoogleResponse", "User");
+        }
+
+        [HttpGet("google-response")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            //return View();
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (!result.Succeeded)
+            {
+                return RedirectToAction("SignIn");
+            }
+
+            var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
+            var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+            if (email == null)
+            {
+                return RedirectToAction("SignIn");
+            }
+
+            var existingUser = await _userService.GetByEmailAsync(email);
+            if (existingUser == null)
+            {
+                var newUser = new UserDTO
+                {
+                    Id = Guid.NewGuid(),
+                    Username = email,
+                    Email = email,
+                    FullName = name,
+                    Role = AppConstants.Status.User,
+                    CreatedAt = DateTime.Now
+                };
+
+                await _userService.CreateAsync(newUser);
+
+                existingUser.Id = newUser.Id;
+                existingUser.Username = newUser.Username;
+                existingUser.Email = newUser.Email;
+                existingUser.FullName = newUser.FullName;
+                existingUser.Role = newUser.Role;
+            }
+
+            HttpContext.Session.SetString("UserID", existingUser.Id.ToString());
+            HttpContext.Session.SetString("UserRole", existingUser.Role);
+            HttpContext.Session.SetString("UserFullName", existingUser.FullName ?? "");
+            HttpContext.Session.SetString("UserEmail", existingUser.Email);
+
+            switch (existingUser.Role)
+            {
+                case AppConstants.Status.Admin:
+                    return RedirectToAction("Index", "AdminHome");
+                case AppConstants.Status.User:
+                    return RedirectToAction("Index", "Home");
+                default:
+                    return RedirectToAction("SignIn");
+            }
+        }
+
+        [HttpPost("/signin-facebook")]
+        public IActionResult SignInFacebook()
+        {
+            //var redirectUrl = Url.Action("ExternalLoginCallback", "User");
+            //var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+            //return Challenge(properties, "Google");
+            return View();
         }
     }
 

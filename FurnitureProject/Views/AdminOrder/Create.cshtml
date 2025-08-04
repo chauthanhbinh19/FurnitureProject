@@ -1,87 +1,884 @@
 ﻿@model FurnitureProject.Models.DTO.OrderDTO
+
 @{
-    ViewBag.Title = "Tạo đơn hàng";
-    var productList = ViewBag.Products as List<Product>;
+    ViewData["Title"] = "Tạo đơn hàng";
 }
 
-<h2>Tạo đơn hàng mới</h2>
-
-<form asp-action="Create" method="post">
-    <div class="form-group">
-        <label>Chọn khách hàng</label>
-        <select asp-for="@Model.User.FullName" class="form-control" asp-items="ViewBag.Users">
-            <option value="">-- Chọn người dùng --</option>
-        </select>
+<div class="title-box">
+    <div class="text-box">
+        <span class="title ms-2">Tạo đơn hàng</span>
     </div>
+</div>
 
-    <table class="table" id="order-items-table">
-        <thead>
-            <tr>
-                <th>Sản phẩm</th>
-                <th>Số lượng</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.TotalItems; i++)
-            {
-                <tr>
-                    <td>
-                        <select name="orderItems[@i].productId" class="form-control">
-                            @foreach (var p in productList)
-                            {
-                                <option value="@p.Id">@p.Name - @p.Price.ToString("N0") VNĐ</option>
-                            }
-                        </select>
-                    </td>
-                    <td>
-                        <input name="orderItems[@i].quantity" class="form-control" value="1" type="number" min="1" />
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger remove-row">X</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div class="container mt-4 pb-5">
+    <form asp-controller="AdminOrder" asp-action="Create" method="post">
+        <div class="row gx-4 gy-3 justify-content-between">
+            <div class="col-md-6-5">
+                <div class="row gx-4 gy-3 justify-content-between">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-file-invoice text-conflowerblue"></i>
+                            <span>Đơn hàng</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-4 gy-3 justify-content-between">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="PaymentMethod" class="form-label fw-medium"></label>
+                                    <select asp-for="PaymentMethod" class="form-select custom-gray-input" asp-items="ViewBag.PaymentMethodList"></select>
+                                    <span asp-validation-for="PaymentMethod" class="text-danger small"></span>
+                                </div>
+                                @* <div class="col-md-5 mb-3">
+                                    <label asp-for="ShippingFee" class="form-label fw-medium"></label>
+                                    <input asp-for="ShippingFee" class="form-control custom-gray-input text-end" />
+                                    <span asp-validation-for="ShippingFee" class="text-danger small"></span>
+                                </div> *@
+                            </div>
+                            <div class="row gx-4 gy-3 justify-content-between">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="OrderDate" class="form-label fw-medium"></label>
+                                    <input asp-for="OrderDate" type="date" class="form-control custom-gray-input" />
+                                    <span asp-validation-for="OrderDate" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-5 mb-3">
+                                    <label asp-for="Status" class="form-label fw-medium"></label>
+                                    <select asp-for="Status" class="form-select custom-gray-input" asp-items="ViewBag.StatusList"></select>
+                                    <span asp-validation-for="Status" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="row gx-4 gy-3 justify-content-between">
+                                <div class="col-md-12 mb-3">
+                                    <label asp-for="TotalAmount" class="form-label fw-medium"></label>
+                                    <input asp-for="TotalAmount" id="TotalAmount" class="form-control custom-gray-input text-end" readonly />
+                                    <span asp-validation-for="TotalAmount" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-4 gy-3 justify-content-between">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-box text-conflowerblue"></i>
+                            <span>Sản phẩm</span>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-outline-info mb-3" id="openProductModal" type="button">Chọn sản phẩm</button>
+                            <!-- Modal Product -->
+                            <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="productModalLabel">Chọn sản phẩm</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="modalProductContainer">
+                                            <!-- Load content from PartialView -->
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-custom btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                            <button type="button" class="btn btn-custom bg-conflowerblue" id="confirmProductSelection">OK</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3 table-responsive">
+                                <table class="table table-hover align-middle" id="selected-products-table">
+                                    <thead class="table-background">
+                                        <tr>
+                                            <th class="col with-separator">Hình ảnh</th>
+                                            <th class="col with-separator">Tên</th>
+                                            <th class="col with-separator">Số lượng</th>
+                                            <th class="col with-separator">Giá</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="row gx-4 gy-3 justify-content-between">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-user-circle text-conflowerblue"></i>
+                            <span>Thông tin khách hàng</span>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-outline-info mb-3" id="openUserModal" type="button">Chọn khách hàng</button>
+                            <!-- Modal User -->
+                            <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="userModalLabel">Chọn khách hàng (Chỉ chọn một khách hàng)</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="modalUserContainer">
+                                            <!-- Load content from PartialView -->
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-custom btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                            <button type="button" class="btn btn-custom bg-conflowerblue" id="confirmUserSelection">OK</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" asp-for="UserId" id="UserId" class="form-control custom-gray-input" />
+                            <div class="mb-3">
+                                <label asp-for="ReceiverName" class="form-label fw-medium"></label>
+                                <input asp-for="ReceiverName" id="ReceiverName" class="form-control custom-gray-input" />
+                                <span asp-validation-for="ReceiverName" class="text-danger small"></span>
+                            </div>
 
-    <button type="button" class="btn btn-secondary" id="add-row">+ Thêm sản phẩm</button>
-    <button type="submit" class="btn btn-primary">Tạo đơn</button>
-</form>
+                            <div class="mb-3">
+                                <label asp-for="ReceiverEmail" class="form-label fw-medium"></label>
+                                <input asp-for="ReceiverEmail" id="ReceiverEmail" class="form-control custom-gray-input" />
+                                <span asp-validation-for="ReceiverEmail" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ReceiverPhone" class="form-label fw-medium"></label>
+                                <input asp-for="ReceiverPhone" id="ReceiverPhone" class="form-control custom-gray-input" />
+                                <span asp-validation-for="ReceiverPhone" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-4 gy-3 justify-content-between">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-conflowerblue"></i>
+                            <span>Địa chỉ</span>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-outline-info mb-3" id="openAddressModal" type="button">Chọn địa chỉ</button>
+                            <!-- Modal Address -->
+                            <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="addressModalLabel">Chọn địa chỉ (Chỉ chọn một địa chỉ)</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="modalAddressContainer">
+                                            <!-- Load content from PartialView -->
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-custom btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                            <button type="button" class="btn btn-custom bg-conflowerblue" id="confirmAddressSelection">OK</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" asp-for="AddressId" id="AddressId" class="form-control custom-gray-input" />
+                            <div class="mb-3">
+                                <label asp-for="Address.Street" class="form-label fw-medium"></label>
+                                <input asp-for="Address.Street" id="Street" class="form-control custom-gray-input" />
+                                <span asp-validation-for="Address.Street" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address.Ward" class="form-label fw-medium"></label>
+                                <input asp-for="Address.Ward" id="Ward" class="form-control custom-gray-input" />
+                                <span asp-validation-for="Address.Ward" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address.District" class="form-label fw-medium"></label>
+                                <input asp-for="Address.District" id="District" class="form-control custom-gray-input" />
+                                <span asp-validation-for="Address.District" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address.City" class="form-label fw-medium"></label>
+                                <input asp-for="Address.City" id="City" class="form-control custom-gray-input" />
+                                <span asp-validation-for="Address.City" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address.Country" class="form-label fw-medium"></label>
+                                <input asp-for="Address.Country" id="Country" class="form-control custom-gray-input" />
+                                <span asp-validation-for="Address.Country" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address.PostalCode" class="form-label fw-medium"></label>
+                                <input asp-for="Address.PostalCode" id="PostalCode" class="form-control custom-gray-input" />
+                                <span asp-validation-for="Address.PostalCode" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-primary px-4">Lưu</button>
+        </div>
+    </form>
+</div>
+
 
 @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
     <script>
-        const productOptions = `@Html.Raw(Json.Serialize(
-                    productList.Select(p => new { value = p.Id, text = p.Name + " - " + p.Price.ToString("N0") + " VNĐ" })
-            ))`;
-
-    const products = JSON.parse(productOptions);
-
-        document.getElementById("add-row").addEventListener("click", function () {
-            const table = document.getElementById("order-items-table").getElementsByTagName("tbody")[0];
-            const rowCount = table.rows.length;
-
-            const newRow = document.createElement("tr");
-            newRow.innerHTML = `
-                <td>
-                    <select name="orderItems[${rowCount}].productId" class="form-control">
-                        ${products.map(p => `<option value="${p.value}">${p.text}</option>`).join("")}
-                    </select>
-                </td>
-                <td>
-                    <input name="orderItems[${rowCount}].quantity" class="form-control" type="number" value="1" min="1" />
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger remove-row">X</button>
-                </td>
-            `;
-            table.appendChild(newRow);
+        $(document).on('click', '#openProductModal', function () {
+            $.get('/admin/product/product-popup', function (html) {
+                $('#modalProductContainer').html(html);
+                $('#productModal').modal('show');
+            });
         });
 
-        document.addEventListener("click", function (e) {
-            if (e.target.classList.contains("remove-row")) {
-                e.target.closest("tr").remove();
-            }
+        $(document).on('click', '#openUserModal', function () {
+            $.get('/admin/user/user-popup', function (html) {
+                $('#modalUserContainer').html(html);
+                $('#userModal').modal('show');
+            });
+        });
+
+        $(document).on('click', '#openAddressModal', function () {
+            var userId = $('#UserId').val();
+            $.get('/admin/address/address-popup', { userId: userId }, function (html) {
+                $('#modalAddressContainer').html(html);
+                $('#addressModal').modal('show');
+            });
+        });
+
+        $(document).on('click', '.product-modal-page', function (e) {
+            e.preventDefault();
+            const page = $(this).data('page');
+            const keyword = $('#searchKeywordModal').val();
+            $.get('/AdminProduct/LoadProductModalContent', { page, keyword }, function (html) {
+                $('#productListModalContainer').html(html);
+            });
+        });
+
+        $('#modalContainer').on('click', '#btnSearchProductModal', function () {
+            const keyword = $('#searchKeywordModal').val();
+            $.get('/AdminProduct/LoadProductModalContent', { page: 1, keyword }, function (html) {
+                $('#productListModalContainer').html(html);
+            });
+        });
+
+        // Chọn sản phẩm
+        $(document).on('click', '.select-product-modal', function () {
+            const id = $(this).data('id');
+            const name = $(this).data('name');
+            alert('Đã chọn: ' + name);
+            $('#modalProductContainer').modal('hide');
+        });
+
+        
+    </script>
+    <script>
+        let currentUserSortColumn = null;
+        let currentUserSortDirection = null;
+
+        $(document).on('click', '#btnUserFilterSearch', function () {
+            const keyword = $('#UserSearchKeyWord').val();
+            const role = $('#UserFilterByRole').val();
+            const statusId = $('#UserFilterByStatus').val();
+            // Lấy các giá trị khác nếu có
+
+            $.ajax({
+                url: '/admin/user/user-popup',
+                type: 'GET',
+                data: {
+                    'Filter.SearchKeyWord': keyword,
+                    'Filter.FilterByRole': role,
+                    'Filter.FilterByStatus' : statusId,
+                    'Filter.SortColumn': currentUserSortColumn,
+                    'Filter.SortDirection': currentUserSortDirection
+                    // Thêm các trường khác nếu cần
+                },
+                success: function (result) {
+                    $('#modalUserContainer').html(result);
+                },
+                error: function () {
+                    $('#modalUserContainer').html("<p class='text-danger'>Không thể tải lại sản phẩm.</p>");
+                }
+            });
+        });
+
+        $(document).on('click', '#btnUserResetFilter', function () {
+            // Reset các input và select
+            $('#UserSearchKeyWord').val('');
+            $('#UserFilterByRole').val('');
+            $('#UserFilterByStatus').val('');
+
+            // Gửi lại request sau khi reset nếu muốn tự động load lại
+            $.ajax({
+                url: '/admin/user/user-popup',
+                type: 'GET',
+                data: {
+                    'Filter.SearchKeyWord': '',
+                    'Filter.FilterByRole': '',
+                    'Filter.FilterByStatus': '',
+                    'Filter.SortColumn': '',
+                    'Filter.SortDirection': ''
+                },
+                success: function (result) {
+                    $('#modalUserContainer').html(result);
+                },
+                error: function () {
+                    $('#modalUserContainer').html("<p class='text-danger'>Không thể tải lại sản phẩm.</p>");
+                }
+            });
+        });
+
+        $(document).on('click', '.user-sort-link', function (e) {
+            currentUserSortColumn = $(this).data('sort-column');
+            currentUserSortDirection = $(this).data('sort-direction');
+
+            // Lấy các filter hiện tại
+            const keyword = $('#UserSearchKeyWord').val();
+            const role = $('#UserFilterByRole').val();
+            const statusId = $('#UserFilterByStatus').val();
+
+            $.ajax({
+                url: '/admin/user/user-popup',
+                type: 'GET',
+                data: {
+                    'Filter.SearchKeyWord': keyword,
+                    'Filter.FilterByRole': role,
+                    'Filter.FilterByStatus': statusId,
+                    'Filter.SortColumn': currentUserSortColumn,
+                    'Filter.SortDirection': currentUserSortDirection
+                },
+                success: function (result) {
+                    $('#modalUserContainer').html(result);
+                },
+                error: function () {
+                    $('#modalUserContainer').html("<p class='text-danger'>Không thể sắp xếp dữ liệu.</p>");
+                }
+            });
+        });
+
+        $(document).on('click', '.user-pagination-ajax', function (e) {
+            e.preventDefault();
+
+            const page = $(this).data('page');
+            currentUserSortColumn = currentUserSortColumn;
+            currentUserSortDirection = currentUserSortDirection;
+
+            const keyword = $('#UserSearchKeyWord').val();
+            const role = $('#UserFilterByRole').val();
+            const statusId = $('#UserFilterByStatus').val();
+
+            $.ajax({
+                url: '/admin/user/user-popup',
+                type: 'GET',
+                data: {
+                    'Filter.SearchKeyWord': keyword,
+                    'Filter.FilterByRole': role,
+                    'Filter.FilterByStatus': statusId,
+                    'Filter.SortColumn': currentUserSortColumn,
+                    'Filter.SortDirection': currentUserSortDirection,
+                    'page': page
+                },
+                success: function (result) {
+                    $('#modalUserContainer').html(result);
+                },
+                error: function () {
+                    $('#modalUserContainer').html("<p class='text-danger'>Không thể tải lại sản phẩm.</p>");
+                }
+            });
         });
     </script>
+    <script>
+        $(document).on('change', '#selectAllUsers', function () {
+            $('.user-checkbox').prop('checked', $(this).prop('checked'));
+        });
+
+        // Optional: lấy danh sách các ID đã chọn
+        function getSelectedUserIds() {
+            let selectedIds = [];
+            $('.user-checkbox:checked').each(function () {
+                selectedIds.push($(this).val());
+            });
+            return selectedIds;
+        }
+         $('#confirmUserSelection').on('click', function () {
+            // Ví dụ: lấy thông tin từ checkbox đã chọn
+            var selectedUser = $('.user-id:checked').first();
+            if (selectedUser.length) {
+                const userId = selectedUser.data("id");
+                const fullName = selectedUser.data('fullname');
+                const email = selectedUser.data('email');
+                const phone = selectedUser.data('phone');
+
+                $('#UserId').val(userId);
+                $('#ReceiverName').val(fullName);
+                $('#ReceiverEmail').val(email);
+                $('#ReceiverPhone').val(phone);
+            }
+
+            $('#userModal').modal('hide');
+        });
+    </script>
+    <script>
+        let currentProductSortColumn = null;
+        let currentProductSortDirection = null;
+
+        $(document).on('click', '#btnProductFilterSearch', function () {
+            const keyword = $('#ProductSearchKeyWord').val();
+            const categoryId = $('#ProductFilterCategoryId').val();
+            const statusId = $('#ProductFilterByStatus').val();
+            const tagId = $('#ProductFilterTagId').val();
+            // Lấy các giá trị khác nếu có
+
+            $.ajax({
+                url: '/admin/product/product-popup',
+                type: 'GET',
+                data: {
+                    'Filter.SearchKeyWord': keyword,
+                    'Filter.FilterCategoryId': categoryId,
+                    'Filter.FilterByStatus' : statusId,
+                    'Filter.FilterTagId' : tagId,
+                    'Filter.SortColumn': currentProductSortColumn,
+                    'Filter.SortDirection': currentProductSortDirection
+                    // Thêm các trường khác nếu cần
+                },
+                success: function (result) {
+                    $('#modalProductContainer').html(result);
+                },
+                error: function () {
+                    $('#modalProductContainer').html("<p class='text-danger'>Không thể tải lại sản phẩm.</p>");
+                }
+            });
+        });
+
+        $(document).on('click', '#btnProductResetFilter', function () {
+            // Reset các input và select
+            $('#ProductSearchKeyWord').val('');
+            $('#ProductFilterCategoryId').val('');
+            $('#ProductFilterByStatus').val('');
+            $('#ProductFilterTagId').val('');
+
+            // Gửi lại request sau khi reset nếu muốn tự động load lại
+            $.ajax({
+                url: '/admin/product/product-popup',
+                type: 'GET',
+                data: {
+                    'Filter.SearchKeyWord': '',
+                    'Filter.FilterCategoryId': '',
+                    'Filter.FilterByStatus': '',
+                    'Filter.FilterTagId': '',
+                    'Filter.SortColumn': '',
+                    'Filter.SortDirection': ''
+                },
+                success: function (result) {
+                    $('#modalProductContainer').html(result);
+                },
+                error: function () {
+                    $('#modalProductContainer').html("<p class='text-danger'>Không thể tải lại sản phẩm.</p>");
+                }
+            });
+        });
+
+        $(document).on('click', '.product-sort-link', function (e) {
+            currentProductSortColumn = $(this).data('sort-column');
+            currentProductSortDirection = $(this).data('sort-direction');
+
+            // Lấy các filter hiện tại
+            const keyword = $('#ProductSearchKeyWord').val();
+            const categoryId = $('#ProductFilterCategoryId').val();
+            const statusId = $('#ProductFilterByStatus').val();
+            const tagId = $('#ProductFilterTagId').val();
+
+            $.ajax({
+                url: '/admin/product/product-popup',
+                type: 'GET',
+                data: {
+                    'Filter.SearchKeyWord': keyword,
+                    'Filter.FilterCategoryId': categoryId,
+                    'Filter.FilterByStatus': statusId,
+                    'Filter.FilterTagId': tagId,
+                    'Filter.SortColumn': currentProductSortColumn,
+                    'Filter.SortDirection': currentProductSortDirection
+                },
+                success: function (result) {
+                    $('#modalProductContainer').html(result);
+                },
+                error: function () {
+                    $('#modalProductContainer').html("<p class='text-danger'>Không thể sắp xếp dữ liệu.</p>");
+                }
+            });
+        });
+
+        $(document).on('click', '.product-pagination-ajax', function (e) {
+            e.preventDefault();
+
+            const page = $(this).data('page');
+            currentProductSortColumn = currentProductSortColumn;
+            currentProductSortDirection = currentProductSortDirection;
+
+            const keyword = $('#ProductSearchKeyWord').val();
+            const categoryId = $('#ProductFilterCategoryId').val();
+            const statusId = $('#ProductFilterByStatus').val();
+            const tagId = $('#ProductFilterTagId').val();
+
+            $.ajax({
+                url: '/admin/product/product-popup',
+                type: 'GET',
+                data: {
+                    'Filter.SearchKeyWord': keyword,
+                    'Filter.FilterCategoryId': categoryId,
+                    'Filter.FilterByStatus': statusId,
+                    'Filter.FilterTagId': tagId,
+                    'Filter.SortColumn': currentProductSortColumn,
+                    'Filter.SortDirection': currentProductSortDirection,
+                    'page': page
+                },
+                success: function (result) {
+                    $('#modalProductContainer').html(result);
+                },
+                error: function () {
+                    $('#modalProductContainer').html("<p class='text-danger'>Không thể tải lại sản phẩm.</p>");
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).on('change', '#selectAllProducts', function () {
+            $('.product-checkbox').prop('checked', $(this).prop('checked'));
+        });
+
+        // Optional: lấy danh sách các ID đã chọn
+        function getSelectedProductIds() {
+            let selectedIds = [];
+            $('.product-checkbox:checked').each(function () {
+                selectedIds.push($(this).val());
+            });
+            return selectedIds;
+        }
+    </script>
+    <script>
+        let currentAddressSortColumn = null;
+        let currentAddressSortDirection = null;
+
+        $(document).on('click', '#btnAddressFilterSearch', function () {
+            const keyword = $('#AddressSearchKeyWord').val();
+            const addressUserId = $('#AddressUserId').val();
+            // Lấy các giá trị khác nếu có
+
+            $.ajax({
+                url: '/admin/address/address-popup',
+                type: 'GET',
+                data: {
+                    'userId': addressUserId,
+                    'Filter.SearchKeyWord': keyword,
+                    'Filter.SortColumn': currentAddressSortColumn,
+                    'Filter.SortDirection': currentAddressSortDirection
+                    // Thêm các trường khác nếu cần
+                },
+                success: function (result) {
+                    $('#modalAddressContainer').html(result);
+                },
+                error: function () {
+                    $('#modalAddressContainer').html("<p class='text-danger'>Không thể tải lại sản phẩm.</p>");
+                }
+            });
+        });
+
+        $(document).on('click', '#btnAddressResetFilter', function () {
+            // Reset các input và select
+            $('#AddressSearchKeyWord').val('');
+            const addressUserId = $('#AddressUserId').val();
+
+            // Gửi lại request sau khi reset nếu muốn tự động load lại
+            $.ajax({
+                url: '/admin/address/address-popup',
+                type: 'GET',
+                data: {
+                    'userId': addressUserId,
+                    'Filter.SearchKeyWord': '',
+                    'Filter.SortColumn': '',
+                    'Filter.SortDirection': ''
+                },
+                success: function (result) {
+                    $('#modalAddressContainer').html(result);
+                },
+                error: function () {
+                    $('#modalAddressContainer').html("<p class='text-danger'>Không thể tải lại sản phẩm.</p>");
+                }
+            });
+        });
+
+        $(document).on('click', '.address-sort-link', function (e) {
+            currentAddressSortColumn = $(this).data('sort-column');
+            currentAddressSortDirection = $(this).data('sort-direction');
+
+            // Lấy các filter hiện tại
+            const keyword = $('#AddressSearchKeyWord').val();
+            const addressUserId = $('#AddressUserId').val();
+
+            $.ajax({
+                url: '/admin/address/address-popup',
+                type: 'GET',
+                data: {
+                    'userId': addressUserId,
+                    'Filter.SearchKeyWord': keyword,
+                    'Filter.SortColumn': currentAddressSortColumn,
+                    'Filter.SortDirection': currentAddressSortDirection
+                },
+                success: function (result) {
+                    $('#modalAddressContainer').html(result);
+                },
+                error: function () {
+                    $('#modalAddressContainer').html("<p class='text-danger'>Không thể sắp xếp dữ liệu.</p>");
+                }
+            });
+        });
+
+        $(document).on('click', '.address-pagination-ajax', function (e) {
+            e.preventDefault();
+
+            const page = $(this).data('page');
+            currentAddressSortColumn = currentAddressSortColumn;
+            currentAddressSortDirection = currentAddressSortDirection;
+
+            const keyword = $('#AddressSearchKeyWord').val();
+            const addressUserId = $('#AddressUserId').val();
+
+            $.ajax({
+                url: '/admin/address/address-popup',
+                type: 'GET',
+                data: {
+                    'userId': addressUserId,
+                    'Filter.SearchKeyWord': keyword,
+                    'Filter.SortColumn': currentAddressSortColumn,
+                    'Filter.SortDirection': currentAddressSortDirection,
+                    'page': page
+                },
+                success: function (result) {
+                    $('#modalAddressContainer').html(result);
+                },
+                error: function () {
+                    $('#modalAddressContainer').html("<p class='text-danger'>Không thể tải lại sản phẩm.</p>");
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).on('change', '#selectAllAddresses', function () {
+            $('.address-checkbox').prop('checked', $(this).prop('checked'));
+        });
+
+        // Optional: lấy danh sách các ID đã chọn
+        function getSelectedAddressIds() {
+            let selectedIds = [];
+            $('.address-checkbox:checked').each(function () {
+                selectedIds.push($(this).val());
+            });
+            return selectedIds;
+        }
+        $('#confirmAddressSelection').on('click', function () {
+            // Ví dụ: lấy thông tin từ checkbox đã chọn
+            var selectedAddress = $('.address-id:checked').first();
+            if (selectedAddress.length) {
+                const addressId = selectedAddress.data("id");
+                const street = selectedAddress.data("street");
+                const ward = selectedAddress.data('ward');
+                const district = selectedAddress.data('district');
+                const city = selectedAddress.data('city');
+                const country = selectedAddress.data('country');
+                const postalCode = selectedAddress.data('postal-code');
+
+                $('#AddressId').val(addressId);
+                $('#Street').val(street);
+                $('#Ward').val(ward);
+                $('#District').val(district);
+                $('#City').val(city);
+                $('#Country').val(country);
+                $('#PostalCode').val(postalCode);
+            }
+
+            $('#addressModal').modal('hide');
+        });
+    </script>
+    <script>
+        let selectedProducts = [];
+
+        // Mở modal chọn sản phẩm
+        $('#openProductModal').on('click', function () {
+            $('#productModal').modal('show');
+        });
+
+        // Xác nhận chọn sản phẩm
+        $('#confirmProductSelection').on('click', function () {
+            $('.product-checkbox:checked').each(function () {
+                const productId = $(this).val();
+                const existingProduct = selectedProducts.find(p => p.id === productId);
+
+                if (existingProduct) {
+                    existingProduct.quantity += 1; // Tăng số lượng nếu đã có
+                } else {
+                    selectedProducts.push({
+                        id: productId,
+                        name: $(this).data('name'),
+                        price: parseInt($(this).data('price')),
+                        discountPrice: parseInt($(this).data('discount-price')),
+                        image: $(this).data('image'),
+                        quantity: 1
+                    });
+                }
+            });
+
+            $('#productModal').modal('hide');
+        });
+
+        // Định dạng tiền theo VNĐ
+        function formatPrice(price) {
+            return price.toLocaleString('vi-VN') + ' ₫';
+        }
+
+        // Render 1 dòng sản phẩm
+        function renderProductRow(product, index) {
+            let priceHtml = '';
+            if (product.discountPrice > 0) {
+                priceHtml = `
+                    <span class="text-danger fw-bold">${formatPrice(product.discountPrice)}</span><br/>
+                    <span class="text-muted text-decoration-line-through">${formatPrice(product.price)}</span>
+                `;
+            } else {
+                priceHtml = `<span>${formatPrice(product.price)}</span>`;
+            }
+
+            return `
+                <tr data-product-id="${product.id}">
+                    <td>
+                        <img src="${product.image}" alt="${product.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px;">
+                    </td>
+                    <td>${product.name}
+                        <input type="hidden" name="Products[${index}].Id" value="${product.id}" />
+                        <input type="hidden" name="Products[${index}].Name" value="${product.name}" />
+                        <input type="hidden" name="Products[${index}].Price" value="${product.price}" />
+                        <input type="hidden" name="Products[${index}].Quantity" value="${product.quantity}" />
+                        <input type="hidden" name="Products[${index}].DiscountPrice" value="${product.discountPrice}" />
+                    </td>
+                    <td>
+                        <div class="input-group input-group-sm justify-content-center" style="width: 120px;">
+                            <button class="btn btn-outline-secondary btn-decrease-qty" type="button" data-product-id="${product.id}">−</button>
+                            <input type="text" class="form-control text-center quantity-input"
+                                   value="${product.quantity}" min="1"
+                                   data-product-id="${product.id}" />
+                            <button class="btn btn-outline-secondary btn-increase-qty" type="button" data-product-id="${product.id}">+</button>
+                        </div>
+                    </td>
+                    <td class="text-end">${priceHtml}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-danger btn-remove-product" data-product-id="${product.id}">&times;</button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Khi modal đóng lại => hiển thị sản phẩm ra bảng
+        $('#productModal').on('hidden.bs.modal', function () {
+            const tbody = $('#selected-products-table tbody');
+            tbody.empty();
+
+            if (selectedProducts.length === 0) {
+                $('#selected-products-table').hide();
+                return;
+            }
+
+            $('#selected-products-table').show();
+
+            selectedProducts.forEach((product,index) => {
+                const row = renderProductRow(product, index);
+                tbody.append(row);
+            });
+
+            updateTotalAmount();
+        });
+
+        // Cập nhật số lượng sản phẩm khi người dùng thay đổi input
+        $(document).on('input', '.quantity-input', function () {
+            const productId = $(this).data('product-id');
+            const quantity = parseInt($(this).val());
+
+            if (isNaN(quantity) || quantity < 1) quantity = 1;
+            $(this).val(quantity);
+
+            const product = selectedProducts.find(p => p.id == productId);
+            if (product) {
+                product.quantity = quantity;
+
+                // ✅ Cập nhật input hidden
+                $(`tr[data-product-id="${productId}"] input[name$=".Quantity"]`).val(quantity);
+            }
+
+            updateTotalAmount();
+        });
+
+        $(document).on('click', '.btn-increase-qty', function () {
+            const productId = $(this).data('product-id');
+            const input = $(`.quantity-input[data-product-id="${productId}"]`);
+            let currentQty = parseInt(input.val()) || 1;
+            currentQty++;
+            input.val(currentQty);
+
+            const product = selectedProducts.find(p => p.id == productId);
+            if (product) {
+                product.quantity = currentQty;
+                $(`tr[data-product-id="${productId}"] input[name$=".Quantity"]`).val(currentQty);
+            }
+
+            updateTotalAmount();
+        });
+
+        $(document).on('click', '.btn-decrease-qty', function () {
+            const productId = $(this).data('product-id');
+            const input = $(`.quantity-input[data-product-id="${productId}"]`);
+            let currentQty = parseInt(input.val()) || 1;
+            currentQty = Math.max(1, currentQty - 1);
+            input.val(currentQty);
+
+            const product = selectedProducts.find(p => p.id == productId);
+            if (product) {
+                product.quantity = currentQty;
+                $(`tr[data-product-id="${productId}"] input[name$=".Quantity"]`).val(currentQty);
+            }
+
+            updateTotalAmount();
+        });
+
+        $(document).on('click', '.btn-remove-product', function () {
+            const productId = $(this).data('product-id');
+
+            // Xóa khỏi danh sách selected
+            selectedProducts = selectedProducts.filter(p => p.id != productId);
+
+            // Xóa dòng trong bảng
+            $(`tr[data-product-id="${productId}"]`).remove();
+
+            // Ẩn bảng nếu rỗng
+            if (selectedProducts.length === 0) {
+                $('#selected-products-table').hide();
+            }
+
+            updateTotalAmount(); // ✅ Cập nhật lại tổng
+        });
+
+        function updateTotalAmount() {
+            let total = 0;
+            selectedProducts.forEach(p => {
+                const price = p.discountPrice > 0 ? p.discountPrice : p.price;
+                total += price * p.quantity;
+            });
+
+            $('#TotalAmount').val(total);
+        }
+
+    </script>
+
+
 }

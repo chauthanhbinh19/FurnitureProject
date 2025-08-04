@@ -1,0 +1,236 @@
+﻿@model FurnitureProject.Models.ViewModels.ProductViewModel
+@{
+    ViewBag.Title = "Tìm kiếm sản phẩm";
+    string keyword = ViewBag.Keyword as string;
+    int totalPages = (int)Math.Ceiling((double)ViewBag.TotalProducts / ViewBag.PageSize);
+    int currentPage = ViewBag.CurrentPage;
+}
+@{
+    int maxPagesToShow = 8;
+    int startPage = Math.Max(1, currentPage - maxPagesToShow / 2);
+    int endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+    if (endPage - startPage + 1 < maxPagesToShow)
+    {
+        startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+    }
+}
+<div class="table-responsive title-box">
+    <div class="container">
+        @* <form id="productFilterForm" class="link-custom"> *@
+            <div class="row mb-3 d-flex flex-wrap gap-4">
+                <div class="col-md-3">
+                    <div class="input-group">
+                    <input id="ProductSearchKeyWord" type="text" asp-for="Filter.SearchKeyWord" name="Filter.SearchKeyWord" value="@Model.Filter?.SearchKeyWord" class="form-control form-control-sm" placeholder="Nhập từ khóa...">
+                        <button type="button" id="btnProductFilterSearch" class="btn btn-sm btn-custom bg-conflowerblue">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+                <!-- Filter by Category -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                <select id="ProductFilterCategoryId" asp-for="Filter.FilterCategoryId" name="Filter.FilterCategoryId" class="form-select" asp-items="@ViewBag.Categories">
+                        <option value="">Chọn danh mục</option>
+                    </select>
+                </div>
+                <!-- Filter by Status -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                <select id="ProductFilterByStatus" asp-for="Filter.FilterByStatus" name="Filter.FilterByStatus" class="form-select" asp-items="@ViewBag.StatusList">
+                        <option value="">Trạng thái</option>
+                    </select>
+                </div>
+                <!-- Filter by Tag -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                <select id="ProductFilterTagId" asp-for="Filter.FilterTagId" name="Filter.FilterTagId" class="form-select" asp-items="@ViewBag.Tags">
+                        <option value="">Chọn nhãn</option>
+                    </select>
+                </div>
+                <!-- Optional: Nút Reset -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                    <a href="javascript:void(0)" id="btnProductResetFilter" class="btn btn-secondary w-100">Xoá lọc</a>
+                </div>
+            </div>
+        @* </form> *@
+        <div class="row mb-3 table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-background">
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAllProducts" class="form-check-input" />
+                        </th>
+                        @* <th scope="col">ID</th> *@
+                        <th class="col with-separator">Hình ảnh</th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Tên
+                                <div class="sort-arrows">
+                                    <a href="#" 
+                                       class="sort-link product-sort-link @(Model.Filter.SortColumn == "Name" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="Name" 
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#" 
+                                       class="sort-link product-sort-link @(Model.Filter.SortColumn == "Name" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="Name" 
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">Nhãn</th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Giá
+                                <div class="sort-arrows">
+                                    <a href="#" 
+                                       class="sort-link product-sort-link @(Model.Filter.SortColumn == "Price" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="Price" 
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#" 
+                                       class="sort-link product-sort-link @(Model.Filter.SortColumn == "Price" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="Price" 
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Tồn kho
+                                <div class="sort-arrows">
+                                    <a href="#" 
+                                       class="sort-link product-sort-link @(Model.Filter.SortColumn == "Stock" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="Stock" 
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#" 
+                                       class="sort-link product-sort-link @(Model.Filter.SortColumn == "Stock" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="Stock" 
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Danh mục
+                                <div class="sort-arrows">
+                                    <a href="#"
+                                       class="sort-link product-sort-link @(Model.Filter.SortColumn == "CategoryName" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="CategoryName" 
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#" 
+                                       class="sort-link product-sort-link @(Model.Filter.SortColumn == "CategoryName" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="CategoryName" 
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Ngày tạo
+                                <div class="sort-arrows">
+                                    <a href="#" 
+                                       class="sort-link product-sort-link @(Model.Filter.SortColumn == "CreatedAt" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="CreatedAt"
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#" 
+                                       class="sort-link product-sort-link @(Model.Filter.SortColumn == "CreatedAt" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="CreatedAt" 
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model.Products)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="product-checkbox form-check-input"
+                                       value ="@product.Id"
+                                       data-product-id = "@product.Id"
+                                       data-name =" @product.Name"
+                                       data-image =" @(product.ImageUrls != null && product.ImageUrls.Count > 0 ? product.ImageUrls[0] : Url.Content("~/images/No_Image_Available.jpg"))"
+                                       data-quantity =" @product.Stock"
+                                       data-discount-price = "@product.DiscountPrice"
+                                       data-price = "@product.Price" />
+                            </td>
+                            @* <td>@product.Id.ToString().Substring(0, 16)</td> *@
+                            <td>
+                                <img src="@(product.ImageUrls != null && product.ImageUrls.Count > 0
+                                                                                                                       ? product.ImageUrls[0]
+                                                                                                                       : Url.Content("~/images/No_Image_Available.jpg"))"
+                                 alt="Product image"
+                                 style="width: 120px; height: 90px; border-radius:5px;" />
+                        </td>
+                        <td>@product.Name</td>
+                        <td>
+                            @foreach (var tagId in product.TagIds)
+                                {
+                                    <span class="badge bg-primary me-1">
+                                        @(ViewBag.TagMap[tagId])
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                @if (product.DiscountPrice > 0)
+                                {
+                                    <span class="text-danger fw-bold">@product.DiscountPrice.ToString("N0") ₫</span>
+                            
+                                    <br />
+                                    <span class="text-muted text-decoration-line-through">@product.Price.ToString("N0") ₫</span>
+                                }
+                                else
+                                {
+                                    <span>@product.Price.ToString("N0") ₫</span>
+                                }
+                            </td>
+                            <td>@product.Stock</td>
+                            <td>@product.Category.Name</td>
+                            <td>@product.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="pagination-box">
+    <nav>
+        <ul class="pagination justify-content-center">
+
+            <!-- Previous button -->
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link product-pagination-ajax"
+                   href ="#"
+                   data-page="@(currentPage - 1)"
+                   aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link product-pagination-ajax"
+                       href="#"
+                       data-page="@i">
+                        @i
+                    </a>
+                </li>
+            }
+
+            <!-- Next button -->
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link product-pagination-ajax"
+                   href="#"
+                   data-page="@(currentPage + 1)"
+                   aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+</div>
+@section Scripts {
+    
+}

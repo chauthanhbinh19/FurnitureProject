@@ -99,10 +99,39 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CartItemAdded;
                 return Redirect(returnUrl ?? "/");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CartItemNotFound;
                 return RedirectToAction("Index", "Home");
+            }
+        }
+        [HttpPost("ajax/add-to-cart")]
+        public async Task<IActionResult> AddToCart(Guid productId, int quantity)
+        {
+            var userId = HttpContext.Session.GetString("UserID");
+            if (userId == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Vui lòng đăng nhập để sử dụng chức năng yêu thích.",
+                    redirectUrl = Url.Action("Signin", "User") // --> /user/signin
+                });
+            }
+
+            try
+            {
+                var (success, message) = await _cartService.CreateCartAsync(Guid.Parse(userId), productId, quantity);
+                if (!success)
+                {
+                    return Json(new { success = false});
+                }
+
+                return Json(new { success = true});
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, status = ex.Message });
             }
         }
         [HttpPost("update-quantity")]
@@ -127,7 +156,7 @@ namespace FurnitureProject.Controllers
                 //TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CartItemUpdated;
                 return RedirectToAction("Index", "Cart");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CartItemNotFound;
                 return RedirectToAction("Index", "Home");
@@ -155,7 +184,7 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CartItemRemoved;
                 return RedirectToAction("Index", "Cart");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CartItemRemoveFailed;
                 return RedirectToAction("Index", "Home");

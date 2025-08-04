@@ -178,7 +178,7 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateCategorySuccess;
                 return RedirectToAction("Index", "AdminCategory");
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateCategoryError;
                 return RedirectToAction("Create", "AdminCategory");
             }
@@ -227,12 +227,12 @@ namespace FurnitureProject.Controllers
                 var(success, message) = await _categoryService.UpdateAsync(category);
                 if (!success) {
                     TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateCategoryError;
-                    return RedirectToAction("Update", "AdminCategory");
+                    return RedirectToAction("Index", "AdminCategory");
                 }
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdateCategorySuccess;
                 return RedirectToAction("Index", "AdminCategory");
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateCategoryError;
                 return RedirectToAction("Update", "AdminCategory");
             }
@@ -253,11 +253,28 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteCategorySuccess;
                 return RedirectToAction("Index", "AdminCategory");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteCategoryError;
                 return RedirectToAction("Index", "AdminCategory");
             }
+        }
+        [HttpGet("detail")]
+        public async Task<IActionResult> Detail(Guid id)
+        {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
+            var category = await _categoryService.GetByIdAsync(id);
+            SetStatusViewBag(category.Status);
+            var categoryDTO = new CategoryDTO
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description,
+                Status = category.Status,
+                CreatedAt = category.CreatedAt,
+            };
+            return View(categoryDTO);
         }
     }
 

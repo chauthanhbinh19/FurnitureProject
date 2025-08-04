@@ -101,12 +101,12 @@
                             </div>
                             <div class="form-check mb-2">
                                 <input class="form-check-input" type="radio" name="Order.PaymentMethod" value="bank"
-                                       @(Model.Order?.PaymentMethod == "bank" ? "checked" : "") />
+                                       @(Model.Order?.PaymentMethod == "banktransfer" ? "checked" : "") />
                                 <label class="form-check-label">Chuyển khoản ngân hàng</label>
                             </div>
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="radio" name="Order.PaymentMethod" value="credit"
-                                       @(Model.Order?.PaymentMethod == "credit" ? "checked" : "") />
+                                       @(Model.Order?.PaymentMethod == "creditcard" ? "checked" : "") />
                                 <label class="form-check-label">Thẻ tín dụng/Ghi nợ</label>
                             </div>
 
@@ -129,7 +129,7 @@
                                 <small>Số lượng: @item.Quantity</small>
                             </div>
                             <div class="text-end">
-                                @if (item.DiscountPrice != null && item.DiscountPrice > 0)
+                                @if (item.DiscountPrice > 0)
                                 {
                                     <span class="text-danger fw-bold">@item.DiscountPrice.ToString("N0") ₫</span>
                         

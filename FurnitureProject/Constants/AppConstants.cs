@@ -91,6 +91,12 @@
 
             public const string OrderPaymentSuccessfully = "Order payment was successful.";
             public const string OrderPaymentFailed = "Order payment failed. Please try again.";
+            public const string CreateOrderSuccess = "Order created successfully!";
+            public const string CreateOrderError = "Create order failed!";
+            public const string UpdateOrderSuccess = "Order updated successfully!";
+            public const string UpdateOrderError = "Update order failed!";
+            public const string DeleteOrderSuccess = "Order deleted successfully!";
+            public const string DeleteOrderError = "Delete order failed!";
 
             public const string Admin = "Admin";
             public const string User = "User";
@@ -125,6 +131,17 @@
             public const string Male = "male";
             public const string Female = "female";
             public const string Other = "other";
+
+            public const string Pending = "pending";
+            public const string Confirmed = "confirmed"; 
+            public const string Processing = "processing";
+            public const string Shipping = "shipping";   
+            public const string Completed = "completed"; 
+            public const string Cancelled = "cancelled";
+
+            public const string COD = "cod";
+            public const string BankTransfer = "banktransfer";
+            public const string CreditCard = "creditcard";
         }
 
         public static class Params
@@ -200,6 +217,11 @@
             public const string OrderReceiverEmail = "Email người nhận";
             public const string OrderReceiverPhone = "Số điện thoại người nhận";
             public const string OrderShippingAddress = "Địa chỉ giao hàng";
+            public const string OrderPaymentMethod = "Phương thức thanh toán";
+            public const string OrderShippingFee = "Phí giao hàng";
+            public const string OrderOrderDate = "Ngày đặt hàng";
+            public const string OrderStatus = "Trạng thái đơn hàng";
+            public const string OrderTotalAmount = "Tổng tiền";
 
             public const string AddressStreet = "Địa chỉ";
             public const string AddressWard = "Phường/Xã";
@@ -207,6 +229,10 @@
             public const string AddressCity = "Thành phố/Tỉnh";
             public const string AddressCountry = "Quốc gia";
             public const string AddressPostalCode = "Mã bưu điện";
+
+            public const string COD = "Thanh toán khi nhận hàng";
+            public const string BankTransfer = "Chuyển khoản ngân hàng";
+            public const string CreditCard = "Thẻ tín dụng";
 
             public const string Status = "Trạng thái";
             public const string Male = "Nam";
@@ -216,6 +242,12 @@
             public const string User = "Người dùng";
             public const string Active = "Hoạt động";
             public const string Inactive = "Không hoạt động";
+            public const string Pending = "Chờ xác nhận";
+            public const string Confirmed = "Đã xác nhận";
+            public const string Processing = "Đang xử lý";
+            public const string Shipping = "Đang giao hàng";
+            public const string Completed = "Hoàn thành";
+            public const string Cancelled = "Đã huỷ";
         }
     }
 }

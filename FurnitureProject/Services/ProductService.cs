@@ -22,6 +22,17 @@ namespace FurnitureProject.Services
         public async Task<IEnumerable<Product>> GetAllAsync() => await _productRepo.GetAllAsync();
 
         public async Task<Product?> GetByIdAsync(Guid id) => await _productRepo.GetByIdAsync(id);
+        public async Task<int> GetTotalProductsAsync(DateTime from, DateTime to)
+        {
+            var allProducts = await GetAllAsync();
+
+            var filteredProducts = allProducts
+                .Where(o => o.Status == "active")
+                .ToList();
+
+            var totalProducts = filteredProducts.Count;
+            return totalProducts;
+        }
 
         public async Task<(bool Success, string? Message)> CreateAsync(ProductDTO dto)
         {

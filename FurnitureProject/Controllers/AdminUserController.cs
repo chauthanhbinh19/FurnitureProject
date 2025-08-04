@@ -62,7 +62,6 @@ namespace FurnitureProject.Controllers
                 },
                 "Value", "Text", status
             );
-            var a = 1;
         }
 
         [HttpGet("")]
@@ -219,7 +218,7 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateUserSuccess;
                 return RedirectToAction("Index", "AdminUser");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateUserError;
                 return RedirectToAction("Create", "AdminUser");
@@ -296,12 +295,12 @@ namespace FurnitureProject.Controllers
                 if (!success)
                 {
                     TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateUserError;
-                    return RedirectToAction("Update", "AdminUser");
+                    return RedirectToAction("Index", "AdminUser");
                 }
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdateUserSuccess;
                 return RedirectToAction("Index", "AdminUser");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateUserError;
                 return RedirectToAction("Update", "AdminUser");
@@ -322,10 +321,158 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteUserSuccess;
                 return RedirectToAction("Index", "AdminUser");
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteUserError;
                 return RedirectToAction("Index", "AdminUser");
             }
+        }
+        [HttpGet("detail")]
+        public async Task<IActionResult> Detail(Guid id)
+        {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
+            var user = await _userService.GetByIdAsync(id);
+            if (user == null) return NotFound();
+
+            TempData["UserPassword"] = user.Password;
+            SetRoleViewBag(user.Role);
+            SetStatusViewBag(user.Status);
+            SetGenderViewBag(user.Gender);
+
+            var userDTO = new UserDTO
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Username = user.Username,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Password = user.Password, // Ensure password is hashed in the service
+                Role = user.Role,
+                Status = user.Status,
+                CreatedAt = user.CreatedAt,
+                Addresses = user.Addresses.Select(a => new AddressDTO
+                {
+                    Id = a.Id,
+                    UserId = a.UserId,
+                    Street = a.Street,
+                    Ward = a.Ward,
+                    District = a.District,
+                    City = a.City,
+                    Country = a.Country,
+                    PostalCode = a.PostalCode,
+                    IsDefault = a.IsDefault
+                }).ToList()
+            };
+
+            ViewBag.AddressesCount = userDTO.Addresses.Count;
+            return View(userDTO);
+        }
+        [HttpGet("user-popup")]
+        public async Task<IActionResult> UserPopup(UserFilterDTO filter, int page = 1)
+        {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
+
+            int pageSize = 10;
+            var users = await _userService.GetAllAsync();
+
+            var userDtos = users.Select(u => new UserDTO
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Username = u.Username,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                Password = u.Password,
+                Role = u.Role,
+                Status = u.Status,
+                CreatedAt = u.CreatedAt
+            }).ToList();
+
+            // Search by key word
+            if (!string.IsNullOrEmpty(filter.SearchKeyWord))
+            {
+                userDtos = userDtos
+                    .Where(u => u.FullName.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase) ||
+                            u.Email.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
+            // Filter by status
+            if (filter.FilterByStatus != null && filter.FilterByStatus.Any())
+            {
+                userDtos = userDtos
+                   .Where(p => !string.IsNullOrEmpty(p.Status) && filter.FilterByStatus.Equals(p.Status))
+                   .ToList();
+            }
+
+            // Filter by role
+            if (filter.FilterByRole != null && filter.FilterByRole.Any())
+            {
+                userDtos = userDtos
+                   .Where(p => !string.IsNullOrEmpty(p.Role) && filter.FilterByRole.Equals(p.Role))
+                   .ToList();
+            }
+
+            // Sort Order
+            if (!string.IsNullOrEmpty(filter.SortColumn))
+            {
+                bool isAscending = filter.SortDirection?.ToLower() == "asc";
+
+                userDtos = filter.SortColumn switch
+                {
+                    "FullName" => isAscending
+                        ? userDtos.OrderBy(p => p.FullName).ToList()
+                        : userDtos.OrderByDescending(p => p.FullName).ToList(),
+
+                    "Email" => isAscending
+                        ? userDtos.OrderBy(p => p.Email).ToList()
+                        : userDtos.OrderByDescending(p => p.Email).ToList(),
+
+                    "PhoneNumber" => isAscending
+                        ? userDtos.OrderBy(p => p.PhoneNumber).ToList()
+                        : userDtos.OrderByDescending(p => p.PhoneNumber).ToList(),
+
+                    "Username" => isAscending
+                        ? userDtos.OrderBy(p => p.Username).ToList()
+                        : userDtos.OrderByDescending(p => p.Username).ToList(),
+
+                    "Role" => isAscending
+                        ? userDtos.OrderBy(p => p.Role).ToList()
+                        : userDtos.OrderByDescending(p => p.Role).ToList(),
+
+                    "CreatedAt" => isAscending
+                        ? userDtos.OrderBy(p => p.CreatedAt).ToList()
+                        : userDtos.OrderByDescending(p => p.CreatedAt).ToList(),
+
+                    "Status" => isAscending
+                        ? userDtos.OrderBy(p => p.Status).ToList()
+                        : userDtos.OrderByDescending(p => p.Status).ToList(),
+
+                    _ => userDtos
+                };
+            }
+
+            int totalUsers = userDtos.Count();
+            var pagedUsers = userDtos
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var userViewModel = new UserViewModel
+            {
+                Users = pagedUsers,
+                Filter = filter
+            };
+
+            SetStatusViewBag(filter.FilterByStatus);
+            SetRoleViewBag(filter.FilterByRole);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.Keyword = filter.SearchKeyWord;
+            ViewBag.TotalUsers = totalUsers;
+            return PartialView("_UserPopup", userViewModel);
         }
     }
 }

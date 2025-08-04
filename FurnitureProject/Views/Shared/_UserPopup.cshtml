@@ -1,0 +1,259 @@
+﻿@model FurnitureProject.Models.ViewModels.UserViewModel
+@{
+    ViewBag.Title = "Search User";
+    string keyword = ViewBag.Keyword as string;
+    int totalPages = (int)Math.Ceiling((double)ViewBag.TotalUsers / ViewBag.PageSize);
+    int currentPage = ViewBag.CurrentPage;
+}
+@{
+    int maxPagesToShow = 8;
+    int startPage = Math.Max(1, currentPage - maxPagesToShow / 2);
+    int endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+    if (endPage - startPage + 1 < maxPagesToShow)
+    {
+        startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+    }
+}
+<div class="table-responsive title-box">
+    <div class="container">
+            <div class="row mb-3 d-flex flex-wrap gap-4">
+                <div class="col-md-3">
+                    <div class="input-group">
+                    <input id="UserSearchKeyWord" type="text" asp-for="Filter.SearchKeyWord" name="search" value="@keyword" class="form-control form-control-sm" placeholder="Nhập từ khóa...">
+                    <button type="button" id="btnUserFilterSearch" class="btn btn-sm btn-custom bg-conflowerblue">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+                <!-- Filter by Status -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                <select id="UserFilterByStatus" asp-for="Filter.FilterByStatus" name="Filter.FilterByStatus" class="form-select" asp-items="@ViewBag.StatusList">
+                        <option value="">Trạng thái</option>
+                    </select>
+                </div>
+                <!-- Filter by Roles -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                <select id="UserFilterByRole" asp-for="Filter.FilterByRole" name="Filter.FilterByRole" class="form-select" asp-items="@ViewBag.RoleList">
+                        <option value="">Vai trò</option>
+                    </select>
+                </div>
+                <!-- Optional: Nút Reset -->
+                <div class="col-md-1-5 d-flex align-items-center">
+                <a href="javascript:void(0)" id="btnUserResetFilter" class="btn btn-secondary w-100">Xoá lọc</a>
+                </div>
+            </div>
+        <div class="row mb-3">
+            <table class="table table-hover align-middle">
+                <thead class="table-background">
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAllUsers" class="form-check-input" />
+                        </th>
+                        @* <th>ID</th> *@
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Tên
+                                <div class="sort-arrows">
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "Name" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="Name"
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "Name" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="Name"
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Email
+                                <div class="sort-arrows">
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "Email" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="Email"
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "Email" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="Email"
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Số điện thoại
+                                <div class="sort-arrows">
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "PhoneNumber" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="PhoneNumber"
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "PhoneNumber" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="PhoneNumber"
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Tài khoản
+                                <div class="sort-arrows">
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "Username" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="Username"
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "Username" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="Username"
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        @* <th>Mật khẩu</th> *@
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Vai trò
+                                <div class="sort-arrows">
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "Password" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="Password"
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "Password" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="Password"
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Ngày tạo
+                                <div class="sort-arrows">
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "CreatedAt" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="CreatedAt"
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "CreatedAt" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="CreatedAt"
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Trạng thái
+                                <div class="sort-arrows">
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "Status" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")"
+                                       data-sort-column="Status"
+                                       data-sort-direction="asc">▲</a>
+                                    <a href="#"
+                                       class="sort-link user-sort-link @(Model.Filter.SortColumn == "Status" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")"
+                                       data-sort-column="Status"
+                                       data-sort-direction="desc">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        @* <th class="col with-separator">Chọn</th> *@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" 
+                                       class="user-id user-checkbox form-check-input"
+                                       data-id = "@user.Id"
+                                       data-fullname = "@user.FullName"
+                                       data-email = "@user.Email"
+                                       data-phone = "@user.PhoneNumber"
+                                       value="@user.Id" />
+                            </td>
+                            @* <td>@user.Id.ToString().Substring(0, 16)</td> *@
+                            <td>@user.FullName</td>
+                            <td>
+                                <span class="badge text-primary border border-primary bg-light">@user.Email</span>
+                            </td>
+                            <td>
+                                <span class="badge text-primary border border-primary bg-light">@user.PhoneNumber</span>
+                            </td>
+
+                            <td>@user.Username</td>
+                            @* <td>@user.password</td> *@
+                            <td>@user.Role</td>
+                            <td>@user.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (user.Status == "active")
+                                {
+                                    <span class="badge active-badge">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Hoạt động
+                                    </span>
+                                }
+                                else if (user.Status == "inactive")
+                                {
+                                    <span class="badge inactive-badge" ">
+                                        <i class="bi bi-pause-circle-fill me-1"></i> Không hoạt động
+                                    </span>
+                                }
+                                else if (user.Status == "banned")
+                                {
+                                    <span class="badge">
+                                        <i class="bi bi-slash-circle-fill me-1"></i> Bị khóa
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge">
+                                        <i class="bi bi-question-circle-fill me-1"></i> @user.Status
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="pagination-box">
+    <nav>
+        <ul class="pagination justify-content-center">
+
+            <!-- Previous button -->
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link user-pagination-ajax"
+                   href="#"
+                   data-page="@(currentPage - 1)"
+                   aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <!-- Page numbers -->
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link user-pagination-ajax"
+                       href="#"
+                       data-page="@i">
+                        @i
+                    </a>
+                </li>
+            }
+
+            <!-- Next button -->
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link user-pagination-ajax"
+                   href="#"
+                   data-page="@(currentPage + 1)"
+                   aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+</div>

@@ -47,7 +47,7 @@
                     <div class="card-body text-center">
                         <h6 class="card-title text-truncate" title="@product.Name">@product.Name</h6>
                         <p class="card-text fw-bold text-danger">
-                            @if (product.DiscountPrice != null && product.DiscountPrice > 0)
+                            @if (product.DiscountPrice > 0)
                                 {
                                     <span class="text-danger fw-bold">@product.DiscountPrice.ToString("N0") ₫</span>
 

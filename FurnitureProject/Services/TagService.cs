@@ -58,7 +58,7 @@ namespace FurnitureProject.Services
                 await _tagRepo.DeleteAsync(id);
                 return (true, null);
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 return (false, null);
             }
         }
@@ -68,7 +68,9 @@ namespace FurnitureProject.Services
             return await _productTagRepo.GetTagsByProductIdAsync(productId);
         }
 
-        public async Task AddTagsToProductAsync(Guid productId, List<Guid> tagIds) =>
-            _productTagRepo.AddTagsToProductAsync(productId, tagIds);
+        public async Task AddTagsToProductAsync(Guid productId, List<Guid> tagIds)
+        {
+            await _productTagRepo.AddTagsToProductAsync(productId, tagIds);
+        }
     }
 }

@@ -5,6 +5,10 @@ using FurnitureProject.Models;
 using FurnitureProject.Repositories;
 using FurnitureProject.Services;
 using FurnitureProject.Services.Email;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Globalization;
@@ -17,6 +21,26 @@ builder.Services.AddControllersWithViews();
 //Connect database posgresql
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+//    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//})
+//    .AddCookie()
+//    .AddGoogle(options =>
+//    {
+//        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+//        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+//        options.Scope.Add("email");
+//        options.Scope.Add("profile");
+//        options.SaveTokens = true;
+//        options.CallbackPath = "/user/google-response";
+
+//        options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+//        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+//    });
 
 //Connect Cloudinary
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
@@ -62,9 +86,11 @@ builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(option =>
  {
-     option.IdleTimeout = TimeSpan.FromHours(24);
+     option.IdleTimeout = TimeSpan.FromMinutes(30);
      option.Cookie.HttpOnly = true;
      option.Cookie.IsEssential = true;
+     option.Cookie.SecurePolicy = CookieSecurePolicy.None;
+     option.Cookie.SameSite = SameSiteMode.Lax;
  });
 
 var app = builder.Build();
@@ -86,15 +112,12 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseSession();
-
-app.UseMiddleware<RoleAuthorizationMiddleware>();
-
+app.UseCookiePolicy();
+app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseMiddleware<RoleAuthorizationMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -1,9 +1,11 @@
 ﻿using FurnitureProject.Helper;
+using FurnitureProject.Models;
 using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static FurnitureProject.Helper.AppConstants;
 
 namespace FurnitureProject.Controllers
 {
@@ -14,23 +16,47 @@ namespace FurnitureProject.Controllers
         private readonly IUserService _userService;
         private readonly IProductService _productService;
         private readonly ICartService _cartService;
+        private readonly ICategoryService _categoryService;
+        private readonly ITagService _tagService;
+        private readonly IPromotionService _promotionService;
+        private readonly IAddressService _addressService;
 
-        public AdminOrderController(IOrderService orderService, IUserService userService, 
-            IProductService productService, ICartService cartService)
+        public AdminOrderController(IOrderService orderService, IUserService userService, ICategoryService categoryService,
+            IProductService productService, ICartService cartService, ITagService tagService, IPromotionService promotionService,
+            IAddressService addressService)
         {
             _orderService = orderService;
             _userService = userService;
             _productService = productService;
             _cartService = cartService;
+            _categoryService = categoryService;
+            _tagService = tagService;
+            _promotionService = promotionService;
+            _addressService = addressService;
         }
         private void SetStatusViewBag(string? status = null)
         {
             ViewBag.StatusList = new SelectList(
                 new[] {
-                    new { Value = AppConstants.Status.Active, Text = AppConstants.LogMessages.Active },
-                    new { Value = AppConstants.Status.Inactive, Text = AppConstants.LogMessages.Inactive }
+                    new { Value = AppConstants.Status.Pending, Text = AppConstants.Display.Pending },
+                    new { Value = AppConstants.Status.Confirmed, Text = AppConstants.Display.Confirmed },
+                    new { Value = AppConstants.Status.Processing, Text = AppConstants.Display.Processing },
+                    new { Value = AppConstants.Status.Shipping, Text = AppConstants.Display.Shipping },
+                    new { Value = AppConstants.Status.Completed, Text = AppConstants.Display.Completed },
+                    new { Value = AppConstants.Status.Cancelled, Text = AppConstants.Display.Cancelled }
                 },
                 "Value", "Text", status
+            );
+        }
+        private void SetPaymentMethodViewBag(string? paymentMethod = null)
+        {
+            ViewBag.PaymentMethodList = new SelectList(
+                new[] {
+                    new { Value = AppConstants.Status.COD, Text = AppConstants.Display.COD },
+                    new { Value = AppConstants.Status.Confirmed, Text = AppConstants.Display.BankTransfer },
+                    new { Value = AppConstants.Status.Processing, Text = AppConstants.Display.CreditCard }
+                },
+                "Value", "Text", paymentMethod
             );
         }
         private void SetSortOptions(string? selectedSort = null)
@@ -53,6 +79,12 @@ namespace FurnitureProject.Controllers
 
             int pageSize = 10;
             var orders = await _orderService.GetAllAsync();
+
+            if (string.IsNullOrEmpty(filter.SortColumn))
+            {
+                filter.SortColumn = "OrderDate"; // Default sort by OrderDate
+                filter.SortDirection = "desc"; // Default sort direction
+            }
 
             var orderDTOs = orders.Select(order => new OrderDTO
             {
@@ -156,14 +188,12 @@ namespace FurnitureProject.Controllers
             ViewBag.Users = new SelectList(users, "Id", "FullName");
             ViewBag.Products = products;
 
+            SetStatusViewBag();
+            SetPaymentMethodViewBag();
             //await SetCategoryViewBag();
             //await SetTagViewBag();
 
             return View();
-            //return View(new OrderDTO
-            //{
-            //    Or = new List<OrderItemInputModel> { new OrderItemInputModel() } // khởi tạo 1 dòng mặc định
-            //});
         }
 
         [HttpPost("create")]
@@ -174,17 +204,94 @@ namespace FurnitureProject.Controllers
                 var (success, message) = await _orderService.CreateAsync(dto);
                 if (!success)
                 {
-                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateProductError;
-                    return RedirectToAction("Create", "AdminProduct");
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateOrderError;
+                    return RedirectToAction("Create", "AdminOrder");
                 }
 
-                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateProductSuccess;
-                return RedirectToAction("Index", "AdminProduct");
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateOrderSuccess;
+                return RedirectToAction("Index", "AdminOrder");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateProductError;
-                return RedirectToAction("Create", "AdminProduct");
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateOrderError;
+                return RedirectToAction("Create", "AdminOrder");
+            }
+        }
+        [HttpGet("update")]
+        public async Task<IActionResult> Update(Guid id)
+        {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
+
+            var users = await _userService.GetAllAsync();
+            var products = await _productService.GetAllAsync();
+            var order = await _orderService.GetByIdAsync(id);
+
+            ViewBag.Users = new SelectList(users, "Id", "FullName");
+            ViewBag.Products = products;
+
+            //await SetCategoryViewBag();
+            //await SetTagViewBag();
+            var address = await _addressService.GetAddressByIdAsync(order.AddressId.Value);
+
+            var orderDTO = new OrderDTO
+            {
+                Id = order.Id,
+                UserId = order.UserId,
+                ReceiverName = order.ReceiverName,
+                ReceiverEmail = order.ReceiverEmail,
+                ReceiverPhone = order.ReceiverPhone,
+                AddressId = order.AddressId,
+                Address = new AddressDTO
+                {
+                    Street = address?.Street,
+                    Ward = address?.Ward,
+                    District = address?.District,
+                    City = address?.City,
+                    Country = address?.Country,
+                    PostalCode = address?.PostalCode
+                },
+                ShippingMethodId = order.ShippingMethodId,
+                PaymentMethod = order.PaymentMethod,
+                ShippingFee = order.ShippingFee,
+                OrderDate = order.OrderDate,
+                Status = order.Status,
+                CreatedAt = order.CreatedAt,
+                TotalAmount = order.TotalAmount,
+                Products = order.OrderItems.Select(item => new ProductDTO
+                {
+                    Id = item.ProductId,
+                    ImageUrls = item.Product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                    Name = item.Product.Name,
+                    Price = item.UnitPrice,
+                    Quantity = item.Quantity
+                }).ToList()
+            };
+
+            SetStatusViewBag(orderDTO.Status);
+            SetPaymentMethodViewBag(orderDTO.PaymentMethod);
+
+            return View(orderDTO);
+        }
+        [HttpPost("update")]
+        public async Task<IActionResult> Update(OrderDTO dto)
+        {
+            try
+            {
+                var (success, message) = await _orderService.UpdateAsync(dto);
+                if (!success)
+                {
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateOrderError;
+                    return RedirectToAction("Index", "AdminOrder");
+                }
+
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateOrderSuccess;
+                return RedirectToAction("Index", "AdminOrder");
+            }
+            catch (Exception)
+            {
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateOrderError;
+                return RedirectToAction("Update", "AdminOrder");
             }
         }
         [HttpPost("delete")]
@@ -195,17 +302,57 @@ namespace FurnitureProject.Controllers
                 var (success, message) = await _orderService.DeleteAsync(id);
                 if (!success)
                 {
-                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteTagError;
-                    return RedirectToAction("Index", "AdminTag");
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteOrderError;
+                    return RedirectToAction("Index", "AdminOrder");
                 }
-                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteTagSuccess;
-                return RedirectToAction("Index", "AdminTag");
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteOrderSuccess;
+                return RedirectToAction("Index", "AdminOrder");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteTagError;
-                return RedirectToAction("Index", "AdminTag");
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteOrderError;
+                return RedirectToAction("Index", "AdminOrder");
             }
         }
+        [HttpGet("detail")]
+        public async Task<IActionResult> Detail(Guid id)
+        {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
+
+            var order = await _orderService.GetByIdAsync(id);
+            var orderDTO = new OrderDTO
+            {
+                ReceiverName = order.ReceiverName,
+                ReceiverEmail = order.ReceiverEmail,
+                ReceiverPhone = order.ReceiverPhone,
+                AddressId = order.AddressId,
+                Address = new AddressDTO
+                {
+                    Street = order.Address?.Street,
+                    Ward = order.Address?.Ward,
+                    District = order.Address?.District,
+                    City = order.Address?.City,
+                    Country = order.Address?.Country,
+                    PostalCode = order.Address?.PostalCode
+                },
+                ShippingMethodId = order.ShippingMethodId,
+                PaymentMethod = order.PaymentMethod,
+                ShippingFee = order.ShippingFee,
+                OrderDate = order.OrderDate,
+                Status = order.Status,
+                TotalAmount = order.TotalAmount,
+                Products = order.OrderItems.Select(item => new ProductDTO
+                {
+                    Id = item.ProductId,
+                    ImageUrls = item.Product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                    Name = item.Product.Name,
+                    Price = item.UnitPrice,
+                    Quantity = item.Quantity
+                }).ToList()
+            };
+            return View(orderDTO);
+        }
+        
     }
 }

@@ -1,0 +1,287 @@
+﻿@model FurnitureProject.Models.DTO.OrderDTO
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<div class="title-box">
+    <div class="text-box">
+        <span class="title ms-2">Chi tiết đơn hàng</span>
+    </div>
+</div>
+
+<div class="container mt-4 pb-5">
+    <form asp-controller="AdminOrder" asp-action="Create" method="post">
+        <div class="row gx-4 gy-3 justify-content-between">
+            <div class="col-md-6-5">
+                <div class="row gx-4 gy-3 justify-content-between">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-file-invoice text-conflowerblue"></i>
+                            <span>Đơn hàng</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row gx-4 gy-3 justify-content-between">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="PaymentMethod" class="form-label fw-medium"></label>
+                                    <span class="form-control">
+                                        @if (@Model.PaymentMethod == null)
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                        else
+                                        {
+                                            @Model.PaymentMethod
+                                        }
+                                    </span>
+                                </div>
+                                <div class="col-md-5 mb-3">
+                                    <label asp-for="ShippingFee" class="form-label fw-medium"></label>
+                                    <span class="form-control">
+                                        @if (@Model.ShippingFee == 0)
+                                        {
+                                            <span class="text-muted">0</span>
+                                        }
+                                        else
+                                        {
+                                            @Model.ShippingFee
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row gx-4 gy-3 justify-content-between">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="OrderDate" class="form-label fw-medium"></label>
+                                    <span class="form-control">
+                                        @if (@Model.OrderDate == null)
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                        else
+                                        {
+                                            @Model.OrderDate
+                                        }
+                                    </span>
+                                </div>
+                                <div class="col-md-5 mb-3">
+                                    <label asp-for="Status" class="form-label fw-medium"></label>
+                                    <span class="form-control">
+                                        @if (@Model.Status == null)
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                        else
+                                        {
+                                            @Model.Status
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row gx-4 gy-3 justify-content-between">
+                                <div class="col-md-12 mb-3">
+                                    <label asp-for="TotalAmount" class="form-label fw-medium"></label>
+                                    <span class="form-control">
+                                        @if (@Model.TotalAmount == 0)
+                                        {
+                                            <span class="text-muted">0</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@Model.TotalAmount.ToString("N0") ₫</span>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-4 gy-3 justify-content-between">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-box text-conflowerblue"></i>
+                            <span>Sản phẩm</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3 table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-background">
+                                        <tr>
+                                            @* <th scope="col">ID</th> *@
+                                            <th class="col with-separator">Hình ảnh</th>
+                                            <th class="col with-separator">Tên</th>
+                                            <th class="col with-separator">Số lượng</th>
+                                            <th class="col with-separator">Giá</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var product in Model.Products)
+                                        {
+                                            <tr>
+                                                @* <td>@product.Id.ToString().Substring(0, 16)</td> *@
+                                                <td>
+                                                    <img src="@(product.ImageUrls != null && product.ImageUrls.Count > 0
+                                                                                                                                                                                                ? product.ImageUrls[0]
+                                                                                                                                                                                                : Url.Content("~/images/No_Image_Available.jpg"))"
+                                                     alt="Product image"
+                                                     style="width: 120px; height: 90px; border-radius:5px;" />
+                                            </td>
+                                            <td>@product.Name</td>
+                                            <td>@product.Quantity</td>
+                                            <td>@product.Price.ToString("N0") ₫</td>
+                                        </tr>
+                                                                                }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="row gx-4 gy-3 justify-content-between">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-user-circle text-conflowerblue"></i>
+                            <span>Thông tin khách hàng</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label asp-for="ReceiverName" class="form-label fw-medium"></label>
+                                <span class="form-control">
+                                    @if (@Model.ReceiverName == null){
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.ReceiverName
+                                    }
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ReceiverEmail" class="form-label fw-medium"></label>
+                                <span class="form-control">
+                                    @if (@Model.ReceiverEmail == null)
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.ReceiverEmail
+                                    }
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ReceiverPhone" class="form-label fw-medium"></label>
+                                <span class="form-control">
+                                    @if (@Model.ReceiverPhone == null)
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.ReceiverPhone
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row gx-4 gy-3 justify-content-between">
+                    <div class="card shadow mb-3">
+                        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-conflowerblue"></i>
+                            <span>Địa chỉ</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label asp-for="Address.Street" class="form-label fw-medium"></label>
+                                <span class="form-control">
+                                    @if (@Model.Address?.Street == null)
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.Address.Street
+                                    }
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address.Ward" class="form-label fw-medium"></label>
+                                <span class="form-control">
+                                    @if (@Model.Address?.Ward == null)
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.Address.Ward
+                                    }
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address.District" class="form-label fw-medium"></label>
+                                <span class="form-control">
+                                    @if (@Model.Address?.District == null)
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.Address.District
+                                    }
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address.City" class="form-label fw-medium"></label>
+                                <span class="form-control">
+                                    @if (@Model.Address?.City == null)
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.Address.City
+                                    }
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address.Country" class="form-label fw-medium"></label>
+                                <span class="form-control">
+                                    @if (@Model.Address?.Country == null)
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.Address.Country
+                                    }
+                                </span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Address.PostalCode" class="form-label fw-medium"></label>
+                                <span class="form-control">
+                                    @if (@Model.Address?.PostalCode == null)
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.Address.PostalCode
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

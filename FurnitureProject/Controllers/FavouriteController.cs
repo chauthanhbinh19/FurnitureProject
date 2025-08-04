@@ -140,10 +140,9 @@ namespace FurnitureProject.Controllers
                     return Json(new { success = true, status = "added" });
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CartItemNotFound;
-                return RedirectToAction("Index", "Home");
+                return Json(new { success = false, status = "added" });
             }
         }
     }

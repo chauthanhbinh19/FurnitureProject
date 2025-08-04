@@ -58,6 +58,7 @@ namespace FurnitureProject.Controllers
                 Id = promotion.Id,
                 Title = promotion.Title,
                 Description = promotion.Description,
+                DiscountPercent = promotion.DiscountPercent,
                 Status = promotion.Status,
                 CreatedAt = promotion.CreatedAt,
             }).ToList();
@@ -92,6 +93,10 @@ namespace FurnitureProject.Controllers
                     "Description" => isAscending
                         ? promotionDTOs.OrderBy(p => p.Description).ToList()
                         : promotionDTOs.OrderByDescending(p => p.Description).ToList(),
+
+                    "DiscountPercent" => isAscending
+                        ? promotionDTOs.OrderBy(p => p.DiscountPercent).ToList()
+                        : promotionDTOs.OrderByDescending(p => p.DiscountPercent).ToList(),
 
                     "CreatedAt" => isAscending
                         ? promotionDTOs.OrderBy(p => p.CreatedAt).ToList()
@@ -246,7 +251,7 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreatePromotionSuccess;
                 return RedirectToAction("Index", "AdminPromotion");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreatePromotionError;
                 return RedirectToAction("Create", "AdminPromotion");
@@ -384,7 +389,7 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdatePromotionSuccess;
                 return RedirectToAction("Index", "AdminPromotion");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdatePromotionError;
                 return RedirectToAction("Update", "AdminPromotion");
@@ -406,11 +411,62 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeletePromotionSuccess;
                 return RedirectToAction("Index", "AdminPromotion");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeletePromotionError;
                 return RedirectToAction("Index", "AdminPromotion");
             }
+        }
+        [HttpGet("detail")]
+        public async Task<IActionResult> Detail(Guid id)
+        {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
+            var promotion = await _promotionService.GetByIdAsync(id);
+            var promotions = await _promotionService.GetAllAsync();
+            var products = await _productService.GetAllAsync();
+
+            var selectedProductIds = promotion.ProductPromotions?
+                .Select(pp => pp.ProductId)
+                .ToList() ?? new List<Guid>();
+
+            var promotionDTO = new PromotionDTO
+            {
+                Id = promotion.Id,
+                Title = promotion.Title,
+                Description = promotion.Description,
+                StartDate = promotion.StartDate,
+                EndDate = promotion.EndDate,
+                DiscountPercent = promotion.DiscountPercent,
+                Status = promotion.Status,
+                Products = products
+                    .Where(product => selectedProductIds.Contains(product.Id))
+                    .Select(product =>
+                    {
+                        var isInActivePromotion = promotions.Any(p =>
+                            p.EndDate >= DateTime.Today &&
+                            p.ProductPromotions.Any(pp => pp.ProductId == product.Id));
+
+                        return new ProductDTO
+                        {
+                            Id = product.Id,
+                            Name = product.Name,
+                            Description = product.Description,
+                            Price = product.Price,
+                            Stock = product.Stock,
+                            Status = product.Status,
+                            //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                            CreatedAt = product.CreatedAt,
+                            ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                            TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                            PromotionStatus = isInActivePromotion ? "In Promotion" : "Available"
+                        };
+                    }).ToList(),
+                SelectedProductIds = promotion.ProductPromotions?.Select(pp => pp.ProductId).ToList() ?? new List<Guid>()
+            };
+            SetStatusViewBag(promotion.Status);
+
+            return View(promotionDTO);
         }
     }
 

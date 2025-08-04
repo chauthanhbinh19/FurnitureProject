@@ -18,8 +18,10 @@ namespace FurnitureProject.Repositories
             return await context.Orders
                 .Where(o => !o.IsDeleted)
                 .Include(o => o.User)
+                .Include(o => o.Address)
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
+                    .ThenInclude(oi => oi.Product)
+                        .ThenInclude(pi => pi.ProductImages)
                 .ToListAsync();
         }
 
@@ -28,8 +30,10 @@ namespace FurnitureProject.Repositories
             return await context.Orders
                 .Where(o => !o.IsDeleted && o.UserId == userId)
                 .Include(o => o.User)
+                .Include(o => o.Address)
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
+                    .ThenInclude(oi => oi.Product)
+                        .ThenInclude(pi => pi.ProductImages)
                 .ToListAsync();
         }
 
@@ -38,20 +42,23 @@ namespace FurnitureProject.Repositories
             return await context.Orders
                 .Where(o => !o.IsDeleted)
                 .Include(o => o.User)
+                .Include(o => o.Address)
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
+                    .ThenInclude(oi => oi.Product)
+                        .ThenInclude(pi => pi.ProductImages)
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
 
         public async Task AddAsync(Order order)
         {
             order.OrderDate = DateTime.SpecifyKind(order.OrderDate, DateTimeKind.Utc);
-            await context.Orders.AddAsync(order);
+            context.Orders.Add(order);
             await context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Order order)
         {
+            order.OrderDate = DateTime.SpecifyKind(order.OrderDate, DateTimeKind.Utc);
             context.Orders.Update(order);
             await context.SaveChangesAsync();
         }

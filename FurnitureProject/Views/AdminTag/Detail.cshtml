@@ -1,0 +1,67 @@
+﻿@model FurnitureProject.Models.DTO.TagDTO
+
+@{
+    ViewData["Title"] = "Chi tiết nhãn";
+}
+<div class="title-box">
+    <div class="text-box">
+        <span class="title ms-2">Chi tiết nhãn sản phẩm</span>
+    </div>
+</div>
+<div class="container mt-4 pb-5">
+    <div class="row gx-4 gy-3 justify-content-between">
+        <div class="card shadow mb-3">
+            <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                <i class="fas fa-circle-info text-conflowerblue"></i>
+                <span>Thông tin nhãn</span>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-4">
+                    <div class="col-md-3-5 mb-3">
+                        <label asp-for="Name" class="form-label fw-medium"></label>
+                        <p class="form-control custom-gray-input">
+                            @if (@Model.Name != null)
+                            {
+                                @Model.Name
+                            }
+                            else
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                        </p>
+                    </div>
+
+                    <div class="col-md-3-5 mb-3">
+                        <label asp-for="Status" class="form-label fw-medium"></label>
+                        <div>
+                            @if (Model.Status == "active")
+                            {
+                                <div class="badge active-badge">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Hoạt động
+                                </div>
+                            }
+                            else if (Model.Status == "inactive")
+                            {
+                                <div class="badge inactive-badge" ">
+                                    <i class="bi bi-pause-circle-fill me-1"></i> Không hoạt động
+                                </div>
+                            }
+                            else if (Model.Status == "banned")
+                            {
+                                <div class="badge">
+                                    <i class="bi bi-slash-circle-fill me-1"></i> Bị khóa
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="badge">
+                                    <i class="bi bi-question-circle-fill me-1"></i> @Model.Status
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

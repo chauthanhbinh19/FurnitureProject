@@ -156,7 +156,7 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateTagSuccess;
                 return RedirectToAction("Index", "AdminTag");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateTagError;
                 return RedirectToAction("Create", "AdminTag");
@@ -204,12 +204,12 @@ namespace FurnitureProject.Controllers
                 var(success, message) = await _tagService.UpdateAsync(tag);
                 if (!success) {
                     TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateTagError;
-                    return RedirectToAction("Update", "AdminTag");
+                    return RedirectToAction("Index", "AdminTag");
                 }
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdateTagSuccess;
                 return RedirectToAction("Index", "AdminTag");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateTagError;
                 return RedirectToAction("Update", "AdminTag");
@@ -228,11 +228,27 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteTagSuccess;
                 return RedirectToAction("Index", "AdminTag");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteTagError;
                 return RedirectToAction("Index", "AdminTag");
             }
+        }
+        [HttpGet("detail")]
+        public async Task<IActionResult> Detail(Guid id)
+        {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
+            var tag = await _tagService.GetByIdAsync(id);
+            SetStatusViewBag(tag.Status);
+            var tagDTO = new TagDTO
+            {
+                Id = tag.Id,
+                Name = tag.Name,
+                Status = tag.Status,
+                CreatedAt = tag.CreatedAt
+            };
+            return View(tagDTO);
         }
     }
 }

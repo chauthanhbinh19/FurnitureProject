@@ -7,6 +7,7 @@ namespace FurnitureProject.Services
     {
         Task<IEnumerable<Product>> GetAllAsync();
         Task<Product?> GetByIdAsync(Guid id);
+        Task<int> GetTotalProductsAsync(DateTime from, DateTime to);
         Task<(bool Success, string? Message)> CreateAsync(ProductDTO dto);
         Task<(bool Success, string? Message)> UpdateAsync(ProductDTO dto);
         Task<(bool Success, string? Message)> DeleteAsync(Guid id);

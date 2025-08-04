@@ -1,0 +1,184 @@
+﻿@model FurnitureProject.Models.DTO.ProductDTO
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    // var Categories = ViewBag.Categories;
+}
+<div class="title-box">
+    <div class="text-box">
+        <span class="title ms-2">Chi tiết sản phẩm</span>
+    </div>
+</div>
+<div class="container mt-4 pb-5">
+    <form id="productForm" asp-controller="AdminProduct" asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="row gx-4 gy-3 justify-content-between">
+            <!-- Card 1: Thông tin sản phẩm -->
+            <div class="col-md-6-5">
+                <div class="card shadow mb-3">
+                    <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                        <i class="fas fa-circle-info text-conflowerblue"></i>
+                        <span>Thông tin sản phẩm</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row justify-content-between">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Name" class="form-label fw-medium"></label>
+                                <span class="form-control custom-gray-input">
+                                    @if (Model.Name == null)
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@Model.Name</span>
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row justify-content-between">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Price" class="form-label fw-medium"></label>
+                                <span class="form-control custom-gray-input">
+                                    @if (Model.Price == 0)
+                                    {
+                                        <span class="text-muted">0</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@Model.Price</span>
+                                    }
+                                </span>
+                            </div>
+
+                            <div class="col-md-5 mb-3">
+                                <label asp-for="Stock" class="form-label fw-medium"></label>
+                                <span class="form-control custom-gray-input">
+                                    @if (Model.Stock == 0)
+                                    {
+                                        <span class="text-muted">0</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@Model.Stock</span>
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card shadow">
+                    <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                        <i class="fas fa-align-left text-conflowerblue"></i>
+                        <span>Mô tả sản phẩm</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-medium"></label>
+                            <span class="form-control custom-gray-input" style="height: 250px;">
+                                @if (Model.Description == null)
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }
+                                else
+                                {
+                                    <span>@Model.Description</span>
+                                }
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Upload hình ảnh -->
+            <div class="col-md-5">
+                <div class="card shadow mb-3">
+                    <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                        <i class="fas fa-upload text-conflowerblue"></i>
+                        <span>Tải ảnh sản phẩm</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Hình ảnh</label>
+                            <div id="" class="d-flex flex-wrap gap-3 mt-3">
+                                @if (Model.ImageUrls != null)
+                                {
+                                    foreach (var imageUrl in Model.ImageUrls)
+                                    {
+                                        <div class="position-relative d-inline-block m-2" style="width: 120px; height: 120px;">
+                                            <img src="@imageUrl"
+                                                 alt="Product Image"
+                                                 class="img-thumbnail"
+                                                 style="width: 100%; height: 100%; object-fit: cover;" />
+
+                                            @* <button type="button"
+                                                    class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1"
+                                                    onclick="this.parentElement.remove();">
+                                                &times;
+                                            </button> *@
+
+                                            <input type="hidden" name="ExistingImageUrls" value="@imageUrl" />
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card shadow">
+                    <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+                        <i class="fas fa-tags text-conflowerblue"></i>
+                        <span>Danh mục & nhãn</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="TagIds" class="form-label fw-medium"></label>
+                            <div>
+                                @if (Model.TagIds != null && ViewBag.Tags != null)
+                                {
+                                    var tagList = (List<FurnitureProject.Models.Tag>)ViewBag.Tags;
+                                    var selectedTags = tagList
+                                    .Where(t => Model.TagIds.Contains(t.Id))
+                                    .Select(t => t.Name); // hoặc t.Title, tùy theo model
+
+                                    <div>
+                                        @foreach (var tagName in selectedTags)
+                                        {
+                                            <span class="badge bg-primary me-1">@tagName</span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="form-control text-muted">N/A</span>
+                                }
+
+                            </div>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label class="form-label fw-medium">Danh mục</label>
+                            <div>
+                                @if (ViewBag.Categories != null)
+                                {
+                                    var category = ((SelectList)ViewBag.Categories)
+                                    .Cast<SelectListItem>()
+                                    .FirstOrDefault(c => c.Value == Model.CategoryId.ToString());
+
+                                    <span class="badge bg-secondary me-1">@category?.Text</span>
+                                }
+                                else
+                                {
+                                    <span class="form-control text-muted">N/A</span>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit button -->
+        <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-primary px-4">Lưu sản phẩm</button>
+        </div>
+    </form>
+</div>

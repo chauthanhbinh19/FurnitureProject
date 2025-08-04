@@ -1,16 +1,15 @@
 ﻿@model FurnitureProject.Models.DTO.VoucherDTO
 
 @{
-    ViewBag.Title = "Tạo mã giảm giá";
+    ViewBag.Title = "Chi tiết mã giảm giá";
 }
 <div class="title-box">
     <div class="text-box">
-        <span class="title ms-2">Tạo mã giảm giá</span>
+        <span class="title ms-2">Chi tiết mã giảm giá</span>
     </div>
 </div>
 <div class="container mt-4 pb-5">
-    <form asp-controller="AdminVoucher" asp-action="Create" method="post">
-        <div class="row gx-4 gy-3 justify-content-between">
+    <div class="row gx-4 gy-3 justify-content-between">
             <div class="card shadow mb-3">
                 <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
                     <i class="fas fa-circle-info text-conflowerblue"></i>
@@ -20,37 +19,102 @@
                     <div class="row mb-3 d-flex flex-wrap gap-4">
                         <div class="col-md-5">
                             <label asp-for="Code" class="form-label fw-semibold"></label>
-                            <input asp-for="Code" class="form-control custom-gray-input" placeholder="Ví dụ: SUMMER25" />
-                            <span asp-validation-for="Code" class="text-danger small"></span>
+                            <span class="form-control custom-gray-input">
+                                @if (Model.Code == null)
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }else
+                                {
+                                    <span>@Model.Code</span>
+                                }
+                            </span>
                         </div>
                         <div class="col-md-3">
                             <label asp-for="DiscountPercent" class="form-label fw-semibold"></label>
-                            <input asp-for="DiscountPercent" type="number" min="0" max="100" class="form-control custom-gray-input" placeholder="0 - 100" />
-                            <span asp-validation-for="DiscountPercent" class="text-danger small"></span>
+                            <span class="form-control custom-gray-input">
+                                @if (Model.DiscountPercent == 0)
+                                {
+                                    <span class="text-muted">0</span>
+                                }else
+                                {
+                                    <span>@Model.DiscountPercent</span>
+                                }
+                            </span>
                         </div>
                         <div class="col-md-3">
                             <label asp-for="DiscountAmount" class="form-label fw-semibold"></label>
-                            <input asp-for="DiscountAmount" type="number" step="1000" min="0" class="form-control custom-gray-input" placeholder="VND" />
-                            <span asp-validation-for="DiscountAmount" class="text-danger small"></span>
+                            <span class="form-control custom-gray-input">
+                                @if (Model.DiscountAmount == 0)
+                                {
+                                    <span class="text-muted">0</span>
+                                }else
+                                {
+                                    <span>@Model.DiscountAmount</span>
+                                }
+                            </span>
                         </div>
                     </div>
 
                     <div class="row mb-3 d-flex flex-wrap gap-4">
                         <div class="col-md-3">
                             <label asp-for="ExpiryDate" class="form-label fw-semibold"></label>
-                            <input asp-for="ExpiryDate" type="date" class="form-control custom-gray-input" />
-                            <span asp-validation-for="ExpiryDate" class="text-danger small"></span>
+                            <span class="form-control custom-gray-input">
+                                @if (Model.ExpiryDate == null)
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }else
+                                {
+                                    <span>@Model.ExpiryDate</span>
+                                }
+                            </span>
                         </div>
                         <div class="col-md-3">
                             <label asp-for="UsageLimit" class="form-label fw-semibold"></label>
-                            <input asp-for="UsageLimit" type="number" class="form-control custom-gray-input" min="1" />
-                            <span asp-validation-for="UsageLimit" class="text-danger small"></span>
+                            <span class="form-control custom-gray-input">
+                                @if (Model.UsageLimit == 0)
+                                {
+                                    <span class="text-muted">0</span>
+                                }else
+                                {
+                                    <span>@Model.UsageLimit</span>
+                                }
+                            </span>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3 mb-3 d-flex flex-column">
                             <label asp-for="Status" class="form-label fw-semibold"></label>
-                            <select asp-for="Status" class="form-select custom-gray-input" asp-items="ViewBag.StatusList">
-                            </select>
-                            <span asp-validation-for="Status" class="text-danger small"></span>
+                            <div">
+                                @if (Model.Status == null)
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }
+                                else
+                                {
+                                    @if (Model.Status == "active")
+                                    {
+                                        <span class="badge active-badge">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Hoạt động
+                                        </span>
+                                    }
+                                    else if (Model.Status == "inactive")
+                                    {
+                                        <span class="badge inactive-badge" ">
+                                            <i class="bi bi-pause-circle-fill me-1"></i> Không hoạt động
+                                        </span>
+                                    }
+                                    else if (Model.Status == "banned")
+                                    {
+                                        <span class="badge">
+                                            <i class="bi bi-slash-circle-fill me-1"></i> Bị khóa
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge">
+                                            <i class="bi bi-question-circle-fill me-1"></i> @Model.Status
+                                        </span>
+                                    }
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -120,9 +184,5 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div class="mt-4 d-flex justify-content-end">
-                <button type="submit" class="btn-custom bg-conflowerblue px-4">Lưu</button>
-        </div>    
-        </form>
+        </div>>    
 </div>

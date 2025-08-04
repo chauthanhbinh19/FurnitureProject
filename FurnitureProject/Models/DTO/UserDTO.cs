@@ -39,6 +39,7 @@ namespace FurnitureProject.Models.DTO
         [Display(Name = AppConstants.Display.UserStatus)]
         public string Status { get; set; } = "active";
         public DateTime? CreatedAt { get; set; }
+        public int OrderCount { get; set; } = 0;
         public AddressDTO Address { get; set; } = new AddressDTO();
         public List<AddressDTO> Addresses { get; set; } = new List<AddressDTO>();
     }

@@ -48,15 +48,19 @@
                     <a asp-action="ForgotPassword" asp-controller="User">Quên mật khẩu?</a>
                 </div>
                 <hr />
-                <div class="d-grid gap-2 mt-3">
-                    <a href="~/signin-google" class="btn btn-outline-danger btn-block rounded-5" style="border-radius: 0.5rem;">
-                        <i class="bi bi-google"></i> Đăng nhập với Google
-                    </a>
-                    <a href="~/signin-facebook" class="btn btn-outline-primary btn-block rounded-5" style="border-radius: 0.5rem;">
-                        <i class="bi bi-facebook"></i> Đăng nhập với Facebook
-                    </a>
-                </div>
             </form>
+                <div class="d-grid gap-2 mt-3">
+                    <form asp-action="SignInGoogle" asp-controller="User" method="Get">
+                        <button type="submit" class="btn btn-outline-danger btn-block rounded-5" style="border-radius: 0.5rem; width: 100%">
+                            <i class="bi bi-google"></i> Đăng nhập với Google
+                        </button>
+                    </form>
+                @* <form asp-action="SignInFacebook" asp-controller="User" method="Get">
+                        <button type="submit" class="btn btn-outline-primary btn-block rounded-5" style="border-radius: 0.5rem; width: 100%">
+                            <i class="bi bi-facebook"></i> Đăng nhập với Facebook
+                        </button>
+                    </form> *@
+                </div>
         </div>
     </div>
 </div>

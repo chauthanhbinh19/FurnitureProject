@@ -152,24 +152,23 @@
                                 }
                             </td>
                             <td>
-                                <form asp-controller="AdminTag" asp-action="Update" method="get" style="display:inline;">
+                                <form asp-controller="AdminTag" asp-action="Detail" method="get" style="display:inline;">
                                     <input type="hidden" name="id" value="@tag.Id" />
-                                    <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                        <i class="bi bi-pencil-square"></i>
+                                    <button type="submit" class="btn btn-sm text-success" title="Chi tiết">
+                                        <i class="fa-solid fa-eye fa-1-5x"></i>
                                     </button>
                                 </form>
-                                @* <form asp-controller="tag" asp-action="Delete" method="post" style="display:inline;"
-                              onsubmit="return confirm('Bạn có chắc muốn xoá user này?');">
-                            <input type="hidden" name="id" value="@tag.Id" />
-                            <button type="submit" class="btn btn-sm btn-danger" title="Xoá">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form> *@
+                                <form asp-controller="AdminTag" asp-action="Update" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="@tag.Id" />
+                                    <button type="submit" class="btn btn-sm text-primary" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen-to-square fa-1-5x"></i>
+                                    </button>
+                                </form>
                                 <form asp-controller="AdminTag" asp-action="Delete" method="post" style="display:inline;"
                                       onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
                                     <input type="hidden" name="id" value="@tag.Id" />
-                                    <button type="submit" class="btn btn-sm btn-danger delete-tag" data-id="@tag.Id" title="Xoá">
-                                        <i class="bi bi-trash"></i>
+                                    <button type="submit" class="btn btn-sm text-danger delete-tag" data-id="@tag.Id" title="Xoá">
+                                        <i class="fa-solid fa-trash fa-1-5x"></i>
                                     </button>
                                 </form>
                             </td>

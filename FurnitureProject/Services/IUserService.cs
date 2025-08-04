@@ -9,6 +9,7 @@ namespace FurnitureProject.Services
         Task<User?> GetByIdAsync(Guid id);
         Task<User?> GetByUsernameAsync(string username);
         Task<User?> GetByEmailAsync(string email);
+        Task<int> GetTotalUsersAsync(DateTime from, DateTime to);
         Task<(bool Success, string? Message)> CreateAsync(UserDTO userDTO);
         Task<(bool Success, string? Message)> UpdateAsync(UserDTO userDTO);
         Task<(bool Success, string? Message)> DeleteAsync(Guid id);

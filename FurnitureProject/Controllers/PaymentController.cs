@@ -77,7 +77,18 @@ namespace FurnitureProject.Controllers
 
             paymentViewModel.Order = new OrderDTO
             {
-                Addresses = addresses.ToList(),
+                Addresses = addresses.Select(a => new AddressDTO
+                {
+                    Id = a.Id,
+                    UserId = a.UserId,
+                    Street = a.Street,
+                    Ward = a.Ward,
+                    District = a.District,
+                    City = a.City,
+                    Country = a.Country,
+                    PostalCode = a.PostalCode,
+                    IsDefault = a.IsDefault
+                }).ToList()
             };
 
             return View(paymentViewModel);
@@ -144,17 +155,13 @@ namespace FurnitureProject.Controllers
                             DiscountPrice = discountPrice,
                         };
                     }).ToList(),
-                    Address = new Address
-                    {
-                        Id = paymentViewModel.Order.AddressId,
-                    }
                 };
 
                 orderDto.TotalAmount = orderDto.Products.Sum(p => 
                     (p.DiscountPrice > 0 ? p.DiscountPrice : p.Price) * p.Quantity
                 );
 
-                var (success, message) = await _orderService.CreateAsync(orderDto);
+                var (success, message) = await _orderService.PaymentAsync(orderDto);
                 if (!success)
                 {
                     TempData[AppConstants.Status.Error] = AppConstants.LogMessages.OrderPaymentFailed;
@@ -169,7 +176,7 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.OrderPaymentSuccessfully;
                 return RedirectToAction("Index", "Home");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.OrderPaymentFailed;
                 return RedirectToAction("Index", "Payment");

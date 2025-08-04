@@ -184,9 +184,27 @@
                         <tr>
                             @* <td>@voucher.Id.ToString().Substring(0, 16)</td> *@
                             <td>@voucher.Code</td>
-                            <td>@voucher.DiscountPercent</td>
-                            <td>@voucher.DiscountAmount</td>
-                            <td>@voucher.CreatedAt</td>
+                            <td class="text-end">
+                                @if (voucher.DiscountPercent > 0)
+                                {
+                                    <span>@voucher.DiscountPercent %</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">0</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                @if (voucher.DiscountAmount > 0)
+                                {
+                                    <span>@voucher.DiscountAmount.ToString("N0", System.Globalization.CultureInfo.InvariantCulture) + " đ"</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">0</span>
+                                }
+                            </td>
+                            <td>@voucher.CreatedAt?.ToString("dd/MM/yyyy")</td>
                             <td>@voucher.ExpiryDate.ToString("dd/MM/yyyy")</td>
                             <td>
                                 @if (voucher.Status == "active")
@@ -215,17 +233,23 @@
                                 }
                             </td>
                             <td>
+                                <form asp-controller="AdminVoucher" asp-action="Detail" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="@voucher.Id" />
+                                    <button type="submit" class="btn btn-sm text-success" title="Chi tiết">
+                                        <i class="fa-solid fa-eye fa-1-5x"></i>
+                                    </button>
+                                </form>
                                 <form asp-controller="AdminVoucher" asp-action="Update" method="get" style="display:inline;">
                                     <input type="hidden" name="id" value="@voucher.Id" />
-                                    <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                        <i class="bi bi-pencil-square"></i>
+                                    <button type="submit" class="btn btn-sm text-primary" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen-to-square fa-1-5x"></i>
                                     </button>
                                 </form>
                                 <form asp-controller="AdminVoucher" asp-action="Delete" method="post" style="display:inline;"
                                       onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
                                     <input type="hidden" name="id" value="@voucher.Id" />
-                                    <button type="submit" class="btn btn-sm btn-danger delete-tag" data-id="@voucher.Id" title="Xoá">
-                                        <i class="bi bi-trash"></i>
+                                    <button type="submit" class="btn btn-sm text-danger delete-tag" data-id="@voucher.Id" title="Xoá">
+                                        <i class="fa-solid fa-trash fa-1-5x"></i>
                                     </button>
                                 </form>
                             </td>

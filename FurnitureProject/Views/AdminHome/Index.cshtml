@@ -1,148 +1,324 @@
-﻿@{
+﻿@using FurnitureProject.Models.DTO
+@{
     ViewData["Title"] = "Trang chủ dashboard";
+    var topCustomers = ViewBag.TopCustomers as List<(Guid UserId, string FullName, int OrderCount)>;
+    var topProducts = ViewBag.TopProducts as List<ProductDTO>;
 }
+<div class="container-fluid px-4">
+    <div class="d-flex items-center align-items-center gap-4">
+        <!-- Left arrow -->
+        <button class="p-2 rounded-3 card">
+            <i class="fa-solid fa-angle-left"></i>
+        </button>
+        @* <button class="card px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100">Recently Applied</button> *@
+        <div class="col-md-1-5">
+            <form method="get" asp-action="Index" class="d-flex gap-2 flex-wrap">
+                <input type="hidden" name="range" value="3" />
+                <button type="submit" 
+                        class="btn card @(ViewBag.SelectedRange == 3 ? "border-primary text-primary" : "")" 
+                        style="width: 100%;">3 ngày trước</button>
+            </form>
+        </div>
+        <div class="col-md-1-5">
+            <form method="get" asp-action="Index">
+                <input type="hidden" name="range" value="7" />
+                <button type="submit" 
+                        class="btn card @(ViewBag.SelectedRange == 7 ? "border-primary text-primary" : "")" 
+                        style="width: 100%;">7 ngày trước</button>
+            </form>
+        </div>
+        <div class="col-md-1-5">
+            <form method="get" asp-action="Index">
+                <input type="hidden" name="range" value="15" />
+                <button type="submit" 
+                        class="btn card @(ViewBag.SelectedRange == 15 ? "border-primary text-primary" : "")" 
+                        style="width:100%">15 ngày trước</button>
+            </form>
+        </div>
+        <div class="col-md-1-5">
+            <form method="get" asp-action="Index">
+                <input type="hidden" name="range" value="30" />
+                <button type="submit" 
+                        class="btn card @(ViewBag.SelectedRange == 30 ? "border-primary text-primary" : "")" 
+                        style="width: 100%;">30 ngày trước</button>
+            </form>
+        </div>
+        <div class="col-md-1-5">
+            <form method="get" asp-action="Index">
+                <input type="hidden" name="range" value="365" />
+                <button type="submit" 
+                        class="btn card @(ViewBag.SelectedRange == 365 ? "border-primary text-primary" : "")" 
+                        style="width:100%;">Năm ngoái</button>
+            </form>
+        </div>
+        
+        <!-- Right arrow -->
+        <button class="p-2 rounded-3 card">
+            <i class="fa-solid fa-angle-right"></i>
+        </button>
+
+        <!-- Icon buttons -->
+        <button class="px-4 py-2 rounded-3 card">
+            <i class="fa-solid fa-calendar"></i>
+        </button>
+    </div>
+</div>
 <div class="container-fluid px-4 py-4">
-    <!-- Tổng quan -->
-    <div class="row mb-3 d-flex flex-wrap gap-4 justify-content-between">
-        <div class="col-md-2 col-sm-6 rounded-3">
-            <div class="bg-white rounded-3 p-3 shadow-sm text-center">
-                <i class="bi bi-currency-dollar fs-3 text-primary"></i>
-                <div class="text-uppercase small">Doanh thu</div>
-                <div class="fw-bold fs-5">$2,297,201</div>
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-6 rounded-3">
-            <div class="bg-white rounded-3 p-3 shadow-sm text-center">
-                <i class="bi bi-bank fs-3 text-purple"></i>
-                <div class="text-uppercase small">Lợi nhuận</div>
-                <div class="fw-bold fs-5">$286,397</div>
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-6rounded-3">
-            <div class="bg-white rounded-3 p-3 shadow-sm text-center">
-                <i class="bi bi-truck fs-3 text-danger"></i>
-                <div class="text-uppercase small">Đơn hàng</div>
-                <div class="fw-bold fs-5">5009</div>
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-6 rounded-3">
-            <div class="bg-white rounded-3 p-3 shadow-sm text-center">
-                <i class="bi bi-person fs-3 text-info"></i>
-                <div class="text-uppercase small">Khách hàng</div>
-                <div class="fw-bold fs-5">793</div>
-            </div>
-        </div>
-        <div class="col-md-2 col-sm-6 rounded-3">
-            <div class="bg-white rounded-3 p-3 shadow-sm text-center">
-                <i class="bi bi-calculator fs-3 text-warning"></i>
-                <div class="text-uppercase small">Số lượng bán</div>
-                <div class="fw-bold fs-5">37,873</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Chart & Ranking -->
-    <div class="row mb-3 d-flex flex-wrap gap-4">
-        <div class="col-md-7-5">
-            <div class="bg-white rounded-3 p-4 shadow-sm">
-                <h6 class="fw-bold mb-3">Sales Performance</h6>
-                <canvas id="lineChart"></canvas>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="bg-white rounded-3 p-4 shadow-sm">
-                <h6 class="fw-bold mb-3">Region Performance</h6>
-                <canvas id="barChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <!-- Ranking & Ratio -->
-    <div class="row mb-3 d-flex flex-wrap gap-4">
-        <div class="col-md-7-5">
-            <div class="bg-white rounded-3 p-4 shadow-sm">
-                <h6 class="fw-bold mb-3">Sub-category Ranking</h6>
-                <table class="table table-borderless">
-                    <thead class="text-muted">
-                        <tr>
-                            <th>Item</th>
-                            <th>Category</th>
-                            <th>Quantity</th>
-                            <th>Sales</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Phones</td><td>Technology</td><td>3,289</td><td>$330,007</td></tr>
-                        <tr><td>Chairs</td><td>Furniture</td><td>2,356</td><td>$328,449</td></tr>
-                        <tr><td>Storage</td><td>Office Supplies</td><td>3,158</td><td>$223,844</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="bg-white rounded-3 p-4 shadow-sm">
-                <h6 class="fw-bold mb-3">Performance Ratio</h6>
-                <div class="progress" style="height: 30px;">
-                    <div class="progress-bar bg-primary" style="width: 88.91%;">Revenue</div>
-                    <div class="progress-bar bg-purple" style="width: 11.09%;">Profit</div>
+    <div class="row gx-4 gy-3 justify-content-between">
+        <div class="col-md-2-5">
+            <div class="card p-3 flex-column flex-column gap-2 card-box">
+                <div class="d-flex align-items-center gap-2">
+                   <i class="fa-solid fa-money-bills text-conflowerblue"></i>
+                    <span class="fw-medium">Tổng doanh thu</span>
                 </div>
+                <span class="fw-bold fs-5">@ViewBag.TotalRevenue.ToString("N0") ₫</span>
+                <span class="text-success form-control">+16% in last 7 days</span>
+            </div>
+        </div>
+        <div class="col-md-2-5">
+                <div class="card p-3 flex-column flex-column gap-2 card-box">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-user-group text-conflowerblue"></i>
+                        <span class="fw-medium">Tổng khách hàng</span>
+                </div>
+                <span class="fw-bold fs-5">@ViewBag.TotalUsers</span>
+                    <span class="text-danger form-control">-10% in last 7 days</span>
+            </div>
+        </div>
+        <div class="col-md-2-5">
+                <div class="card p-3 flex-column flex-column gap-2 card-box">
+                    <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-file-invoice text-conflowerblue"></i>
+                        <span class="fw-medium">Tổng số giao dịch</span>
+                </div>
+                <span class="fw-bold fs-5">@ViewBag.TotalTransactions</span>
+                    <span class="text-success form-control">+10% increase</span>
+            </div>
+        </div>
+        <div class="col-md-2-5">
+                <div class="card p-3 flex-column flex-column gap-2 card-box">
+                    <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-boxes-stacked text-conflowerblue"></i>
+                        <span class="fw-medium">Tổng sản phẩm</span>
+                </div>
+                <span class="fw-bold fs-5">@ViewBag.TotalProducts</span>
+                    <span class="text-success form-control">+5% increase</span>
             </div>
         </div>
     </div>
 </div>
-
+<div class="container-fluid px-4">
+    <div class="row gx-4 gy-3 d-flex align-items-stretch justify-content-between">
+        <div class="col-md-6-5 h-100">
+            <div class="card p-3 flex-column flex-column gap-2 card-box">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-user text-conflowerblue"></i>
+                            <span class="fw-medium">Khách hàng tiêu biểu</span>
+                        </div>
+                        <div>
+                            Khách hàng mua hàng nhiều nhất trong @ViewBag.SelectedRange ngày
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column justify-content-end">
+                        <a asp-action="Index" asp-controller="AdminUser" class="px-2 py-2 rounded-3 card">
+                            <i class="fa-solid fa-arrows-turn-right fs-5"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-3">
+                    @foreach (var user in (List<UserDTO>)ViewBag.TopCustomers)
+                    {
+                        <div class="col-md-3-5 d-flex flex-row gap-2 py-2 px-2 card">
+                            <img src="~/images/polar-bear.png" alt="Avatar" class="rounded-5" width="50" height="50">
+                            <div class="d-flex flex-column">
+                                <div class="fw-medium"
+                                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; font-size: 0.95rem;">
+                                    @user.FullName
+                                </div>
+                                <div class="fw-light">Mua: @user.OrderCount</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 h-100">
+            <div class="card p-3 flex-column flex-column gap-2 card-box">
+                <span class="fw-medium fs-5">Đơn hàng theo trạng thái</span>
+                <canvas id="orderStatusChart" height="175"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid px-4 mt-4 mb-4">
+    <div class="row gx-4 gy-3 justify-content-between">
+        <div class="col-md-6-5">
+            <div class="card p-3 flex-column flex-column gap-2 card-box">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="fs-5 d-flex align-items-center gap-2">
+                            <i class="fas fa-boxes-stacked text-conflowerblue"></i>
+                            <span class="fw-medium">Sản phẩm tiêu biểu</span>
+                        </div>
+                        <div>
+                            Sản phẩm được mua nhiều nhất trong @ViewBag.SelectedRange ngày
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column justify-content-end">
+                        <a asp-action="Index" asp-controller="AdminProduct" class="px-2 py-2 rounded-3 card">
+                            <i class="fa-solid fa-arrows-turn-right fs-5"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-3">
+                    @foreach(var product in topProducts)
+                    {
+                        <div class="col-md-3-5 d-flex flex-column gap-2 py-3 px-3 card">
+                            <div class="d-flex justify-content-center" style="aspect-ratio: 1/1; width: 100%; overflow:hidden;">
+                                <img src="@product.ImageUrls[0]" alt="Avatar" class="rounded-5" style="object-fit:cover; width: 100%; height: 100%; display:block; border-radius: 10px;">
+                            </div>
+                            <div class="d-flex flex-column">
+                                <div class="fw-medium"
+                                     style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; font-size: 0.95rem;">
+                                    @product.Name
+                                </div>
+                                <div class="fw-light">Đã bán: @product.Quantity</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card p-3 flex-column flex-column gap-2 card-box">
+                <span class="fw-medium fs-5">Doanh thu theo ngày</span>
+                <canvas id="revenueLineChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Chart script -->
-<script>
-    const lineChart = new Chart(document.getElementById('lineChart'), {
-        type: 'line',
-        data: {
-            labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-            datasets: [{
-                label: 'Revenue',
-                data: [0.09, 0.07, 0.2, 0.14, 0.15, 0.14, 0.15, 0.16, 0.3, 0.2, 0.35, 0.32],
-                borderColor: '#6C63FF',
-                backgroundColor: 'rgba(108,99,255,0.2)',
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
-    });
+@section Scripts{
+    <script>
+        const ctx = document.getElementById('orderStatusChart').getContext('2d');
 
-    const barChart = new Chart(document.getElementById('barChart'), {
-        type: 'bar',
-        data: {
-            labels: ['West', 'East', 'Central', 'South'],
-            datasets: [
+        const labels = [];
+        const data = [];
+
+        @* Tạo dữ liệu từ ViewBag *@
+        @if (ViewBag.OrderStatusCounts != null)
+        {
+                foreach (var item in (Dictionary<string, int>)ViewBag.OrderStatusCounts)
                 {
-                    label: 'Furniture',
-                    data: [700, 600, 500, 400],
-                    backgroundColor: '#6366F1'
-                },
-                {
-                    label: 'Office Supplies',
-                    data: [900, 800, 600, 500],
-                    backgroundColor: '#8B5CF6'
-                },
-                {
-                    label: 'Technology',
-                    data: [800, 700, 650, 550],
-                    backgroundColor: '#EF4444'
+                        <text>
+                            labels.push('@item.Key');
+                            data.push(@item.Value);
+                        </text>
                 }
-            ]
-        },
-        options: {
-            responsive: true,
-            indexAxis: 'y',
-            scales: {
-                x: { stacked: true },
-                y: { stacked: true }
-            }
         }
-    });
-</script>
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Số lượng đơn',
+                    data: data,
+                    backgroundColor: [
+                        '#f6c23e', // Pending
+                        '#36b9cc', // Confirmed
+                        '#4e73df', // Processing
+                        '#1cc88a', // Shipping
+                        '#858796', // Completed
+                        '#e74a3b'  // Cancelled
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'x',
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+    <script>
+        const revenueLabels = [];
+        const revenueData = [];
+
+        @* Tạo dữ liệu từ ViewBag.RevenueByDate *@
+        @if (ViewBag.RevenueByDate != null)
+        {
+                foreach (var item in (Dictionary<string, decimal>)ViewBag.RevenueByDate)
+                {
+                        <text>
+                            revenueLabels.push("@item.Key");
+                            revenueData.push(@item.Value);
+                        </text>
+                }
+        }
+
+        new Chart(document.getElementById('revenueLineChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: revenueLabels,
+                datasets: [{
+                    label: 'Doanh thu theo ngày',
+                    data: revenueData,
+                    fill: true,
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            // display: true,
+                            text: 'VNĐ'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN') + ' ₫';
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            // display: true,
+                            text: 'Ngày'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Doanh thu: ' + context.parsed.y.toLocaleString('vi-VN') + ' ₫';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

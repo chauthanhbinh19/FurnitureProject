@@ -97,6 +97,26 @@
                         </th>
                         <th class="col with-separator">
                             <div class="d-flex align-items-center sort-wrapper">
+                                Giảm giá (%)
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="DiscountPercent"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "DiscountPercent" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="DiscountPercent"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "DiscountPercent" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
                                 Ngày tạo
                                 <div class="sort-arrows">
                                     <a asp-action="Index"
@@ -144,7 +164,26 @@
                         <tr>
                             @* <td>@promotion.Id.ToString().Substring(0, 16)</td> *@
                             <td>@promotion.Title</td>
-                            <td>@promotion.Description</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(promotion.Description))
+                                {
+                                    @promotion.Description
+                                }
+                                else
+                                {
+                                    <span class="text-muted">N/A</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                @if (promotion.DiscountPercent > 0)
+                                {
+                                    <span>@promotion.DiscountPercent %</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">0</span>
+                                }
+                            </td>
                             <td>@promotion.CreatedAt?.ToString("dd/MM/yyyy")</td>
                             <td>
                                 @if (promotion.Status == "active")
@@ -173,17 +212,23 @@
                                 }
                             </td>
                             <td>
+                                <form asp-controller="AdminPromotion" asp-action="Detail" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="@promotion.Id" />
+                                    <button type="submit" class="btn btn-sm text-success" title="Chi tiết">
+                                        <i class="fa-solid fa-eye fa-1-5x"></i>
+                                    </button>
+                                </form>
                                 <form asp-controller="AdminPromotion" asp-action="Update" method="get" style="display:inline;">
                                     <input type="hidden" name="id" value="@promotion.Id" />
-                                    <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                        <i class="bi bi-pencil-square"></i>
+                                    <button type="submit" class="btn btn-sm text-primary" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen-to-square fa-1-5x"></i>
                                     </button>
                                 </form>
                                 <form asp-controller="AdminPromotion" asp-action="Delete" method="post" style="display:inline;"
                                       onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
                                     <input type="hidden" name="id" value="@promotion.Id" />
-                                    <button type="submit" class="btn btn-sm btn-danger delete-tag" data-id="@promotion.Id" title="Xoá">
-                                        <i class="bi bi-trash"></i>
+                                    <button type="submit" class="btn btn-sm text-danger delete-tag" data-id="@promotion.Id" title="Xoá">
+                                        <i class="fa-solid fa-trash fa-1-5x"></i>
                                     </button>
                                 </form>
                             </td>

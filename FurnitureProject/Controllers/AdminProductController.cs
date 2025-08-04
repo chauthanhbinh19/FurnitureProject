@@ -45,8 +45,8 @@ namespace FurnitureProject.Controllers
         {
             ViewBag.StatusList = new SelectList(
                 new[] {
-                    new { Value = AppConstants.Status.Active, Text = AppConstants.LogMessages.Active },
-                    new { Value = AppConstants.Status.Inactive, Text = AppConstants.LogMessages.Inactive }
+                    new { Value = AppConstants.Status.Active, Text = AppConstants.Display.Active },
+                    new { Value = AppConstants.Status.Inactive, Text = AppConstants.Display.Inactive }
                 },
                 "Value", "Text", status
             );
@@ -241,7 +241,7 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateProductSuccess;
                 return RedirectToAction("Index", "AdminProduct");
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateProductError;
                 return RedirectToAction("Create", "AdminProduct");
             }
@@ -287,7 +287,7 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdateProductSuccess;
                 return RedirectToAction("Index", "AdminProduct");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateProductError;
                 return RedirectToAction("Update", "AdminProduct");
@@ -308,11 +308,176 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteProductSuccess;
                 return RedirectToAction("Index", "AdminProduct");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteProductError;
                 return RedirectToAction("Index", "AdminProduct");
             }
+        }
+        [HttpGet("detail")]
+        public async Task<IActionResult> Detail(Guid id)
+        {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
+            var product = await _productService.GetByIdAsync(id);
+
+            var productDTO = new ProductDTO
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Stock = product.Stock,
+                CategoryId = product.CategoryId,
+                ImageUrls = product.ProductImages?.Select(p => p.ImageUrl).ToList() ?? new List<string>(),
+                TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new List<Guid>()
+            };
+
+            await SetCategoryViewBag();
+            //await SetTagViewBag(productDTO.TagIds);
+            var tags = await _tagService.GetAllAsync();
+            ViewBag.Tags = tags;
+            return View(productDTO);
+        }
+        [HttpGet("product-popup")]
+        public async Task<IActionResult> ProductPopup(ProductFilterDTO filter, int page = 1)
+        {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
+
+            int pageSize = 10;
+            var products = await _productService.GetAllAsync();
+            var categories = await _categoryService.GetAllAsync();
+            var tags = await _tagService.GetAllAsync();
+            var promotions = await _promotionService.GetAllAsync();
+            var today = DateTime.UtcNow;
+
+            var productDtos = products.Select(product =>
+            {
+                var activePromotion = promotions.FirstOrDefault(promo =>
+                    promo.ProductPromotions.Any(pp => pp.ProductId == product.Id) &&
+                    promo.EndDate >= today
+                );
+
+                decimal discountPrice = 0;
+                if (activePromotion != null)
+                {
+                    var discount = activePromotion.DiscountPercent;
+                    discountPrice = product.Price * (1 - discount / 100m);
+                }
+
+                return new ProductDTO
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    Stock = product.Stock,
+                    Status = product.Status,
+                    Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                    CreatedAt = product.CreatedAt,
+                    ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                    TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                    DiscountPrice = discountPrice,
+                };
+            }).ToList();
+
+
+            // Search by key word
+            if (!string.IsNullOrEmpty(filter.SearchKeyWord))
+            {
+                productDtos = productDtos
+                    .Where(u => u.Name.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase) ||
+                                (u.Description != null &&
+                                u.Description.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
+            }
+
+            // Filter by category id
+            if (filter.FilterCategoryId.HasValue)
+            {
+                productDtos = productDtos
+                    .Where(p => p.Category?.Id == filter.FilterCategoryId.Value)
+                    .ToList();
+            }
+
+            // Filter by status
+            if (filter.FilterByStatus != null && filter.FilterByStatus.Any())
+            {
+                productDtos = productDtos
+                   .Where(p => !string.IsNullOrEmpty(p.Status) && filter.FilterByStatus.Equals(p.Status))
+                   .ToList();
+            }
+
+            // Filter by tag id
+            if (filter.FilterTagId.HasValue)
+            {
+                productDtos = productDtos
+                    .Where(p => p.TagIds != null && p.TagIds.Any(id => id == filter.FilterTagId.Value))
+                    .ToList();
+            }
+
+            // Sort Order
+            if (!string.IsNullOrEmpty(filter.SortColumn))
+            {
+                bool isAscending = filter.SortDirection?.ToLower() == "asc";
+
+                productDtos = filter.SortColumn switch
+                {
+                    "Name" => isAscending
+                        ? productDtos.OrderBy(p => p.Name).ToList()
+                        : productDtos.OrderByDescending(p => p.Name).ToList(),
+
+                    "Price" => isAscending
+                        ? productDtos.OrderBy(p => p.Price).ToList()
+                        : productDtos.OrderByDescending(p => p.Price).ToList(),
+
+                    "Stock" => isAscending
+                        ? productDtos.OrderBy(p => p.Stock).ToList()
+                        : productDtos.OrderByDescending(p => p.Stock).ToList(),
+
+                    "CategoryName" => isAscending
+                        ? productDtos.OrderBy(p => p.Category.Name).ToList()
+                        : productDtos.OrderByDescending(p => p.Category.Name).ToList(),
+
+                    "CreatedAt" => isAscending
+                        ? productDtos.OrderBy(p => p.CreatedAt).ToList()
+                        : productDtos.OrderByDescending(p => p.CreatedAt).ToList(),
+
+                    "Status" => isAscending
+                        ? productDtos.OrderBy(p => p.Status).ToList()
+                        : productDtos.OrderByDescending(p => p.Status).ToList(),
+
+                    _ => productDtos
+                };
+            }
+
+
+            int totalProducts = productDtos.Count();
+            var pagedProducts = productDtos
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var productViewModel = new ProductViewModel
+            {
+                Products = pagedProducts,
+                Filter = filter
+            };
+
+            var tagMap = tags.ToDictionary(t => t.Id, t => t.Name);
+            ViewBag.TagMap = tagMap;
+
+            await SetCategoryViewBag(filter.FilterCategoryId);
+            await SetTagViewBag(filter.FilterTagId);
+            SetStatusViewBag(filter.FilterByStatus);
+
+            ViewBag.Status = "active";
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.Keyword = filter.SearchKeyWord;
+            ViewBag.TotalProducts = totalProducts;
+            return PartialView("_ProductPopup", productViewModel);
         }
     }
 }

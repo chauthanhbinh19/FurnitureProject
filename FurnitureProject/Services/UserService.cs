@@ -25,7 +25,17 @@ namespace FurnitureProject.Services
         public async Task<User?> GetByUsernameAsync(string username) => await _userRepo.GetByUsernameAsync(username);
 
         public async Task<User?> GetByEmailAsync(string email) => await _userRepo.GetByEmailAsync(email);
+        public async Task<int> GetTotalUsersAsync(DateTime from, DateTime to)
+        {
+            var allUsers = await GetAllAsync();
 
+            var filteredUsers = allUsers
+                .Where(o => o.Status == "active" && o.CreatedAt >= from && o.CreatedAt <= to)
+                .ToList();
+
+            var totalUsers = filteredUsers.Count;
+            return totalUsers;
+        }
         public async Task<(bool Success, string? Message)> CreateAsync(UserDTO userDTO)
         {
             try

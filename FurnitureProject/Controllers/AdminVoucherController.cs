@@ -241,7 +241,7 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateProductSuccess;
                 return RedirectToAction("Index", "AdminVoucher");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateProductError;
                 return RedirectToAction("Create", "AdminVoucher");
@@ -367,7 +367,7 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdateVoucherSuccess;
                 return RedirectToAction("Index", "AdminVoucher");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateVoucherError;
                 return RedirectToAction("Update", "AdminVoucher");
@@ -389,11 +389,65 @@ namespace FurnitureProject.Controllers
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.DeleteVoucherSuccess;
                 return RedirectToAction("Index", "AdminVoucher");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData[AppConstants.Status.Error] = AppConstants.LogMessages.DeleteVoucherError;
                 return RedirectToAction("Index", "AdminVoucher");
             }
+        }
+        [HttpGet("detail")]
+        public async Task<IActionResult> Detail(Guid id)
+        {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "admin");
+            var voucher = await _voucherService.GetByIdAsync(id);
+            var vouchers = await _voucherService.GetAllAsync();
+            var products = await _productService.GetAllAsync();
+
+            var selectedProductIds = voucher.ProductVouchers?
+                .Select(pp => pp.ProductId)
+                .ToList() ?? new List<Guid>();
+
+            var voucherDTO = new VoucherDTO
+            {
+                Id = voucher.Id,
+                Code = voucher.Code,
+                DiscountPercent = voucher.DiscountPercent,
+                DiscountAmount = voucher.DiscountAmount,
+                ExpiryDate = voucher.ExpiryDate,
+                UsageLimit = voucher.UsageLimit,
+                TimeUsed = voucher.TimeUsed,
+                IsValid = voucher.IsValid,
+                Status = voucher.Status,
+                CreatedAt = voucher.CreatedAt,
+                Products = products
+                    .Where(product => selectedProductIds.Contains(product.Id))
+                    .Select(product =>
+                    {
+                        var isInActiveVoucher = vouchers.Any(p =>
+                            p.ExpiryDate >= DateTime.Today &&
+                            p.ProductVouchers.Any(pp => pp.ProductId == product.Id));
+
+                        return new ProductDTO
+                        {
+                            Id = product.Id,
+                            Name = product.Name,
+                            Description = product.Description,
+                            Price = product.Price,
+                            Stock = product.Stock,
+                            Status = product.Status,
+                            //Category = categories.FirstOrDefault(c => c.Id == product.CategoryId),
+                            CreatedAt = product.CreatedAt,
+                            ImageUrls = product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                            TagIds = product.ProductTags?.Select(pt => pt.TagId).ToList() ?? new(),
+                            VoucherStatus = isInActiveVoucher ? "In Voucher" : "Available"
+                        };
+                    }).ToList(),
+                SelectedProductIds = voucher.ProductVouchers?.Select(pp => pp.ProductId).ToList() ?? new List<Guid>()
+            };
+            SetStatusViewBag(voucher.Status);
+
+            return View(voucherDTO);
         }
     }
 }

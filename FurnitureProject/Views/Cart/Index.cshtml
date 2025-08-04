@@ -62,7 +62,7 @@
                                                 </div>
                                             </td>
                                             <td class="text-end">
-                                                @if (item.DiscountPrice != null && item.DiscountPrice > 0)
+                                                @if (item.DiscountPrice > 0)
                                                 {
                                                     <span class="text-danger fw-bold">@item.DiscountPrice.ToString("N0") ₫</span>
 
@@ -75,7 +75,7 @@
                                                 }
                                             </td>
                                             <td>
-                                                @if (item.DiscountPrice != null && item.DiscountPrice > 0)
+                                                @if (item.DiscountPrice > 0)
                                                 {
                                                     <td class="text-end fw-bold">@((item.DiscountPrice * item.Quantity).ToString("N0")) ₫</td>
                                                 }

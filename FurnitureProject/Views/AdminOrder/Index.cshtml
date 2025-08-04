@@ -157,26 +157,6 @@
                         </th>
                         <th class="col with-separator">
                             <div class="d-flex align-items-center sort-wrapper">
-                                Tổng tiền
-                                <div class="sort-arrows">
-                                    <a asp-action="Index"
-                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
-                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
-                                       asp-route-SortColumn="TotalAmount"
-                                       asp-route-SortDirection="asc"
-                                       class="@(Model.Filter.SortColumn == "TotalAmount" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
-
-                                    <a asp-action="Index"
-                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
-                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
-                                       asp-route-SortColumn="TotalAmount"
-                                       asp-route-SortDirection="desc"
-                                       class="@(Model.Filter.SortColumn == "TotalAmount" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
-                                </div>
-                            </div>
-                        </th>
-                        <th class="col with-separator">
-                            <div class="d-flex align-items-center sort-wrapper">
                                 Số lượng
                                 <div class="sort-arrows">
                                     <a asp-action="Index"
@@ -192,6 +172,26 @@
                                        asp-route-SortColumn="TotalItems"
                                        asp-route-SortDirection="desc"
                                        class="@(Model.Filter.SortColumn == "TotalItems" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Tổng tiền
+                                <div class="sort-arrows">
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="TotalAmount"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "TotalAmount" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Index"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="TotalAmount"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "TotalAmount" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
                                 </div>
                             </div>
                         </th>
@@ -212,45 +212,64 @@
                             </td>
                             <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
                             <td>
-                                @if (order.Status == "active")
+                                @if (order.Status == "pending")
                                 {
-                                    <span class="badge active-badge">
-                                        <i class="bi bi-check-circle-fill me-1"></i> Hoạt động
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-hourglass-start me-1"></i> Chờ xác nhận
                                     </span>
                                 }
-                                else if (order.Status == "inactive")
+                                else if (order.Status == "confirmed")
                                 {
-                                    <span class="badge inactive-badge" ">
-                                        <i class="bi bi-pause-circle-fill me-1"></i> Không hoạt động
+                                    <span class="badge bg-primary">
+                                        <i class="fas fa-check-circle me-1"></i> Đã xác nhận
                                     </span>
                                 }
-                                else if (order.Status == "pending")
+                                else if (order.Status == "processing")
                                 {
-                                    <span class="badge pending-badge">
-                                        <i class="bi bi-slash-circle-fill me-1"></i> Đang chờ
+                                    <span class="badge bg-info text-dark">
+                                        <i class="fas fa-cogs me-1"></i> Đang xử lý
                                     </span>
                                 }
-                                else
+                                else if (order.Status == "shipping")
                                 {
-                                    <span class="badge">
-                                        <i class="bi bi-question-circle-fill me-1"></i> @order.Status
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-truck me-1"></i> Đang giao hàng
                                     </span>
                                 }
+                                else if (order.Status == "completed")
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-double me-1"></i> Hoàn thành
+                                    </span>
+                                }
+                                else if (order.Status == "cancelled")
+                                {
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times-circle me-1"></i> Đã huỷ
+                                    </span>
+                                }
+
                             </td>
-                            <td>@order.TotalAmount.ToString("N0") ₫</td>
-                            <td>@order.TotalItems</td>
+                            <td class="text-end">@order.TotalItems</td>
+                            <td class="text-end">@order.TotalAmount.ToString("N0") ₫</td>
                             <td>
+                                <form asp-controller="AdminOrder" asp-action="Detail" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <button type="submit" class="btn btn-sm text-success" title="Chi tiết">
+                                        <i class="fa-solid fa-eye fa-1-5x"></i>
+                                    </button>
+                                </form>
                                 <form asp-controller="AdminOrder" asp-action="Update" method="get" style="display:inline;">
                                     <input type="hidden" name="id" value="@order.Id" />
-                                    <button type="submit" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                        <i class="bi bi-pencil-square"></i>
+                                    <button type="submit" class="btn btn-sm text-primary" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen-to-square fa-1-5x"></i>
                                     </button>
                                 </form>
                                 <form asp-controller="AdminOrder" asp-action="Delete" method="post" style="display:inline;"
                                       onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
                                     <input type="hidden" name="id" value="@order.Id" />
-                                    <button type="submit" class="btn btn-sm btn-danger delete-tag" data-id="@order.Id" title="Xoá">
-                                        <i class="bi bi-trash"></i>
+                                    <button type="submit" class="btn btn-sm text-danger delete-tag" data-id="@order.Id" title="Xoá">
+                                        <i class="fa-solid fa-trash fa-1-5x"></i>
                                     </button>
                                 </form>
                             </td>

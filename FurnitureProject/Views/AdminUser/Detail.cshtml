@@ -1,0 +1,209 @@
+﻿@model FurnitureProject.Models.DTO.UserDTO
+
+@{
+    ViewData["Title"] = "Chi tiết người dùng";
+}
+<div class="title-box">
+    <div class="text-box">
+        <span class="title ms-2">Chi tiết người dùng</span>
+    </div>
+</div>
+<div class="container mt-4 pb-5">
+    <div class="row gx-4 gy-3 justify-content-between">
+        <div class="card shadow mb-4">
+            <div class="card-header fs-5 d-flex align-items-center gap-2">
+                <i class="fas fa-user-circle text-conflowerblue"></i>
+                <span>Thông tin cá nhân</span>
+            </div>
+            <div class="card-body">
+                <div class="row justify-content-between mb-3">
+                    <div class="col-md-3-5">
+                        <label asp-for="FullName" class="form-label fw-medium"></label>
+                        <span class="form-control">
+                            @if (Model.FullName == null)
+                            {
+                                <span class="text-muted">N/A</span>
+                            }else
+                            {
+                                <span>@Model.FullName</span>
+                            }
+                        </span>
+                    </div>
+                    <div class="col-md-3-5">
+                        <label asp-for="Email" class="form-label fw-medium"></label>
+                        <span class="form-control">
+                            @if (Model.Email == null)
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                            else
+                            {
+                                <span>@Model.Email</span>
+                            }
+                        </span>
+                    </div>
+                    <div class="col-md-3-5">
+                        <label asp-for="PhoneNumber" class="form-label fw-medium"></label>
+                        <span class="form-control">
+                            @if (Model.PhoneNumber == null)
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                            else
+                            {
+                                <span>@Model.PhoneNumber</span>
+                            }
+                        </span>
+                    </div>
+                </div>
+                <div class="row justify-content-between mb-3">
+                    <div class="col-md-2-5">
+                        <label asp-for="DateOfBirth" class="form-label fw-medium"></label>
+                        <span class="form-control">
+                            @if (Model.DateOfBirth == null)
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                            else
+                            {
+                                <span>@Model.DateOfBirth?.ToString("dd/MM/yyyy")</span>
+                            }
+                        </span>
+                    </div>
+                    <div class="col-md-2-5">
+                        <label asp-for="Gender" class="form-label fw-medium"></label>
+                        <span class="form-control">
+                            @if (Model.Gender == null)
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                            else
+                            {
+                                <span>@Model.Gender</span>
+                            }
+                        </span>
+                    </div>
+                    <div class="col-md-2-5">
+                        <label asp-for="Role" class="form-label fw-medium"></label>
+                        <span class="form-control">
+                            @if (Model.Role == null)
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                            else
+                            {
+                                <span>@Model.Role</span>
+                            }
+                        </span>
+                    </div>
+                    <div class="col-md-2-5 mb-3 d-flex flex-column">
+                        <label asp-for="Status" class="form-label fw-medium"></label>
+                        <div">
+                            @if (Model.Status == null)
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                            else
+                            {
+                                @if (Model.Status == "active")
+                                {
+                                    <span class="badge active-badge">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Hoạt động
+                                    </span>
+                                }
+                                else if (Model.Status == "inactive")
+                                {
+                                    <span class="badge inactive-badge" ">
+                                        <i class="bi bi-pause-circle-fill me-1"></i> Không hoạt động
+                                    </span>
+                                }
+                                else if (Model.Status == "banned")
+                                {
+                                    <span class="badge">
+                                        <i class="bi bi-slash-circle-fill me-1"></i> Bị khóa
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge">
+                                        <i class="bi bi-question-circle-fill me-1"></i> @Model.Status
+                                    </span>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header fs-5 d-flex align-items-center gap-2">
+                <i class="fas fa-user-cog text-conflowerblue"></i>
+                <span>Tài khoản</span>
+            </div>
+            <div class="card-body">
+                <div class="row d-flex gap-4 mb-3">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-medium">Tên đăng nhập</label>
+                        <span class="form-control">@Model.Username</span>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-medium">Mật khẩu</label>
+                        <span class="form-control">******</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header fs-5 d-flex align-items-center gap-2">
+                <i class="fas fa-map-marker-alt text-conflowerblue"></i>
+                <span>Địa chỉ</span>
+            </div>
+            <div class="card-body">
+                @if (Model.Addresses != null && Model.Addresses.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mặc định</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Phường/xã</th>
+                                    <th>Quận/huyện</th>
+                                    <th>Thành phố</th>
+                                    <th>Quốc gia</th>
+                                    <th>Mã bưu chính</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var address in Model.Addresses)
+                                {
+                                    <tr>
+                                        <td>
+                                            @if (address.IsDefault == true)
+                                            {
+                                                <span class="badge bg-success">Mặc định</span>
+                                            }
+                                        </td>
+                                        <td>@address.Street</td>
+                                        <td>@address.Ward</td>
+                                        <td>@address.District</td>
+                                        <td>@address.City</td>
+                                        <td>@address.Country</td>
+                                        <td>@address.PostalCode</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Không có địa chỉ nào.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
