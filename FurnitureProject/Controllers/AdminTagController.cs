@@ -24,23 +24,11 @@ namespace FurnitureProject.Controllers
         {
             ViewBag.StatusList = new SelectList(
                 new[] {
-                    new { Value = AppConstants.Status.Active, Text = AppConstants.LogMessages.Active },
-                    new { Value = AppConstants.Status.Inactive, Text = AppConstants.LogMessages.Inactive }
+                    new { Value = AppConstants.Status.Active, Text = AppConstants.Display.Active },
+                    new { Value = AppConstants.Status.Inactive, Text = AppConstants.Display.Inactive }
                 },
                 "Value", "Text", status
             );
-        }
-        private void SetSortOptions(string? selectedSort = null)
-        {
-            var sortOptions = new List<SelectListItem>
-            {
-                new SelectListItem { Text = AppConstants.LogMessages.Newest, Value = AppConstants.Status.Newest },
-                new SelectListItem { Text = AppConstants.LogMessages.Oldest, Value = AppConstants.Status.Oldest },
-                //new SelectListItem { Text = "Giá tăng dần", Value = "price-asc" },
-                //new SelectListItem { Text = "Giá giảm dần", Value = "price-desc" }
-            };
-
-            ViewBag.SortOptions = new SelectList(sortOptions, "Value", "Text", selectedSort);
         }
         [Route("")]
         public async Task<IActionResult> Index(TagFilterDTO filter, int page = 1)

@@ -3,10 +3,62 @@
 @{
     ViewData["Title"] = "Tạo đơn hàng";
 }
+@{
+    string status = Model?.Status ?? "";
+    List<string> steps = new List<string> { "pending", "confirmed", "processing", "shipping", "completed" };
+    Dictionary<string, string> labels = new Dictionary<string, string> {
+        { "pending", "Chờ xác nhận" },
+        { "confirmed", "Đã xác nhận" },
+        { "processing", "Đang xử lý" },
+        { "shipping", "Đang giao hàng" },
+        { "completed", "Hoàn thành" }
+    };
+    Dictionary<string, string> icons = new Dictionary<string, string> {
+        { "pending", "fa-box" },
+        { "confirmed", "fa-check-circle" },
+        { "processing", "fa-cogs" },
+        { "shipping", "fa-truck" },
+        { "completed", "fa-handshake" }
+    };
+    int currentIndex = status != null ? steps.IndexOf(status) : -1;
+}
 
 <div class="title-box">
     <div class="text-box">
         <span class="title ms-2">Tạo đơn hàng</span>
+    </div>
+</div>
+<div class="title-box">
+    <div class="d-flex justify-content-between align-items-start w-100">
+        @for (int i = 0; i < steps.Count; i++)
+        {
+            var step = steps[i];
+            bool isActive = i <= currentIndex;
+            var bgClass = isActive ? "bg-conflowerblue text-white" : "bg-secondary text-white";
+            var textClass = isActive ? "text-conflowerblue" : "text-secondary";
+            <text>
+                <div class="step-wrapper d-flex flex-column align-items-center flex-grow-1 position-relative">
+                    <!-- Container with line & circle -->
+                    <div class="circle-container position-relative w-100 d-flex justify-content-center">
+                        <div class="step-circle @bgClass z-2 d-flex justify-content-center align-items-center">
+                            <i class="fas @icons[step]"></i>
+                        </div>
+
+                        @if (i < steps.Count - 1)
+                        {
+                            bool isLineActive = i < currentIndex;
+                            var lineClass = isLineActive ? "bg-conflowerblue" : "bg-secondary";
+                            <div class="step-line @lineClass position-absolute top-50 start-50 translate-middle-y"></div>
+                        }
+                    </div>
+
+                    <!-- Label -->
+                    <div class="step-label mt-2 @textClass text-center">
+                        @labels[step]
+                    </div>
+                </div>
+            </text>
+        }
     </div>
 </div>
 

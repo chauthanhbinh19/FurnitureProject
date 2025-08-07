@@ -98,6 +98,9 @@
             public const string DeleteOrderSuccess = "Order deleted successfully!";
             public const string DeleteOrderError = "Delete order failed!";
 
+            public const string CreateAddressSuccess = "Address created successfully!";
+            public const string CreateAddressError = "Create address failed!";
+
             public const string Admin = "Admin";
             public const string User = "User";
             public const string Active = "Active";

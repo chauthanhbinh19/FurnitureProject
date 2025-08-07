@@ -33,7 +33,7 @@
             <div class="row mb-3 d-flex flex-wrap gap-4">
                 <div class="col-md-3">
                     <div class="input-group">
-                        <input type="text" name="search" value="@keyword" class="form-control form-control-sm" placeholder="Nhập từ khóa...">
+                        <input type="text" asp-for="Filter.SearchKeyWord" value="@keyword" class="form-control form-control-sm" placeholder="Nhập từ khóa...">
                         <button type="submit" class="btn btn-sm btn-custom bg-conflowerblue">
                             <i class="bi bi-search"></i> Tìm kiếm
                         </button>
@@ -53,7 +53,7 @@
                 </div>
                 <!-- Optional: Nút Reset -->
                 <div class="col-md-1-5 d-flex align-items-center">
-                    <a href="/admin/product/" class="btn btn-secondary w-100">Xoá lọc</a>
+                    <a href="/admin/user/" class="btn btn-secondary w-100">Xoá lọc</a>
                 </div>
             </div>
         </form>
@@ -211,17 +211,17 @@
                     {
                         <tr>
                             @* <td>@user.Id.ToString().Substring(0, 16)</td> *@
-                            <td>@user.FullName</td>
-                            <td>
+                            <td style="white-space: nowrap;">@user.FullName</td>
+                            <td style="white-space: nowrap;">
                                 <span class="badge text-primary border border-primary bg-light">@user.Email</span>
                             </td>
-                            <td>
+                            <td style="white-space: nowrap;">
                                 <span class="badge text-primary border border-primary bg-light">@user.PhoneNumber</span>
                             </td>
 
-                            <td>@user.Username</td>
+                            <td style="white-space: nowrap;">@user.Username</td>
                             @* <td>@user.password</td> *@
-                            <td>
+                            <td style="white-space: nowrap;">
                                 @if (user.Role == "admin")
                                 {
                                     <span class="badge bg-danger">
@@ -241,8 +241,8 @@
                                     </span>
                                 }
                             </td>
-                            <td>@user.CreatedAt?.ToString("dd/MM/yyyy")</td>
-                            <td>
+                            <td style="white-space: nowrap;">@user.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                            <td style="white-space: nowrap;">
                                 @if (user.Status == "active")
                                 {
                                     <span class="badge active-badge">

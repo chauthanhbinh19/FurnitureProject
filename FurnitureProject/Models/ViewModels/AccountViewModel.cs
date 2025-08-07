@@ -8,6 +8,10 @@ namespace FurnitureProject.Models.ViewModels
 
         public UserDTO Profile { get; set; }
 
+        public AddressDTO Address { get; set; }
+
+        public List<AddressDTO> Addresses { get; set; }
+
         public OrderViewModel OrderViewModel { get; set; } = new();
 
         public List<VoucherDTO> Vouchers { get; set; }

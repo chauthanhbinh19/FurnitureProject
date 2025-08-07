@@ -18,6 +18,14 @@
                         @Html.Partial("_Profile", Model.Profile)
                         break;
 
+                    case "Addresses":
+                        @Html.Partial("_Addresses", Model.Addresses)
+                        break;
+
+                    case "CreateAddress":
+                        @Html.Partial("_CreateAddress", Model.Address)
+                        break;
+
                     case "Orders":
                         @Html.Partial("_Orders", Model.OrderViewModel)
                         break;
@@ -30,3 +38,49 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            console.log('jQuery ready');
+            $('#province-select').change(function () {
+                const provinceCode = $(this).val();
+                console.log(provinceCode); // <- Đảm bảo log này chạy
+
+                $('#district-select').prop('disabled', true).html('<option value="">-- Chọn quận --</option>');
+                $('#ward-select').prop('disabled', true).html('<option value="">-- Chọn phường --</option>');
+
+                if (provinceCode) {
+                    $.getJSON(`/account/ajax/district?provinceCode=${provinceCode}`, function (districts) {
+                        districts.forEach(d => {
+                            $('#district-select').append(`<option value="${d.code}">${d.name}</option>`);
+                        });
+                        $('#district-select').prop('disabled', false);
+                        const selectedText = $('#province-select option:selected').text();
+                        $('#city-text').val(selectedText);
+                    });
+                }
+            });
+
+            $('#district-select').change(function () {
+                const districtCode = $(this).val();
+                $('#ward-select').prop('disabled', true).html('<option value="">-- Chọn phường --</option>');
+
+                if (districtCode) {
+                    $.getJSON(`/account/ajax/ward?districtCode=${districtCode}`, function (wards) {
+                        wards.forEach(w => {
+                            $('#ward-select').append(`<option value="${w.code}">${w.name}</option>`);
+                        });
+                        $('#ward-select').prop('disabled', false);
+                        const selectedText = $('#district-select option:selected').text();
+                        $('#district-text').val(selectedText);
+                    });
+                }
+            });
+            $('#ward-select').change(function () {
+                const selectedText = $('#ward-select option:selected').text();
+                $('#ward-text').val(selectedText);
+            });
+        });
+    </script>
+
+}

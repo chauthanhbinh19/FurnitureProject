@@ -49,5 +49,30 @@ namespace FurnitureProject.Repositories
             _context.Addresses.Remove(address);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Province>> GetProvincesAsync()
+        {
+            return await _context.Provinces
+                .OrderBy(p => p.Name)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<District>> GetDistrictsAsync(int provinceCode)
+        {
+            var districts = _context.Districts
+            .Where(d => d.ProvinceCode == provinceCode)
+            .OrderBy(d => d.Name)
+            .ToList();
+            return districts;
+        }
+
+        public async Task<IEnumerable<Ward>> GetWardsAsync(int districtCode)
+        {
+            var wards = _context.Wards
+            .Where(w => w.DistrictCode == districtCode)
+            .OrderBy(w => w.Name)
+            .ToList();
+            return wards;
+        }
     }
 }

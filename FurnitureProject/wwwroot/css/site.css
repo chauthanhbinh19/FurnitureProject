@@ -166,7 +166,7 @@ thead th:last-child {
 }
 
 .bg-conflowerblue {
-    background-color: cornflowerblue;
+    background-color: cornflowerblue !important;
 }
 
 .btn-custom {
@@ -330,4 +330,27 @@ thead th:last-child {
     border: 1px solid cornflowerblue !important;
     color: cornflowerblue;
 }
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    z-index: 2;
+    background-color: #6c757d; /* fallback */
+}
+
+.step-line {
+    height: 4px;
+    background-color: #ccc;
+    width: 100%;
+    left: 50%;
+    z-index: 1;
+}
+
+.step-wrapper {
+    min-width: 100px;
+}
+
+
+
 

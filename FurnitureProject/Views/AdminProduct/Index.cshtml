@@ -185,8 +185,8 @@
                                  alt="Product image"
                                  style="width: 120px; height: 90px; border-radius:5px;" />
                         </td>
-                        <td>@product.Name</td>
-                        <td>
+                        <td style="white-space: nowrap;">@product.Name</td>
+                        <td style="white-space: nowrap;">
                             @foreach (var tagId in product.TagIds)
                                 {
                                     <span class="badge bg-primary me-1">
@@ -194,7 +194,7 @@
                                     </span>
                                 }
                         </td>
-                        <td class="text-end">
+                            <td class="text-end" style="white-space: nowrap;">
                             @if (product.DiscountPrice > 0)
                             {
                                 <span class="text-danger fw-bold">@product.DiscountPrice.ToString("N0") ₫</span><br />
@@ -205,9 +205,9 @@
                                 <span>@product.Price.ToString("N0") ₫</span>
                             }
                         </td>
-                        <td class="text-end">@product.Stock</td>
-                        <td>@product.Category.Name</td>
-                        <td>@product.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                            <td class="text-end" style="white-space: nowrap;">@product.Stock</td>
+                            <td style="white-space: nowrap;">@product.Category.Name</td>
+                            <td style="white-space: nowrap;">@product.CreatedAt?.ToString("dd/MM/yyyy")</td>
                             <td class="align-middle">
                                 <div class="d-flex flex-row align-items-center gap-1">
                                     <form asp-controller="AdminProduct" asp-action="Detail" method="get" style="display:inline;">

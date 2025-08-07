@@ -1,0 +1,56 @@
+﻿@model IEnumerable<FurnitureProject.Models.DTO.AddressDTO>
+<div class="title-box">
+    <div class="text-box">
+        <span class="title ms-2">Địa chỉ người dùng</span>
+    </div>
+    <div>
+        <a asp-area="" asp-controller="Account" asp-action="CreateAddress" class="link-custom btn-custom bg-conflowerblue">Thêm địa chỉ</a>
+    </div>
+</div>
+<div class="row gx-4 gy-3 justify-content-between">
+    <div class="col-md-12">
+        <div class="table-responsive card shadow mb-3">
+            <table id="addressTable" class="table table-hover align-middle">
+                <thead class="table-background">
+                    <tr>
+                        <th>Địa chỉ</th>
+                        <th>Phường/xã</th>
+                        <th>Quận/huyện</th>
+                        <th>Thành phố</th>
+                        <th>Quốc gia</th>
+                        <th>Mã bưu chính</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var address in Model)
+                    {
+                        <tr>
+                            <td>
+                                @address.Street
+                            </td>
+                            <td>
+                                @address.Ward
+                            </td>
+                            <td>
+                                @address.District
+                            </td>
+                            <td>
+                                @address.City
+                            </td>
+                            <td>
+                                @address.Country
+                            </td>
+                            <td>
+                                @address.PostalCode
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger btnDeleteAddress">Xoá</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

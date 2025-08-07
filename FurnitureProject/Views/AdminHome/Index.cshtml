@@ -45,6 +45,16 @@
         </div>
         <div class="col-md-1-5">
             <form method="get" asp-action="Index">
+                <input type="hidden" name="range" value="182" />
+                <button type="submit"
+                        class="btn card @(ViewBag.SelectedRange == 182 ? "border-primary text-primary" : "")"
+                        style="width: 100%;">
+                    6 tháng trước
+                </button>
+            </form>
+        </div>
+        <div class="col-md-1-5">
+            <form method="get" asp-action="Index">
                 <input type="hidden" name="range" value="365" />
                 <button type="submit" 
                         class="btn card @(ViewBag.SelectedRange == 365 ? "border-primary text-primary" : "")" 
@@ -69,7 +79,7 @@
             <div class="card p-3 flex-column flex-column gap-2 card-box">
                 <div class="d-flex align-items-center gap-2">
                    <i class="fa-solid fa-money-bills text-conflowerblue"></i>
-                    <span class="fw-medium">Tổng doanh thu</span>
+                    <span class="fw-medium fs-5">Tổng doanh thu</span>
                 </div>
                 <span class="fw-bold fs-5">@ViewBag.TotalRevenue.ToString("N0") ₫</span>
                 <span class="text-success form-control">+16% in last 7 days</span>
@@ -79,7 +89,7 @@
                 <div class="card p-3 flex-column flex-column gap-2 card-box">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fa-solid fa-user-group text-conflowerblue"></i>
-                        <span class="fw-medium">Tổng khách hàng</span>
+                        <span class="fw-medium fs-5">Tổng khách hàng</span>
                 </div>
                 <span class="fw-bold fs-5">@ViewBag.TotalUsers</span>
                     <span class="text-danger form-control">-10% in last 7 days</span>
@@ -89,7 +99,7 @@
                 <div class="card p-3 flex-column flex-column gap-2 card-box">
                     <div class="d-flex align-items-center gap-2">
                     <i class="fa-solid fa-file-invoice text-conflowerblue"></i>
-                        <span class="fw-medium">Tổng số giao dịch</span>
+                        <span class="fw-medium fs-5">Tổng số giao dịch</span>
                 </div>
                 <span class="fw-bold fs-5">@ViewBag.TotalTransactions</span>
                     <span class="text-success form-control">+10% increase</span>
@@ -99,7 +109,7 @@
                 <div class="card p-3 flex-column flex-column gap-2 card-box">
                     <div class="d-flex align-items-center gap-2">
                     <i class="fa-solid fa-boxes-stacked text-conflowerblue"></i>
-                        <span class="fw-medium">Tổng sản phẩm</span>
+                        <span class="fw-medium fs-5">Tổng sản phẩm</span>
                 </div>
                 <span class="fw-bold fs-5">@ViewBag.TotalProducts</span>
                     <span class="text-success form-control">+5% increase</span>

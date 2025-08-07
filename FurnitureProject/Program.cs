@@ -1,10 +1,12 @@
 ﻿using CloudinaryDotNet;
 using FurnitureProject.Data;
+using FurnitureProject.Helper;
 using FurnitureProject.Middleware;
 using FurnitureProject.Models;
 using FurnitureProject.Repositories;
 using FurnitureProject.Services;
 using FurnitureProject.Services.Email;
+using FurnitureProject.Services.Vnpay;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -80,6 +82,8 @@ builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IFavouriteRepository, FavouriteRepository>();
 builder.Services.AddScoped<IFavouriteService, FavouriteService>();
+builder.Services.AddScoped<IVnpay, Vnpay>();
+
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
@@ -108,6 +112,12 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate(); // Auto create database data if not exist
     await DataSeeder.SeedAsync(db);
+
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+
+    var seeder = new VietnamAddressSeeder(context);
+    //await seeder.SeedAsync();
 }
 
 app.UseHttpsRedirection();

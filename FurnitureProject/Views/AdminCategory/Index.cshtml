@@ -32,7 +32,7 @@
             <div class="row mb-3 d-flex flex-wrap gap-4">
                 <div class="col-md-3">
                     <div class="input-group">
-                        <input type="text" name="search" value="@keyword" class="form-control form-control-sm" placeholder="Nhập từ khóa...">
+                        <input type="text" asp-for="Filter.SearchKeyWord" value="@keyword" class="form-control form-control-sm" placeholder="Nhập từ khóa...">
                         <button type="submit" class="btn btn-sm btn-custom bg-conflowerblue">
                             <i class="bi bi-search"></i> Tìm kiếm
                         </button>
@@ -46,7 +46,7 @@
                 </div>
                 <!-- Optional: Nút Reset -->
                 <div class="col-md-1-5 d-flex align-items-center">
-                    <a href="/admin/product/" class="btn btn-secondary w-100">Xoá lọc</a>
+                    <a href="/admin/category/" class="btn btn-secondary w-100">Xoá lọc</a>
                 </div>
             </div>
         </form>
@@ -143,8 +143,8 @@
                     {
                         <tr>
                             @* <td>@category.Id.ToString().Substring(0, 16)</td> *@
-                            <td>@category.Name</td>
-                            <td>
+                            <td style="white-space: nowrap;">@category.Name</td>
+                            <td style="white-space: nowrap;">
                                 @if(!string.IsNullOrEmpty(category.Description))
                                 {
                                     @category.Description
@@ -154,8 +154,8 @@
                                     <span class="text-muted">N/A</span>
                                 }
                             </td>
-                            <td>@category.CreatedAt?.ToString("dd/MM/yyyy")</td>
-                            <td>
+                            <td style="white-space: nowrap;">@category.CreatedAt?.ToString("dd/MM/yyyy")</td>
+                            <td style="white-space: nowrap;">
                                 @if (category.Status == "active")
                                 {
                                     <span class="badge active-badge">

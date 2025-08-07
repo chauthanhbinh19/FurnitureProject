@@ -14,11 +14,13 @@ namespace FurnitureProject.Controllers
     {
         private readonly IUserService _userService;
         private readonly ICartService _cartService;
+        private readonly IAddressService _addressService;
 
-        public AdminUserController(IUserService userService, ICartService cartService)
+        public AdminUserController(IUserService userService, ICartService cartService, IAddressService addressService)
         {
             _userService = userService;
             _cartService = cartService;
+            _addressService = addressService;
         }
         private void SetGenderViewBag(string? gender = null)
         {
@@ -41,18 +43,7 @@ namespace FurnitureProject.Controllers
                 "Value", "Text", status
             );
         }
-        private void SetSortOptions(string? selectedSort = null)
-        {
-            var sortOptions = new List<SelectListItem>
-            {
-                new SelectListItem { Text = AppConstants.LogMessages.Newest, Value = AppConstants.Status.Newest },
-                new SelectListItem { Text = AppConstants.LogMessages.Oldest, Value = AppConstants.Status.Oldest },
-                //new SelectListItem { Text = "Giá tăng dần", Value = "price-asc" },
-                //new SelectListItem { Text = "Giá giảm dần", Value = "price-desc" }
-            };
 
-            ViewBag.SortOptions = new SelectList(sortOptions, "Value", "Text", selectedSort);
-        }
         private void SetRoleViewBag(string? status = null)
         {
             ViewBag.RoleList = new SelectList(
@@ -191,6 +182,9 @@ namespace FurnitureProject.Controllers
             SetStatusViewBag();
             SetGenderViewBag();
 
+            var provinces = await _addressService.GetProvincesAsync();
+            ViewBag.Provinces = provinces;
+
             return View();
         }
 
@@ -237,6 +231,9 @@ namespace FurnitureProject.Controllers
             SetRoleViewBag(user.Role);
             SetStatusViewBag(user.Status);
             SetGenderViewBag(user.Gender);
+
+            var provinces = await _addressService.GetProvincesAsync();
+            ViewBag.Provinces = provinces;
 
             var userDTO = new UserDTO
             {

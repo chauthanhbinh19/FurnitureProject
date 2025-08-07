@@ -1,0 +1,69 @@
+﻿@model FurnitureProject.Models.DTO.AddressDTO
+<form asp-controller="Account" asp-action="CreateAddress" method="post">
+    <div class="card shadow mb-3">
+        <div class="card-header text-black fs-5 d-flex align-items-center gap-2">
+            <i class="fas fa-map-marker-alt text-conflowerblue"></i>
+            <span>Địa chỉ</span>
+        </div>
+        <div class="card-body">
+            <div class="row justify-content-between mb-3">
+                <div class="col-md-3-5">
+                    <label asp-for="@Model.Street" class="form-label fw-medium"></label>
+                    <input asp-for="@Model.Street" class="form-control custom-gray-input" />
+                    <span asp-validation-for="@Model.Street" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3-5">
+                    <label asp-for="@Model.City" class="form-label fw-medium"></label>
+                    <select class="form-select" id="province-select">
+                        <option value="">-- Chọn tỉnh --</option>
+                        @foreach (var province in Model.Provinces)
+                        {
+                            <option value="@province.Code">@province.Name</option>
+                        }
+                    </select>
+                    <input type="hidden" asp-for="@Model.City" id="city-text"/>
+                    <span asp-validation-for="@Model.City" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3-5">
+                    <label asp-for="@Model.District" class="form-label fw-medium"></label>
+                    <select class="form-select" id="district-select" disabled>
+                        <option value="">-- Chọn quận --</option>
+                    </select>
+                    <input type="hidden" asp-for="@Model.District" id="district-text" />
+                    <span asp-validation-for="@Model.District" class="text-danger small"></span>
+                </div>
+            </div>
+            <div class="row justify-content-between mb-3">
+                <div class="col-md-3-5">
+                    <label asp-for="@Model.Ward" class="form-label fw-medium"></label>
+                    <select class="form-select" id="ward-select" disabled>
+                        <option value="">-- Chọn phường --</option>
+                    </select>
+                    <input type="hidden" asp-for="@Model.Ward" id="ward-text" />
+                    <span asp-validation-for="@Model.Ward" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3-5">
+                    <label asp-for="@Model.Country" class="form-label fw-medium"></label>
+                    <input asp-for="@Model.Country" class="form-control custom-gray-input" value="Việt Nam"/>
+                    <span asp-validation-for="@Model.Country" class="text-danger small"></span>
+                </div>
+                <div class="col-md-3-5">
+                    <label asp-for="@Model.PostalCode" class="form-label fw-medium"></label>
+                    <input asp-for="@Model.PostalCode" class="form-control custom-gray-input" />
+                    <span asp-validation-for="@Model.PostalCode" class="text-danger small"></span>
+                </div>
+            </div>
+            <div class="row align-items-center justify-content-between mb-3 gap-4">
+                @* <div class="col-md-8">
+                                        <div class="form-check mt-4">
+                                            <input asp-for="@Model.Address.IsDefault" class="form-check-input" type="checkbox" />
+                                            <label asp-for="@Model.Address.IsDefault" class="form-check-label">Là địa chỉ mặc định</label>
+                                        </div>
+                                    </div> *@
+                <div class="col-md-12 d-flex justify-content-end">
+                    <button type="submit" id="btnAddAddress" class="btn-custom bg-conflowerblue px-4">Thêm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

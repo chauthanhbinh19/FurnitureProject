@@ -1,5 +1,8 @@
 ﻿@model FurnitureProject.Models.ViewModels.OrderViewModel
 @{
+    ViewData["Title"] = "Danh sách đơn hàng";
+}
+@{
     ViewBag.Title = "Tìm kiếm đơn hàng";
     string keyword = ViewBag.Keyword as string;
     int totalPages = (int)Math.Ceiling((double)ViewBag.TotalOrders / ViewBag.PageSize);
@@ -14,15 +17,20 @@
         startPage = Math.Max(1, endPage - maxPagesToShow + 1);
     }
 }
-<h4 class="mb-4">🛒 Lịch sử đặt hàng</h4>
+
+<div class="title-box">
+    <div class="text-box">
+        <span class="title ms-2">Lịch sử đơn hàng</span>
+    </div>
+</div>
 <div class="table-responsive title-box">
     <div class="container">
-        <form method="get" asp-controller="AdminOrder" asp-action="Index" class="link-custom">
-            <div class="row mb-3 justify-content-around">
+        <form method="get" asp-controller="Account" asp-action="Orders" class="link-custom">
+            <div class="row mb-3 d-flex flex-wrap gap-4">
                 <div class="col-md-3">
                     <div class="input-group">
-                        <input type="text" name="search" value="@keyword" class="form-control" placeholder="Nhập từ khóa...">
-                        <button type="submit" class="btn-custom bg-conflowerblue">
+                        <input type="text" asp-for="Filter.SearchKeyWord" value="@keyword" class="form-control form-control-sm" placeholder="Nhập từ khóa...">
+                        <button type="submit" class="btn btn-sm btn-custom bg-conflowerblue">
                             <i class="bi bi-search"></i> Tìm kiếm
                         </button>
                     </div>
@@ -44,13 +52,147 @@
                 <thead class="table-background">
                     <tr>
                         @* <th scope="col">ID</th> *@
-                        <th class="col with-separator">Họ tên người nhận</th>
-                        <th class="col with-separator">Email</th>
-                        <th class="col with-separator">Số điện thoại</th>
-                        <th class="col with-separator">Ngày tạo</th>
-                        <th class="col with-separator">Trạng thái</th>
-                        <th class="col with-separator">Tổng tiền</th>
-                        <th class="col with-separator">Số lượng</th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Khách hàng
+                                <div class="sort-arrows">
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="ReceiverName"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "ReceiverName" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="ReceiverName"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "ReceiverName" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Email
+                                <div class="sort-arrows">
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="ReceiverEmail"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "ReceiverEmail" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="ReceiverEmail"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "ReceiverEmail" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Số điện thoại
+                                <div class="sort-arrows">
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="ReceiverPhone"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "ReceiverPhone" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="ReceiverPhone"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "ReceiverPhone" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Ngày tạo
+                                <div class="sort-arrows">
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="OrderDate"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "OrderDate" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="OrderDate"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "OrderDate" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Trạng thái
+                                <div class="sort-arrows">
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Status"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "Status" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="Status"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "Status" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Số lượng
+                                <div class="sort-arrows">
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="TotalItems"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "TotalItems" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="TotalItems"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "TotalItems" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
+                                Tổng tiền
+                                <div class="sort-arrows">
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="TotalAmount"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "TotalAmount" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="TotalAmount"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "TotalAmount" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -58,30 +200,64 @@
                     {
                         <tr>
                             @* <td>@order.Id.ToString().Substring(0, 16)</td> *@
-                            <td>@order.ReceiverName</td>
-                            <td>@order.ReceiverEmail</td>
-                            <td>@order.ReceiverPhone</td>
+                            <td style="white-space: nowrap;">@order.ReceiverName</td>
+                            <td>
+                                <span class="badge text-primary border border-primary bg-light">@order.ReceiverEmail</span>
+                            </td>
+                            <td>
+                                <span class="badge text-primary border border-primary bg-light">@order.ReceiverPhone</span>
+                            </td>
                             <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
                             <td>
-                                @if (order.Status == "active")
+                                @if (order.Status == "pending")
                                 {
-                                    <span class="badge bg-success">Hoạt động</span>
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-hourglass-start me-1"></i> Chờ xác nhận
+                                    </span>
                                 }
-                                else if (order.Status == "inactive")
+                                else if (order.Status == "confirmed")
                                 {
-                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                    <span class="badge bg-primary">
+                                        <i class="fas fa-check-circle me-1"></i> Đã xác nhận
+                                    </span>
                                 }
-                                else if (order.Status == "banned")
+                                else if (order.Status == "processing")
                                 {
-                                    <span class="badge bg-danger">Bị khóa</span>
+                                    <span class="badge bg-info text-dark">
+                                        <i class="fas fa-cogs me-1"></i> Đang xử lý
+                                    </span>
                                 }
-                                else
+                                else if (order.Status == "shipping")
                                 {
-                                    <span class="badge bg-warning text-dark">@order.Status</span>
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-truck me-1"></i> Đang giao hàng
+                                    </span>
                                 }
+                                else if (order.Status == "completed")
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-double me-1"></i> Hoàn thành
+                                    </span>
+                                }
+                                else if (order.Status == "cancelled")
+                                {
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times-circle me-1"></i> Đã huỷ
+                                    </span>
+                                }
+
                             </td>
-                            <td>@order.TotalAmount.ToString("N0") ₫</td>
-                            <td>@order.TotalItems</td>
+                            <td class="text-end">@order.TotalItems</td>
+                            <td class="text-end" style="white-space: nowrap;">@order.TotalAmount.ToString("N0") ₫</td>
+                            <td>
+                                <form asp-controller="AdminOrder" asp-action="Delete" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <button type="submit" class="btn btn-sm text-danger delete-tag" data-id="@order.Id" title="Xoá">
+                                        <i class="fa-solid fa-trash fa-1-5x"></i>
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -95,7 +271,14 @@
 
             <!-- Previous button -->
             <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1 })" aria-label="Previous">
+                <a class="page-link"
+                   asp-action="Orders"
+                   asp-route-page="@(currentPage - 1)"
+                   asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                   asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                   asp-route-sortColumn="@Model.Filter.SortColumn"
+                   asp-route-sortDirection="@Model.Filter.SortDirection"
+                   aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
@@ -104,13 +287,28 @@
             @for (int i = startPage; i <= endPage; i++)
             {
                 <li class="page-item @(i == currentPage ? "active" : "")">
-                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                    <a class="page-link"
+                       asp-action="Orders"
+                       asp-route-page="@i"
+                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                       asp-route-sortColumn="@Model.Filter.SortColumn"
+                       asp-route-sortDirection="@Model.Filter.SortDirection">
+                        @i
+                    </a>
                 </li>
             }
 
             <!-- Next button -->
             <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1 })" aria-label="Next">
+                <a class="page-link"
+                   asp-action="Orders"
+                   asp-route-page="@(currentPage + 1)"
+                   asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                   asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                   asp-route-sortColumn="@Model.Filter.SortColumn"
+                   asp-route-sortDirection="@Model.Filter.SortDirection"
+                   aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
@@ -118,3 +316,28 @@
         </ul>
     </nav>
 </div>
+
+@section Scripts {
+    <script>
+        // Hàm toast đơn giản
+                    function showToast(type, message) {
+            let toastId = 'toast-' + type;
+            let existing = $('#' + toastId);
+
+            if (existing.length) existing.remove();
+
+            let toast = `
+                <div id="${toastId}" class="toast show text-white ${toastId}"
+                     style="position: fixed; top: 20px; right: 20px; z-index: 9999">
+                    ${message}
+                </div>`;
+            $('body').append(toast);
+
+            setTimeout(function () {
+                $('#' + toastId).remove();
+            }, 2000); // ✅ thời gian hiển thị: 2.5 giây
+        }
+
+        });
+    </script>
+}

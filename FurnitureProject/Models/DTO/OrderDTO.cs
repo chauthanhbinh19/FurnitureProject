@@ -25,6 +25,7 @@ namespace FurnitureProject.Models.DTO
         [Display(Name = AppConstants.Display.OrderPaymentMethod)]
         public string? PaymentMethod { get; set; }
         [Display(Name = AppConstants.Display.OrderOrderDate)]
+        public string? PaymentGateway { get; set; }
         public DateTime OrderDate { get; set; }
         [Required]
         [Display(Name = AppConstants.Display.OrderStatus)]

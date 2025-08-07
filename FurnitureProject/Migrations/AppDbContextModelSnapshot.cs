@@ -166,6 +166,29 @@ namespace FurnitureProject.Migrations
                     b.ToTable("categories", (string)null);
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.District", b =>
+                {
+                    b.Property<int>("Code")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Code"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("ProvinceCode")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("ProvinceCode");
+
+                    b.ToTable("districts", (string)null);
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.Favourite", b =>
                 {
                     b.Property<Guid>("id")
@@ -641,6 +664,24 @@ namespace FurnitureProject.Migrations
                     b.ToTable("promotions", (string)null);
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.Province", b =>
+                {
+                    b.Property<int>("Code")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Code"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("provinces", (string)null);
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.ShippingMethod", b =>
                 {
                     b.Property<Guid>("Id")
@@ -837,6 +878,29 @@ namespace FurnitureProject.Migrations
                     b.ToTable("vouchers", (string)null);
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.Ward", b =>
+                {
+                    b.Property<int>("Code")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Code"));
+
+                    b.Property<int>("DistrictCode")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("DistrictCode");
+
+                    b.ToTable("wards", (string)null);
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.Address", b =>
                 {
                     b.HasOne("FurnitureProject.Models.User", "User")
@@ -876,6 +940,15 @@ namespace FurnitureProject.Migrations
                     b.Navigation("Cart");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.District", b =>
+                {
+                    b.HasOne("FurnitureProject.Models.Province", null)
+                        .WithMany("Districts")
+                        .HasForeignKey("ProvinceCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FurnitureProject.Models.Favourite", b =>
@@ -1052,6 +1125,15 @@ namespace FurnitureProject.Migrations
                     b.Navigation("Voucher");
                 });
 
+            modelBuilder.Entity("FurnitureProject.Models.Ward", b =>
+                {
+                    b.HasOne("FurnitureProject.Models.District", null)
+                        .WithMany("Wards")
+                        .HasForeignKey("DistrictCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FurnitureProject.Models.Cart", b =>
                 {
                     b.Navigation("CartItems");
@@ -1060,6 +1142,11 @@ namespace FurnitureProject.Migrations
             modelBuilder.Entity("FurnitureProject.Models.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.District", b =>
+                {
+                    b.Navigation("Wards");
                 });
 
             modelBuilder.Entity("FurnitureProject.Models.Order", b =>
@@ -1093,6 +1180,11 @@ namespace FurnitureProject.Migrations
             modelBuilder.Entity("FurnitureProject.Models.Promotion", b =>
                 {
                     b.Navigation("ProductPromotions");
+                });
+
+            modelBuilder.Entity("FurnitureProject.Models.Province", b =>
+                {
+                    b.Navigation("Districts");
                 });
 
             modelBuilder.Entity("FurnitureProject.Models.ShippingMethod", b =>

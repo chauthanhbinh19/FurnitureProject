@@ -106,21 +106,34 @@
                                         <span asp-validation-for="@Model.Address.Street" class="text-danger small"></span>
                                     </div>
                                     <div class="col-md-3-5">
-                                        <label asp-for="@Model.Address.Ward" class="form-label fw-medium"></label>
-                                        <input asp-for="@Model.Address.Ward" class="form-control custom-gray-input" />
-                                        <span asp-validation-for="@Model.Address.Ward" class="text-danger small"></span>
+                                        <label asp-for="@Model.Address.City" class="form-label fw-medium"></label>
+                                        <select class="form-select" id="province-select">
+                                            <option value="">-- Chọn tỉnh --</option>
+                                            @foreach (var province in ViewBag.Provinces)
+                                            {
+                                                <option value="@province.Code">@province.Name</option>
+                                            }
+                                        </select>
+                                        <input type="hidden" asp-for="@Model.Address.City" id="city-text" />
+                                        <span asp-validation-for="@Model.Address.City" class="text-danger small"></span>
                                     </div>
                                     <div class="col-md-3-5">
                                         <label asp-for="@Model.Address.District" class="form-label fw-medium"></label>
-                                        <input asp-for="@Model.Address.District" class="form-control custom-gray-input" />
+                                        <select class="form-select" id="district-select" disabled>
+                                            <option value="">-- Chọn quận --</option>
+                                        </select>
+                                        <input type="hidden" asp-for="@Model.Address.District" id="district-text" />
                                         <span asp-validation-for="@Model.Address.District" class="text-danger small"></span>
                                     </div>
                                 </div>
                                 <div class="row justify-content-between mb-3">
                                     <div class="col-md-3-5">
-                                        <label asp-for="@Model.Address.City" class="form-label fw-medium"></label>
-                                        <input asp-for="@Model.Address.City" class="form-control custom-gray-input" />
-                                        <span asp-validation-for="@Model.Address.City" class="text-danger small"></span>
+                                        <label asp-for="@Model.Address.Ward" class="form-label fw-medium"></label>
+                                        <select class="form-select" id="ward-select" disabled>
+                                            <option value="">-- Chọn phường --</option>
+                                        </select>
+                                        <input type="hidden" asp-for="@Model.Address.Ward" id="ward-text" />
+                                        <span asp-validation-for="@Model.Address.Ward" class="text-danger small"></span>
                                     </div>
                                     <div class="col-md-3-5">
                                         <label asp-for="@Model.Address.Country" class="form-label fw-medium"></label>
@@ -188,13 +201,14 @@
 
         document.getElementById("btnAddAddress").addEventListener("click", function () {
             const street = document.getElementById("Address_Street").value.trim();
-            const ward = document.getElementById("Address_Ward").value.trim();
-            const district = document.getElementById("Address_District").value.trim();
-            const city = document.getElementById("Address_City").value.trim();
+            const ward = document.getElementById("ward-text").value.trim();
+            const district = document.getElementById("district-text").value.trim();
+            const city = document.getElementById("city-text").value.trim();
             const country = document.getElementById("Address_Country").value.trim();
             const postalCode = document.getElementById("Address_PostalCode").value.trim();
-            const isDefault = document.getElementById("Address_IsDefault").checked;
-
+            const checkbox = document.getElementById("Address_IsDefault");
+            const isDefault = checkbox ? checkbox.checked : false;
+            // console.log("Ward:", ward, "District:", district, "City:", city);
             // Validate
             if (!street || !city || !country) {
                 alert("Vui lòng điền đầy đủ địa chỉ, thành phố và quốc gia.");
@@ -243,9 +257,9 @@
 
             // Clear input sau khi thêm
             document.getElementById("Address_Street").value = "";
-            document.getElementById("Address_Ward").value = "";
-            document.getElementById("Address_District").value = "";
-            document.getElementById("Address_City").value = "";
+            document.getElementById("ward-text").value = "";
+            document.getElementById("district-text").value = "";
+            document.getElementById("city-text").value = "";
             document.getElementById("Address_Country").value = "";
             document.getElementById("Address_PostalCode").value = "";
             document.getElementById("Address_IsDefault").checked = false;
@@ -273,5 +287,46 @@
                 addressIndex++;
             });
         }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#province-select').change(function () {
+                const provinceCode = $(this).val();
+
+                $('#district-select').prop('disabled', true).html('<option value="">-- Chọn quận --</option>');
+                $('#ward-select').prop('disabled', true).html('<option value="">-- Chọn phường --</option>');
+
+                if (provinceCode) {
+                    $.getJSON(`/account/ajax/district?provinceCode=${provinceCode}`, function (districts) {
+                        districts.forEach(d => {
+                            $('#district-select').append(`<option value="${d.code}">${d.name}</option>`);
+                        });
+                        $('#district-select').prop('disabled', false);
+                        const selectedText = $('#province-select option:selected').text();
+                        $('#city-text').val(selectedText);
+                    });
+                }
+            });
+
+            $('#district-select').change(function () {
+                const districtCode = $(this).val();
+                $('#ward-select').prop('disabled', true).html('<option value="">-- Chọn phường --</option>');
+
+                if (districtCode) {
+                    $.getJSON(`/account/ajax/ward?districtCode=${districtCode}`, function (wards) {
+                        wards.forEach(w => {
+                            $('#ward-select').append(`<option value="${w.code}">${w.name}</option>`);
+                        });
+                        $('#ward-select').prop('disabled', false);
+                        const selectedText = $('#district-select option:selected').text();
+                        $('#district-text').val(selectedText);
+                    });
+                }
+            });
+            $('#ward-select').change(function () {
+                const selectedText = $('#ward-select option:selected').text();
+                $('#ward-text').val(selectedText);
+            });
+        });
     </script>
 }

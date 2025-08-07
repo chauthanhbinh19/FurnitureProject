@@ -1,5 +1,6 @@
 ﻿using FurnitureProject.Helper;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace FurnitureProject.Models.DTO
@@ -21,5 +22,9 @@ namespace FurnitureProject.Models.DTO
         [Display(Name = AppConstants.Display.AddressPostalCode)]
         public string? PostalCode { get; set; }
         public bool? IsDefault { get; set; } = false;
+        public List<Province>? Provinces { get; set; }
+        public List<District>? Districts { get; set; }
+        public List<Ward>? Wards { get; set; }
+
     }
 }

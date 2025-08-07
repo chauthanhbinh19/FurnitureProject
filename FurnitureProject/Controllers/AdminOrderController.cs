@@ -36,17 +36,46 @@ namespace FurnitureProject.Controllers
         }
         private void SetStatusViewBag(string? status = null)
         {
-            ViewBag.StatusList = new SelectList(
-                new[] {
-                    new { Value = AppConstants.Status.Pending, Text = AppConstants.Display.Pending },
-                    new { Value = AppConstants.Status.Confirmed, Text = AppConstants.Display.Confirmed },
-                    new { Value = AppConstants.Status.Processing, Text = AppConstants.Display.Processing },
-                    new { Value = AppConstants.Status.Shipping, Text = AppConstants.Display.Shipping },
-                    new { Value = AppConstants.Status.Completed, Text = AppConstants.Display.Completed },
-                    new { Value = AppConstants.Status.Cancelled, Text = AppConstants.Display.Cancelled }
-                },
-                "Value", "Text", status
-            );
+            var orderedStatuses = new[]
+            {
+                new { Value = AppConstants.Status.Pending, Text = AppConstants.Display.Pending },
+                new { Value = AppConstants.Status.Confirmed, Text = AppConstants.Display.Confirmed },
+                new { Value = AppConstants.Status.Processing, Text = AppConstants.Display.Processing },
+                new { Value = AppConstants.Status.Shipping, Text = AppConstants.Display.Shipping },
+                new { Value = AppConstants.Status.Completed, Text = AppConstants.Display.Completed },
+                new { Value = AppConstants.Status.Cancelled, Text = AppConstants.Display.Cancelled }
+            };
+
+            if (status == AppConstants.Status.Cancelled || status == AppConstants.Status.Completed)
+            {
+                var selected = orderedStatuses.FirstOrDefault(s => s.Value == status);
+                if (selected != null)
+                {
+                    ViewBag.StatusList = new SelectList(new[] { selected }, "Value", "Text", status);
+                }
+                else
+                {
+                    ViewBag.StatusList = null;
+                }
+                return;
+            }
+
+            if (string.IsNullOrEmpty(status))
+            {
+                ViewBag.StatusList = new SelectList(orderedStatuses, "Value", "Text");
+                return;
+            }
+
+            int currentIndex = Array.FindIndex(orderedStatuses, s => s.Value == status);
+
+            if (currentIndex == -1)
+            {
+                ViewBag.StatusList = null;
+                return;
+            }
+
+            var availableStatuses = orderedStatuses.Skip(currentIndex);
+            ViewBag.StatusList = new SelectList(availableStatuses, "Value", "Text", status);
         }
         private void SetPaymentMethodViewBag(string? paymentMethod = null)
         {
@@ -59,18 +88,7 @@ namespace FurnitureProject.Controllers
                 "Value", "Text", paymentMethod
             );
         }
-        private void SetSortOptions(string? selectedSort = null)
-        {
-            var sortOptions = new List<SelectListItem>
-            {
-                new SelectListItem { Text = AppConstants.LogMessages.Newest, Value = AppConstants.Status.Newest },
-                new SelectListItem { Text = AppConstants.LogMessages.Oldest, Value = AppConstants.Status.Oldest },
-                //new SelectListItem { Text = AppConstants.LogMessages.PriceAscending, Value = AppConstants.Status.PriceAscending },
-                //new SelectListItem { Text = AppConstants.LogMessages.PriceDescending, Value = AppConstants.Status.PriceDescending }
-            };
 
-            ViewBag.SortOptions = new SelectList(sortOptions, "Value", "Text", selectedSort);
-        }
         [Route("")]
         public async Task<IActionResult> Index(OrderFilterDTO filter, int page = 1)
         {
@@ -97,7 +115,7 @@ namespace FurnitureProject.Controllers
                 OrderDate = order.OrderDate,
                 Status = order.Status,
                 TotalAmount = order.TotalAmount,
-                TotalItems = order.OrderItems.Count(),
+                TotalItems = order.OrderItems.Sum(item => item.Quantity),
                 CreatedAt = order.CreatedAt,
             }).ToList();
 
@@ -113,7 +131,7 @@ namespace FurnitureProject.Controllers
             if (filter.FilterByStatus != null && filter.FilterByStatus.Any())
             {
                 orderDTOs = orderDTOs
-                   .Where(p => !string.IsNullOrEmpty(p.Status) && filter.FilterByStatus.Equals(p.Status))
+                   .Where(p => !string.IsNullOrEmpty(p.Status) && filter.FilterByStatus.Contains(p.Status))
                    .ToList();
             }
 

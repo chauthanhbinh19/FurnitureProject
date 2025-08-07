@@ -4,7 +4,7 @@
 }
 
 <div class="container py-5">
-    <form method="post" asp-action="ProcessPayment">
+    <form method="post" id="paymentForm" asp-action="ProcessPayment">
         <h2 class="mb-4">Thanh toán</h2>
         <div class="row mb-3 d-flex flex-wrap gap-4">
             <!-- Cột trái: Thông tin thanh toán -->
@@ -110,7 +110,24 @@
                                 <label class="form-check-label">Thẻ tín dụng/Ghi nợ</label>
                             </div>
 
-                            <button type="submit" class="btn btn-success w-100">Xác nhận thanh toán</button>
+                            <!-- Phần chọn cổng thanh toán (ẩn mặc định) -->
+                            <div id="gateway-selection" class="mb-3" style="display: none;">
+                                <label class="form-label">Chọn cổng thanh toán:</label>
+                                <div class="form-check d-flex align-items-center gap-2 mb-2">
+                                    <input class="form-check-input" type="radio" name="Order.PaymentGateway" value="vnpay"
+                                           @(Model.Order?.PaymentGateway == "vnpay" ? "checked" : "") />
+                                    <img src="~/images/vnpay.png" alt="VNPAY" class="img-fluid rounded-4" style="width: 60px; height: 25px; object-fit: cover;">
+                                    <label class="form-check-label">VNPAY</label>
+                                </div>
+                                <div class="form-check d-flex align-items-center gap-2">
+                                    <input class="form-check-input" type="radio" name="Order.PaymentGateway" value="momo"
+                                           @(Model.Order?.PaymentGateway == "momo" ? "checked" : "") />
+                                    <img src="~/images/momo.png" alt="MOMO" class="img-fluid rounded-4" style="width: 60px; height: 25px; object-fit: cover;">
+                                    <label class="form-check-label">MoMo</label>
+                                </div>
+                            </div>
+
+                            <button type="submit" id="submitPaymentBtn" class="btn btn-success w-100">Xác nhận thanh toán</button>
                         </div>
                     </div>
                 </div>
@@ -174,4 +191,71 @@
             addressDetails.style.display = "block";
         });
     </script>
+    <script>
+        function toggleGatewayOptions() {
+            const creditRadio = document.querySelector('input[name="Order.PaymentMethod"][value="credit"]');
+            const gatewayDiv = document.getElementById('gateway-selection');
+            if (creditRadio.checked) {
+                gatewayDiv.style.display = 'block';
+            } else {
+                gatewayDiv.style.display = 'none';
+            }
+        }
+
+        // Gọi hàm ngay khi load trang (nếu đã chọn sẵn credit)
+        document.addEventListener("DOMContentLoaded", function () {
+            toggleGatewayOptions();
+            const radios = document.querySelectorAll('input[name="Order.PaymentMethod"]');
+            radios.forEach(r => r.addEventListener('change', toggleGatewayOptions));
+        });
+    </script>
+    <script>
+        document.getElementById("submitPaymentBtn").addEventListener("click", function (e) {
+            const selectedPaymentMethod = document.querySelector('input[name="Order.PaymentMethod"]:checked')?.value;
+            const selectedPaymentGateway = document.querySelector('input[name="Order.PaymentGateway"]:checked')?.value;
+
+            if (selectedPaymentMethod === "credit" && selectedPaymentGateway === "vnpay") {
+                e.preventDefault();
+
+                // Tạo form tạm từ dữ liệu nhập
+                const formData = new FormData(document.querySelector("#paymentForm"));
+                        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+                fetch("/order/store-temp-order", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error("Lưu đơn tạm thất bại");
+                    return response.json();
+                })
+                .then(data => {
+                    // Gọi tạo URL thanh toán VNPay
+                    const money = data.amount;
+                    const description = encodeURIComponent("Thanh toán đơn hàng");
+
+                    return fetch(`/Vnpay/CreatePaymentUrl?money=${money}&description=${description}`);
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error("Không thể tạo thanh toán VNPay.");
+                    return response.text();
+                })
+                .then(paymentUrl => {
+                    if (paymentUrl) {
+                        window.location.href = paymentUrl;
+                    } else {
+                        alert("Không nhận được URL thanh toán.");
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert("Đã xảy ra lỗi trong quá trình thanh toán.");
+                });
+            }
+        });
+
+
+    </script>
+
 }

@@ -29,13 +29,6 @@ namespace FurnitureProject.Services
 
         public async Task AddAddressAsync(Address address)
         {
-            var existingDefault = await _addressRepository.GetDefaultByUserIdAsync(address.UserId);
-            if (existingDefault != null)
-            {
-                existingDefault.IsDefault = false;
-                await _addressRepository.UpdateAsync(existingDefault);
-            }
-
             await _addressRepository.AddAsync(address);
         }
 
@@ -58,6 +51,21 @@ namespace FurnitureProject.Services
             {
                 await _addressRepository.DeleteAsync(address);
             }
+        }
+
+        public Task<IEnumerable<Province>> GetProvincesAsync()
+        {
+            return _addressRepository.GetProvincesAsync();
+        }
+
+        public Task<IEnumerable<District>> GetDistrictsAsync(int provinceCode)
+        {
+            return _addressRepository.GetDistrictsAsync(provinceCode);
+        }
+
+        public Task<IEnumerable<Ward>> GetWardsAsync(int districtCode)
+        {
+            return _addressRepository.GetWardsAsync(districtCode);
         }
     }
 }

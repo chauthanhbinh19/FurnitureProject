@@ -30,18 +30,6 @@ namespace FurnitureProject.Controllers
                 "Value", "Text", status
             );
         }
-        private void SetSortOptions(string? selectedSort = null)
-        {
-            var sortOptions = new List<SelectListItem>
-            {
-                new SelectListItem { Text = AppConstants.LogMessages.Newest, Value = AppConstants.Status.Newest },
-                new SelectListItem { Text = AppConstants.LogMessages.Oldest, Value = AppConstants.Status.Oldest },
-                //new SelectListItem { Text = "Giá tăng dần", Value = "price-asc" },
-                //new SelectListItem { Text = "Giá giảm dần", Value = "price-desc" }
-            };
-
-            ViewBag.SortOptions = new SelectList(sortOptions, "Value", "Text", selectedSort);
-        }
 
         [HttpGet("")]
         public async Task<IActionResult> Index(CategoryFilterDTO filter, int page = 1)
@@ -65,8 +53,8 @@ namespace FurnitureProject.Controllers
             if (!string.IsNullOrEmpty(filter.SearchKeyWord))
             {
                 categoryDTOs = categoryDTOs
-                    .Where(u => u.Name.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase) ||
-                                u.Description.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase))
+                    .Where(u => (!string.IsNullOrEmpty(u.Name) && u.Name.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase)) ||
+                                (!string.IsNullOrEmpty(u.Description) && u.Description.Contains(filter.SearchKeyWord, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
             }
 

@@ -28,6 +28,9 @@ namespace FurnitureProject.Data
         public DbSet<Address> Addresses { get; set; }
         public DbSet<ShippingMethod> ShippingMethods { get; set; }
         public DbSet<Favourite> Favourites { get; set; }
+        public DbSet<Province> Provinces { get; set; }
+        public DbSet<District> Districts { get; set; }
+        public DbSet<Ward> Wards { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -54,6 +57,9 @@ namespace FurnitureProject.Data
             modelBuilder.ApplyConfiguration(new AddressConfiguration());
             modelBuilder.ApplyConfiguration(new ShippingMethodConfiguration());
             modelBuilder.ApplyConfiguration(new FavouriteConfiguration());
+            modelBuilder.ApplyConfiguration(new ProvinceConfiguration());
+            modelBuilder.ApplyConfiguration(new DistrictConfiguration());
+            modelBuilder.ApplyConfiguration(new WardConfiguration());
 
             modelBuilder.Entity<ProductPromotion>()
                 .HasKey(pp => new { pp.ProductId, pp.PromotionId });

@@ -10,5 +10,8 @@ namespace FurnitureProject.Repositories
         Task AddAsync(Address address);
         Task UpdateAsync(Address address);
         Task DeleteAsync(Address address);
+        Task<IEnumerable<Province>> GetProvincesAsync();
+        Task<IEnumerable<District>> GetDistrictsAsync(int provinceCode);
+        Task<IEnumerable<Ward>> GetWardsAsync(int districtCode);
     }
 }

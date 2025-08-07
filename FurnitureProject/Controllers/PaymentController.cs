@@ -10,6 +10,7 @@ namespace FurnitureProject.Controllers
     [Route("payment")]
     public class PaymentController : Controller
     {
+        private readonly IConfiguration _config;
         private readonly ICategoryService _categoryService;
         private readonly ICartService _cartService;
         private readonly IOrderService _orderService;
@@ -17,7 +18,8 @@ namespace FurnitureProject.Controllers
         private readonly IPromotionService _promotionService;
         private readonly IAddressService _addressService;
         public PaymentController(ICategoryService categoryService, ICartService cartService, 
-            IOrderService orderService, IProductService productService, IPromotionService promotionService, IAddressService addressService)
+            IOrderService orderService, IProductService productService, IPromotionService promotionService, 
+            IAddressService addressService, IConfiguration config)
         {
             _categoryService = categoryService;
             _cartService = cartService;
@@ -25,6 +27,7 @@ namespace FurnitureProject.Controllers
             _productService = productService;
             _promotionService = promotionService;
             _addressService = addressService;
+            _config = config;
         }
         [HttpGet("")]
         public async Task<IActionResult> Index()
@@ -93,7 +96,7 @@ namespace FurnitureProject.Controllers
 
             return View(paymentViewModel);
         }
-        [HttpPost]
+        [HttpPost("process-payment")]
         public async Task<IActionResult> ProcessPayment(PaymentViewModel paymentViewModel)
         {
             var userId = HttpContext.Session.GetString("UserID");
