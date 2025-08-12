@@ -134,6 +134,26 @@
                         </th>
                         <th class="col with-separator">
                             <div class="d-flex align-items-center sort-wrapper">
+                                Thanh toán
+                                <div class="sort-arrows">
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="IsPaid"
+                                       asp-route-SortDirection="asc"
+                                       class="@(Model.Filter.SortColumn == "IsPaid" && Model.Filter.SortDirection == "asc" ? "active-arrow" : "")">▲</a>
+
+                                    <a asp-action="Orders"
+                                       asp-route-searchKeyWord="@Model.Filter.SearchKeyWord"
+                                       asp-route-filterByStatus="@Model.Filter.FilterByStatus"
+                                       asp-route-SortColumn="IsPaid"
+                                       asp-route-SortDirection="desc"
+                                       class="@(Model.Filter.SortColumn == "IsPaid" && Model.Filter.SortDirection == "desc" ? "active-arrow" : "")">▼</a>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="col with-separator">
+                            <div class="d-flex align-items-center sort-wrapper">
                                 Trạng thái
                                 <div class="sort-arrows">
                                     <a asp-action="Orders"
@@ -208,6 +228,16 @@
                                 <span class="badge text-primary border border-primary bg-light">@order.ReceiverPhone</span>
                             </td>
                             <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                            <td style="white-space: nowrap;">
+                                @if (order.IsPaid)
+                                {
+                                    <span class="badge bg-primary">Đã thanh toán</span> <!-- xanh dương -->
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Chưa thanh toán</span> <!-- đỏ -->
+                                }
+                            </td>
                             <td>
                                 @if (order.Status == "pending")
                                 {
@@ -250,6 +280,12 @@
                             <td class="text-end">@order.TotalItems</td>
                             <td class="text-end" style="white-space: nowrap;">@order.TotalAmount.ToString("N0") ₫</td>
                             <td>
+                                <form asp-controller="Account" asp-action="OrderDetails" method="get" style="display:inline;">
+                                    <input type="hidden" name="id" value="@order.Id" />
+                                    <button type="submit" class="btn btn-sm text-success" title="Chi tiết">
+                                        <i class="fa-solid fa-eye fa-1-5x"></i>
+                                    </button>
+                                </form>
                                 <form asp-controller="AdminOrder" asp-action="Delete" method="post" style="display:inline;"
                                       onsubmit="return confirm('Bạn có chắc chắn muốn xoá thẻ này không?');">
                                     <input type="hidden" name="id" value="@order.Id" />

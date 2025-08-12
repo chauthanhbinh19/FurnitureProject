@@ -4,6 +4,7 @@ using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Services;
 using Microsoft.AspNetCore.Mvc;
+using FurnitureProject.Constants;
 
 namespace FurnitureProject.Controllers
 {
@@ -129,6 +130,7 @@ namespace FurnitureProject.Controllers
                     PaymentMethod = paymentViewModel.Order.PaymentMethod,
                     OrderDate = DateTime.UtcNow,
                     Status = "pending",
+                    IsPaid = false,
                     TotalItems = cart.CartItems.Sum(p => p.Quantity),
                     Products = cart.CartItems.Select(ci =>
                     {
@@ -177,7 +179,7 @@ namespace FurnitureProject.Controllers
                 }
 
                 TempData[AppConstants.Status.Success] = AppConstants.LogMessages.OrderPaymentSuccessfully;
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("OrderSuccess", "Order");
             }
             catch (Exception)
             {

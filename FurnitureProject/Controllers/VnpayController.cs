@@ -1,6 +1,7 @@
 ﻿using FurnitureProject.Enums;
 using FurnitureProject.Helper;
 using FurnitureProject.Models;
+using FurnitureProject.Constants;
 using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Models.Vnpay;
@@ -111,7 +112,7 @@ namespace FurnitureProject.Controllers
                         if (!string.IsNullOrEmpty(tempOrderJson))
                         {
                             var orderDTO = JsonConvert.DeserializeObject<OrderDTO>(tempOrderJson);
-
+                            orderDTO.IsPaid = true;
                             var (success, message) = await _orderService.PaymentAsync(orderDTO);
                             if (!success)
                             {
@@ -129,7 +130,7 @@ namespace FurnitureProject.Controllers
                         }
                     }
 
-                    return RedirectToAction("Index", "Cart");
+                    return RedirectToAction("OrderSuccess", "Order");
                 }
                 catch (Exception)
                 {

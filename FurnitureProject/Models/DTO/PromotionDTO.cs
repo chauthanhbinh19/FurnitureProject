@@ -1,4 +1,4 @@
-﻿using FurnitureProject.Helper;
+﻿using FurnitureProject.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace FurnitureProject.Models.DTO

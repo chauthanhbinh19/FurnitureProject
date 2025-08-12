@@ -43,6 +43,10 @@ namespace FurnitureProject.Configuration
                 .IsRequired()
                 .HasDefaultValue("active");
 
+            builder.Property(u => u.IsPaid)
+                .IsRequired()
+                .HasDefaultValue(false);
+
             builder.Property(u => u.TotalAmount)
                 .IsRequired()
                 .HasDefaultValue(0);

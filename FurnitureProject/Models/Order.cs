@@ -23,7 +23,8 @@ namespace FurnitureProject.Models
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
         [Required]
-        public string Status { get; set; } = "Pending"; // hoặc enum nếu muốn
+        public string Status { get; set; } = "Pending";
+        public bool IsPaid { get; set; }
 
         public decimal TotalAmount { get; set; }
 

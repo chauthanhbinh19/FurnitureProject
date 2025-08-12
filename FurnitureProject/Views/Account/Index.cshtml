@@ -30,6 +30,10 @@
                         @Html.Partial("_Orders", Model.OrderViewModel)
                         break;
 
+                    case "OrderDetails":
+                        @Html.Partial("_OrderDetails", Model.OrderViewModel.Order)
+                        break;
+
                     case "Vouchers":
                         @Html.Partial("_Vouchers", Model.Vouchers)
                         break;

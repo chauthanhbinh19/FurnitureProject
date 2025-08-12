@@ -1,11 +1,11 @@
 ﻿using FurnitureProject.Helper;
 using FurnitureProject.Models;
+using FurnitureProject.Constants;
 using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using static FurnitureProject.Helper.AppConstants;
 
 namespace FurnitureProject.Controllers
 {
@@ -114,6 +114,7 @@ namespace FurnitureProject.Controllers
                 //ShippingAddress = order.ShippingAddress,
                 OrderDate = order.OrderDate,
                 Status = order.Status,
+                IsPaid = order.IsPaid,
                 TotalAmount = order.TotalAmount,
                 TotalItems = order.OrderItems.Sum(item => item.Quantity),
                 CreatedAt = order.CreatedAt,
@@ -157,6 +158,10 @@ namespace FurnitureProject.Controllers
                     "OrderDate" => isAscending
                         ? orderDTOs.OrderBy(p => p.OrderDate).ToList()
                         : orderDTOs.OrderByDescending(p => p.OrderDate).ToList(),
+
+                    "IsPaid" => isAscending
+                        ? orderDTOs.OrderBy(p => p.IsPaid).ToList()
+                        : orderDTOs.OrderByDescending(p => p.IsPaid).ToList(),
 
                     "Status" => isAscending
                         ? orderDTOs.OrderBy(p => p.Status).ToList()
@@ -274,6 +279,7 @@ namespace FurnitureProject.Controllers
                 ShippingFee = order.ShippingFee,
                 OrderDate = order.OrderDate,
                 Status = order.Status,
+                IsPaid = order.IsPaid,
                 CreatedAt = order.CreatedAt,
                 TotalAmount = order.TotalAmount,
                 Products = order.OrderItems.Select(item => new ProductDTO
@@ -299,16 +305,16 @@ namespace FurnitureProject.Controllers
                 var (success, message) = await _orderService.UpdateAsync(dto);
                 if (!success)
                 {
-                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateOrderError;
+                    TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateOrderError;
                     return RedirectToAction("Index", "AdminOrder");
                 }
 
-                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.CreateOrderSuccess;
+                TempData[AppConstants.Status.Success] = AppConstants.LogMessages.UpdateOrderSuccess;
                 return RedirectToAction("Index", "AdminOrder");
             }
             catch (Exception)
             {
-                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.CreateOrderError;
+                TempData[AppConstants.Status.Error] = AppConstants.LogMessages.UpdateOrderError;
                 return RedirectToAction("Update", "AdminOrder");
             }
         }
@@ -358,6 +364,7 @@ namespace FurnitureProject.Controllers
                 PaymentMethod = order.PaymentMethod,
                 ShippingFee = order.ShippingFee,
                 OrderDate = order.OrderDate,
+                IsPaid = order.IsPaid,
                 Status = order.Status,
                 TotalAmount = order.TotalAmount,
                 Products = order.OrderItems.Select(item => new ProductDTO

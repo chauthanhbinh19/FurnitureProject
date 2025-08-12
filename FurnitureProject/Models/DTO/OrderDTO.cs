@@ -1,4 +1,4 @@
-﻿using FurnitureProject.Helper;
+﻿using FurnitureProject.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace FurnitureProject.Models.DTO
@@ -31,6 +31,7 @@ namespace FurnitureProject.Models.DTO
         [Display(Name = AppConstants.Display.OrderStatus)]
         public string Status { get; set; } = "Pending";
         public List<ProductDTO> Products { get; set; } = new List<ProductDTO>();
+        public bool IsPaid { get; set; }
         [Display(Name = AppConstants.Display.OrderTotalAmount)]
         public decimal TotalAmount { get; set; }
         public int TotalItems { get; set; }

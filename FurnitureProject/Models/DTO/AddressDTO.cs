@@ -1,4 +1,4 @@
-﻿using FurnitureProject.Helper;
+﻿using FurnitureProject.Constants;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;

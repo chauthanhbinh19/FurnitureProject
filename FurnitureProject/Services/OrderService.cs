@@ -157,6 +157,7 @@ namespace FurnitureProject.Services
                     PaymentMethod = dto.PaymentMethod,
                     OrderDate = DateTime.UtcNow,
                     Status = dto.Status,
+                    IsPaid = dto.IsPaid,
                     TotalAmount = dto.TotalAmount
                 };
 
@@ -193,6 +194,7 @@ namespace FurnitureProject.Services
                     PaymentMethod = dto.PaymentMethod,
                     OrderDate = DateTime.UtcNow,
                     Status = dto.Status,
+                    IsPaid = dto.IsPaid,
                     TotalAmount = dto.TotalAmount
                 };
 
@@ -229,6 +231,7 @@ namespace FurnitureProject.Services
                 existingOrder.PaymentMethod = dto.PaymentMethod;
                 existingOrder.OrderDate = dto.OrderDate;
                 existingOrder.Status = dto.Status;
+                existingOrder.IsPaid = dto.IsPaid;
                 existingOrder.UpdatedAt = DateTime.UtcNow;
                 existingOrder.TotalAmount = dto.TotalAmount;
                 existingOrder.OrderItems.Clear();

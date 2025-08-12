@@ -1,10 +1,4 @@
-﻿@model FurnitureProject.Models.DTO.OrderDTO;
-@using FurnitureProject.Constants;
-
-@{
-    ViewData["Title"] = "Chi tiết đơn hàng";
-}
-
+﻿@model FurnitureProject.Models.DTO.OrderDTO
 <div class="title-box">
     <div class="text-box">
         <span class="title ms-2">Chi tiết đơn hàng</span>
@@ -67,39 +61,14 @@
                                 <div class="col-md-5 mb-3">
                                     <label asp-for="Status" class="form-label fw-medium"></label>
                                     <span class="form-control">
-                                        @if (string.IsNullOrEmpty(Model.Status))
+                                        @if (@Model.Status == null)
                                         {
                                             <span class="text-muted">N/A</span>
-                                        }
-                                        else if (Model.Status == "Pending")
-                                        {
-                                            <span>@AppConstants.Display.Pending</span>
-                                        }
-                                        else if (Model.Status == "Confirmed")
-                                        {
-                                            <span>@AppConstants.Display.Confirmed</span>
-                                        }
-                                        else if (Model.Status == "Processing")
-                                        {
-                                            <span>@AppConstants.Display.Processing</span>
-                                        }
-                                        else if (Model.Status == "Shipping")
-                                        {
-                                            <span>@AppConstants.Display.Shipping</span>
-                                        }
-                                        else if (Model.Status == "Completed")
-                                        {
-                                            <span>@AppConstants.Display.Completed</span>
-                                        }
-                                        else if (Model.Status == "Cancelled")
-                                        {
-                                            <span>@AppConstants.Display.Cancelled</span>
                                         }
                                         else
                                         {
-                                            <span class="text-muted">N/A</span>
+                                            @Model.Status
                                         }
-
                                     </span>
                                 </div>
                             </div>
@@ -146,8 +115,8 @@
                                                 @* <td>@product.Id.ToString().Substring(0, 16)</td> *@
                                                 <td>
                                                     <img src="@(product.ImageUrls != null && product.ImageUrls.Count > 0
-                                                                                                                                                                                                ? product.ImageUrls[0]
-                                                                                                                                                                                                : Url.Content("~/images/No_Image_Available.jpg"))"
+                                                                                                                                                                                                                                                         ? product.ImageUrls[0]
+                                                                                                                                                                                                                                                         : Url.Content("~/images/No_Image_Available.jpg"))"
                                                      alt="Product image"
                                                      style="width: 120px; height: 90px; border-radius:5px;" />
                                             </td>
@@ -174,7 +143,8 @@
                             <div class="mb-3">
                                 <label asp-for="ReceiverName" class="form-label fw-medium"></label>
                                 <span class="form-control">
-                                    @if (@Model.ReceiverName == null){
+                                    @if (@Model.ReceiverName == null)
+                                    {
                                         <span class="text-muted">N/A</span>
                                     }
                                     else

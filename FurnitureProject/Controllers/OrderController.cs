@@ -1,4 +1,5 @@
-﻿using FurnitureProject.Models;
+﻿using FurnitureProject.Helper;
+using FurnitureProject.Models;
 using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
 using FurnitureProject.Services;
@@ -33,8 +34,13 @@ namespace FurnitureProject.Controllers
             return View();
         }
         [HttpGet("order-success")]
-        public IActionResult OrderSuccess()
+        public async Task<IActionResult> OrderSuccess()
         {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
+
+            var categories = await _categoryService.GetAllAsync();
+            ViewBag.Categories = categories.OrderBy(c => c.Name).ToList();
             return View();
         }
         [HttpPost("store-temp-order")]
@@ -56,6 +62,7 @@ namespace FurnitureProject.Controllers
                 ShippingMethodId = paymentViewModel.Order.ShippingMethodId,
                 PaymentMethod = paymentViewModel.Order.PaymentMethod,
                 OrderDate = DateTime.UtcNow,
+                IsPaid = false,
                 Status = "pending",
                 TotalItems = cart.CartItems.Sum(p => p.Quantity),
                 Products = cart.CartItems.Select(ci =>
@@ -94,7 +101,6 @@ namespace FurnitureProject.Controllers
 
             TempData["TempOrder"] = JsonConvert.SerializeObject(orderDto);
 
-            // Trả về tổng số tiền (hoặc thông tin cần thiết để thanh toán)
             return Json(new { amount = orderDto.TotalAmount });
         }
     }

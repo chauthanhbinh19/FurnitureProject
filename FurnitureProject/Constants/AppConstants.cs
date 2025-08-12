@@ -1,4 +1,4 @@
-﻿namespace FurnitureProject.Helper
+﻿namespace FurnitureProject.Constants
 {
     public static class AppConstants
     {

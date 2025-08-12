@@ -1,4 +1,5 @@
 ﻿using FurnitureProject.Helper;
+using FurnitureProject.Constants;
 using FurnitureProject.Models;
 using FurnitureProject.Models.DTO;
 using FurnitureProject.Models.ViewModels;
@@ -29,17 +30,46 @@ namespace FurnitureProject.Controllers
         }
         private void SetStatusViewBag(string? status = null)
         {
-            ViewBag.StatusList = new SelectList(
-                new[] {
-                    new { Value = AppConstants.Status.Pending, Text = AppConstants.Display.Pending },
-                    new { Value = AppConstants.Status.Confirmed, Text = AppConstants.Display.Confirmed },
-                    new { Value = AppConstants.Status.Processing, Text = AppConstants.Display.Processing },
-                    new { Value = AppConstants.Status.Shipping, Text = AppConstants.Display.Shipping },
-                    new { Value = AppConstants.Status.Completed, Text = AppConstants.Display.Completed },
-                    new { Value = AppConstants.Status.Cancelled, Text = AppConstants.Display.Cancelled }
-                },
-                "Value", "Text", status
-            );
+            var orderedStatuses = new[]
+            {
+                new { Value = AppConstants.Status.Pending, Text = AppConstants.Display.Pending },
+                new { Value = AppConstants.Status.Confirmed, Text = AppConstants.Display.Confirmed },
+                new { Value = AppConstants.Status.Processing, Text = AppConstants.Display.Processing },
+                new { Value = AppConstants.Status.Shipping, Text = AppConstants.Display.Shipping },
+                new { Value = AppConstants.Status.Completed, Text = AppConstants.Display.Completed },
+                new { Value = AppConstants.Status.Cancelled, Text = AppConstants.Display.Cancelled }
+            };
+
+            if (status == AppConstants.Status.Cancelled || status == AppConstants.Status.Completed)
+            {
+                var selected = orderedStatuses.FirstOrDefault(s => s.Value == status);
+                if (selected != null)
+                {
+                    ViewBag.StatusList = new SelectList(new[] { selected }, "Value", "Text", status);
+                }
+                else
+                {
+                    ViewBag.StatusList = null;
+                }
+                return;
+            }
+
+            if (string.IsNullOrEmpty(status))
+            {
+                ViewBag.StatusList = new SelectList(orderedStatuses, "Value", "Text");
+                return;
+            }
+
+            int currentIndex = Array.FindIndex(orderedStatuses, s => s.Value == status);
+
+            if (currentIndex == -1)
+            {
+                ViewBag.StatusList = null;
+                return;
+            }
+
+            var availableStatuses = orderedStatuses.Skip(currentIndex);
+            ViewBag.StatusList = new SelectList(availableStatuses, "Value", "Text", status);
         }
         [HttpGet("")]
         public async Task<IActionResult> IndexAsync()
@@ -111,6 +141,7 @@ namespace FurnitureProject.Controllers
                 //ShippingAddress = order.ShippingAddress,
                 OrderDate = order.OrderDate,
                 Status = order.Status,
+                IsPaid = order.IsPaid,
                 TotalAmount = order.TotalAmount,
                 TotalItems = order.OrderItems.Sum(item => item.Quantity),
                 CreatedAt = order.CreatedAt,
@@ -157,6 +188,10 @@ namespace FurnitureProject.Controllers
                         ? orderDTOs.OrderBy(p => p.OrderDate).ToList()
                         : orderDTOs.OrderByDescending(p => p.OrderDate).ToList(),
 
+                    "IsPaid" => isAscending
+                        ? orderDTOs.OrderBy(p => p.IsPaid).ToList()
+                        : orderDTOs.OrderByDescending(p => p.IsPaid).ToList(),
+
                     "Status" => isAscending
                         ? orderDTOs.OrderBy(p => p.Status).ToList()
                         : orderDTOs.OrderByDescending(p => p.Status).ToList(),
@@ -195,6 +230,58 @@ namespace FurnitureProject.Controllers
             ViewBag.PageSize = pageSize;
             ViewBag.Search = filter.SearchKeyWord;
             ViewBag.TotalOrders = totalOrders;
+            return View("Index", model);
+        }
+
+        [HttpGet("order-detail")]
+        public async Task<IActionResult> OrderDetails(Guid id)
+        {
+            await UserSessionHelper.SetUserInfoAndCartAsync(this, _cartService);
+            LayoutHelper.SetViewBagForLayout(this, true, "user");
+
+            var categories = await _categoryService.GetAllAsync();
+            ViewBag.Categories = categories.OrderBy(c => c.Name).ToList();
+
+            var order = await _orderService.GetByIdAsync(id);
+            var orderDTO = new OrderDTO
+            {
+                ReceiverName = order.ReceiverName,
+                ReceiverEmail = order.ReceiverEmail,
+                ReceiverPhone = order.ReceiverPhone,
+                AddressId = order.AddressId,
+                Address = new AddressDTO
+                {
+                    Street = order.Address?.Street,
+                    Ward = order.Address?.Ward,
+                    District = order.Address?.District,
+                    City = order.Address?.City,
+                    Country = order.Address?.Country,
+                    PostalCode = order.Address?.PostalCode
+                },
+                ShippingMethodId = order.ShippingMethodId,
+                PaymentMethod = order.PaymentMethod,
+                ShippingFee = order.ShippingFee,
+                OrderDate = order.OrderDate,
+                Status = order.Status,
+                TotalAmount = order.TotalAmount,
+                Products = order.OrderItems.Select(item => new ProductDTO
+                {
+                    Id = item.ProductId,
+                    ImageUrls = item.Product.ProductImages?.Select(img => img.ImageUrl).ToList() ?? new List<string>(),
+                    Name = item.Product.Name,
+                    Price = item.UnitPrice,
+                    Quantity = item.Quantity
+                }).ToList()
+            };
+
+            var model = new AccountViewModel
+            {
+                CurrentSection = "OrderDetails",
+                OrderViewModel = new OrderViewModel
+                {
+                    Order = orderDTO,
+                }
+            };
             return View("Index", model);
         }
 

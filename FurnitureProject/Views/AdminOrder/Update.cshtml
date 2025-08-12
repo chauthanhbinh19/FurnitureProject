@@ -98,10 +98,18 @@
                                 </div>
                             </div>
                             <div class="row gx-4 gy-3 justify-content-between">
-                                <div class="col-md-12 mb-3">
+                                <div class="col-md-6-5 mb-3">
                                     <label asp-for="TotalAmount" class="form-label fw-medium"></label>
                                     <input asp-for="TotalAmount" id="TotalAmount" class="form-control custom-gray-input text-end" readonly />
                                     <span asp-validation-for="TotalAmount" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-5 mb-3 mt-5">
+                                    <div class="form-check">
+                                        <input asp-for="IsPaid" type="checkbox" class="form-check-input" id="isPaidCheckbox" />
+                                        <label class="form-check-label" for="isPaidCheckbox">
+                                            Đã thanh toán
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
