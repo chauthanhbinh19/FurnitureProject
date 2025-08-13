@@ -170,11 +170,11 @@ namespace FurnitureProject.Controllers
         {
             if (dto.DiscountPercent <= 0)
             {
-                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.PromotionDiscountPercentCannotBeEmpty);
+                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.DiscountBelowZero);
             }
             if (dto.DiscountPercent > 100)
             {
-                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.PromotionDiscountPercentCannotBeEmpty);
+                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.DiscountAboveHundred);
             }
 
             if (dto.StartDate == default)
@@ -298,11 +298,11 @@ namespace FurnitureProject.Controllers
         {
             if (dto.DiscountPercent <= 0)
             {
-                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.PromotionDiscountPercentCannotBeEmpty);
+                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.DiscountBelowZero);
             }
             if (dto.DiscountPercent > 100)
             {
-                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.PromotionDiscountPercentCannotBeEmpty);
+                ModelState.AddModelError(nameof(dto.DiscountPercent), AppConstants.LogMessages.DiscountAboveHundred);
             }
 
             if (dto.StartDate == default)

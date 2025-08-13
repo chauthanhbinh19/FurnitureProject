@@ -58,6 +58,8 @@
             public const string PromotionStartDateCannotBeInPast = "Promotion start date cannot be earlier than today.";
             public const string PromotionEndDateCannotBeEmpty = "Promotion end date cannot be empty";
             public const string PromotionEndDateCannotBeBeforeStart = "Promotion end date cannot be earlier than the start date.";
+            public const string DiscountBelowZero = "Discount percent cannot be less than 0.";
+            public const string DiscountAboveHundred = "Discount percent cannot be greater than 100.";
 
             public const string CreateVoucherSuccess = "Voucher created successfully!";
             public const string CreateVoucherError = "Create voucher failed!";
